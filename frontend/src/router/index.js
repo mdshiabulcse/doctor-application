@@ -4,6 +4,7 @@ import {Index, Shop, SingleProduct,Checkout} from "@/views/pages/index.js";
 import {Seller,SellerStore,SellerApply} from "@/views/pages/seller/index.js";
 import {UserLogin, UserRegister} from "@/views/auth/index.js";
 import {MyOrderList, MyProfile, MyWishlist} from "@/views/user/index.js";
+import {DashboardIndex} from "@/views/dashboard/index.js";
 import {useAuth} from "@/stores";
 
 
@@ -16,6 +17,7 @@ const routes = [
     {path: '/user-orders', name: "user.orders", component: MyOrderList, meta: { title: 'User Orders',requiresAuth: true }},
     {path: '/user-profile', name: "user.profile", component: MyProfile, meta: { title: 'User Profile' ,requiresAuth: true}},
     {path: '/user-wishlist', name: "user.wishlist", component: MyWishlist, meta: { title: 'User Wishlist' ,requiresAuth: true}},
+    {path: '/dashboard', name: "user.dashboard", component: DashboardIndex, meta: { title: 'User Dashboard' ,requiresAuth: true}},
 
    //user route end=====
 

@@ -23,19 +23,19 @@
 
 
 /*=========dashboard css start========*/
-@import "@/dashboard/assets/img/favicon.png";
+@import "@/dashboard_assets/assets/img/favicon.png";
 
-@import "@/dashboard/assets/css/bootstrap.min.css";
+@import "@/dashboard_assets/assets/css/bootstrap.min.css";
 
-@import "@/dashboard/assets/plugins/fontawesome/css/fontawesome.min.css";
-@import "@/dashboard/assets/plugins/fontawesome/css/all.min.css";
+@import "@/dashboard_assets/assets/plugins/fontawesome/css/fontawesome.min.css";
+@import "@/dashboard_assets/assets/plugins/fontawesome/css/all.min.css";
 
-@import "@/dashboard/assets/css/feather.css";
+@import "@/dashboard_assets/assets/css/feather.css";
 
-@import "@/dashboard/assets/plugins/select2/css/select2.min.css";
+@import "@/dashboard_assets/assets/plugins/select2/css/select2.min.css";
 
-@import "@/dashboard/assets/plugins/owl-carousel/owl.carousel.min.css";
+@import "@/dashboard_assets/assets/plugins/owl-carousel/owl.carousel.min.css";
 
-@import "@/dashboard/assets/plugins/daterangepicker/daterangepicker.css";
+@import "@/dashboard_assets/assets/plugins/daterangepicker/daterangepicker.css";
 
-@import "@/dashboard/assets/css/style.css";
+@import "@/dashboard_assets/assets/css/style.css";

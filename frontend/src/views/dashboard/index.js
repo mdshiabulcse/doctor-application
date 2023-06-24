@@ -1,0 +1,1 @@
+export {default as DashboardIndex} from './index.vue';
