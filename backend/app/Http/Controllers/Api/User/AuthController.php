@@ -17,6 +17,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     public function login(LoginRequest $request){
+//        dd($request->all());
         $user = User::VerifiedUser()->where('phone', $request->phone)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
