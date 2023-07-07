@@ -99,9 +99,6 @@ function cartShow() {
                   <router-link :to="{name:'user.wishlist'}" class="dropdown-item">My Wishlist</router-link>
                 </li>
                 <li>
-                  <router-link :to="{name:'user.dashboard'}" class="dropdown-item">My Dashboard</router-link>
-                </li>
-                <li>
                   <a href="javascript::void(0)" class="dropdown-item" @click="userLogout">Logout</a>
                 </li>
               </ul>
