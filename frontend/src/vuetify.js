@@ -13,3 +13,4 @@ export function setupVuetify(app) {
 const app = createApp(App);
 setupVuetify(app);
 app.mount('#app');
+  
