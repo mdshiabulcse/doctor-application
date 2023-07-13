@@ -11,6 +11,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 loadFonts()
 
@@ -18,11 +19,12 @@ loadFonts()
 // Create vue app
 const app = createApp(App)
 
-
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 // Use plugins
-app.use(vuetify)
-app.use(createPinia())
-app.use(router)
+app.use(vuetify);
+app.use(createPinia());
+app.use(router);
 
 // Mount vue app
 app.mount('#app')

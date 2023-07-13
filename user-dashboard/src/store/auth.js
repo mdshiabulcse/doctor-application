@@ -9,6 +9,9 @@ export const useAuth = defineStore('auth', {
       errors:{},
       user:{},
     }),
+  persist: {
+    paths: ['user'],
+  },
   actions:{
     async login(formData){
       try {

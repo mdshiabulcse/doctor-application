@@ -22,6 +22,7 @@ const form= reactive({
   phone:"",
   password:"",
   remember: false,
+
 })
 const onSubmit= async ()=>{
   const res = await auth.login(form);

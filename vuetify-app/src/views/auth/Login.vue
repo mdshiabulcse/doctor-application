@@ -1,13 +1,17 @@
 
 <script setup>
 
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import {useAuth} from "@/store/auth";
-const auth=useAuth();
+import {storeToRefs} from "pinia";
 
+const auth=useAuth();
+const {errors}=storeToRefs(auth);
+const visible= ref(false);
 const form= reactive({
   phone:"",
-  password:""
+  password:"",
+
 })
 const onSubmit= async ()=>{
   await auth.login(form);
@@ -22,29 +26,33 @@ const onSubmit= async ()=>{
       src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"
     ></v-img>
 
-    <Form @submit.prevent="onSubmit">
-      <v-card
-        class="mx-auto pa-12 pb-8"
-        elevation="8"
-        max-width="448"
-        rounded="lg"
-      >
-        <div class="text-subtitle-1 text-medium-emphasis">Phone</div>
-
-        <Field
+    <v-card
+      class="mx-auto pa-12 pb-8"
+      elevation="8"
+      max-width="448"
+      rounded="lg"
+    >
+      <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+      <form @submit.prevent="onSubmit">
+        <v-text-field
           density="compact"
-          placeholder="Phone Number"
+          placeholder="Phone"
           prepend-inner-icon="mdi-phone-outline"
           variant="outlined"
           v-model="form.phone"
-        ></Field>
+          :error-messages="errors.phone"
+        ></v-text-field>
 
         <v-text-field
+          :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+          :type="visible ? 'text' : 'password'"
           density="compact"
           placeholder="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
+          @click:append-inner="visible = !visible"
           v-model="form.password"
+          :error-messages="errors.password"
         ></v-text-field>
 
         <v-btn
@@ -57,7 +65,8 @@ const onSubmit= async ()=>{
         >
           Log In
         </v-btn>
-      </v-card>
-    </Form>
+      </form>
+
+    </v-card>
   </div>
 </template>
