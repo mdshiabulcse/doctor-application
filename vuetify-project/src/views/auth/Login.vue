@@ -1,19 +1,3 @@
-
-<script setup>
-
-import {reactive} from "vue";
-import {useAuth} from "@/store/auth";
-const auth=useAuth();
-
-const form= reactive({
-  phone:"",
-  password:""
-})
-const onSubmit= async ()=>{
-  await auth.login(form);
-}
-</script>
-
 <template>
   <div>
     <v-img
@@ -22,30 +6,32 @@ const onSubmit= async ()=>{
       src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"
     ></v-img>
 
-    <Form @submit.prevent="onSubmit">
-      <v-card
-        class="mx-auto pa-12 pb-8"
-        elevation="8"
-        max-width="448"
-        rounded="lg"
-      >
-        <div class="text-subtitle-1 text-medium-emphasis">Phone</div>
+    <v-card
+      class="mx-auto pa-12 pb-8"
+      elevation="8"
+      max-width="448"
+      rounded="lg"
+    >
+      <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
-        <Field
+      <form @submit.prevent="onSubmit">
+        <v-text-field
           density="compact"
-          placeholder="Phone Number"
+          placeholder="Phone address"
           prepend-inner-icon="mdi-phone-outline"
           variant="outlined"
+          type="text"
           v-model="form.phone"
-        ></Field>
-
+        ></v-text-field>
         <v-text-field
           density="compact"
           placeholder="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
+          type="password"
           v-model="form.password"
         ></v-text-field>
+
 
         <v-btn
           block
@@ -57,7 +43,22 @@ const onSubmit= async ()=>{
         >
           Log In
         </v-btn>
-      </v-card>
-    </Form>
+      </form>
+
+
+    </v-card>
   </div>
 </template>
+<script setup>
+import {reactive} from "vue";
+import {useAuth} from "@/store/auth";
+
+const auth=useAuth();
+const form= reactive({
+  phone:"",
+  password:"",
+})
+const onSubmit= async ()=>{
+  await auth.login(form);
+}
+</script>

@@ -1,12 +1,12 @@
-
 import { defineStore } from 'pinia'
-import axios from "axios";
 import axiosInstance from "@/services/axiosService";
 
 export const useAuth = defineStore('auth', {
-  state: () => ({errors:{}}),
   actions:{
     async login(formData){
+      // console.log("formData")
+      // console.log(formData)
+      // console.log("formData")
       try {
         let res = await axiosInstance.post("/user/login",formData);
         if (res.status === 200){

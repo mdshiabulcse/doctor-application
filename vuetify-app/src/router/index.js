@@ -5,7 +5,7 @@ import DashboardHome from "@/views/dashboard/DashboardHome.vue";
 const routes = [
   {
     path: '/',
-    // component: () => import('@/layouts/default/Default.vue'),
+    component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
