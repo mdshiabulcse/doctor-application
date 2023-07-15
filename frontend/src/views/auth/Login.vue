@@ -56,7 +56,7 @@ const schema = yup.object({
                                                     placeholder="phone no"
                                                     :class="{'is-invalid':errors.phone}"
 
-                                            /><!--v-if-->
+                                            />
                                             <span class="text-danger">{{ errors.phone }}</span>
                                         </div>
                                         <div class="form-group">

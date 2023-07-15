@@ -8,18 +8,18 @@ import {HeaderPart,NavBar,CartSidebar,MobileMenu,LoginModal,NewsLetter,FooterPar
     <div class="backdrop"></div>
     <a class="backtop fas fa-arrow-up" href="#"></a>
     <!--    Header Part-->
-    <HeaderPart/>
+<!--    <HeaderPart/>-->
     <!--    Navbar part-->
-    <NavBar/>
+<!--    <NavBar/>-->
 
-    <!--    Cart Sidebar Part-->
-    <CartSidebar/>
-    <!--    Mobile menu Part-->
-    <MobileMenu/>
+<!--    &lt;!&ndash;    Cart Sidebar Part&ndash;&gt;-->
+<!--    <CartSidebar/>-->
+<!--    &lt;!&ndash;    Mobile menu Part&ndash;&gt;-->
+<!--    <MobileMenu/>-->
 
-    <!--Login modal Part-->
+<!--    &lt;!&ndash;Login modal Part&ndash;&gt;-->
 
-    <LoginModal/>
+<!--    <LoginModal/>-->
 
     <!--router view part area start-->
     <router-view></router-view>
@@ -27,9 +27,9 @@ import {HeaderPart,NavBar,CartSidebar,MobileMenu,LoginModal,NewsLetter,FooterPar
 
 
 <!--    news letter Part-->
-    <NewsLetter/>
+<!--    <NewsLetter/>-->
 
-    <FooterPart/>
+<!--    <FooterPart/>-->
   </div>
 
 </template>

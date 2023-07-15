@@ -82,7 +82,10 @@ function cartShow() {
               <a class="nav-link header-widget" href="#" data-bs-toggle="dropdown"><i class="fas fa-user"></i></a>
               <ul class="dropdown-menu dropdown-menu-end" v-if="!user?.data">
                 <li>
-                  <router-link :to="{name:'user.login'}" class="dropdown-item"> Login</router-link>
+                  <router-link :to="{name:'auth.login'}" class="dropdown-item"> Login</router-link>
+                </li>
+                <li>
+                  <router-link :to="{name:'user.login'}" class="dropdown-item">User Login</router-link>
                 </li>
                 <li>
                   <router-link :to="{name:'user.register'}" class="dropdown-item"> Register</router-link>
