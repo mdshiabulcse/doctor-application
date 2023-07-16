@@ -21,7 +21,7 @@
 @import "@/dashboard_assets/assets/css/style.css" ;
 
 /*=======packages css=======*/
-/*@import 'element-plus/dist/index.css';*/
+@import 'element-plus/dist/index.css';
 /*@import 'nprogress/nprogress.css';*/
 #nprogress .bar{
     background: #ffffff !important;

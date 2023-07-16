@@ -4,6 +4,8 @@
 import App from './App.vue'
 import './style.css';
 import './template.js';
+import ElementPlus from 'element-plus';
+import router from "./router/index.js";
 // Composables
 import { createApp } from 'vue'
 import { Field, Form, ErrorMessage } from 'vee-validate';
@@ -19,5 +21,6 @@ app.component('ErrorMessage', ErrorMessage);
 // app.component('VTextField', VTextField);
 
 registerPlugins(app)
-
+app.use(ElementPlus)
+app.use(router);
 app.mount('#app')
