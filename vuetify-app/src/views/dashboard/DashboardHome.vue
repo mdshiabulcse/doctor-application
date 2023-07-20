@@ -9,7 +9,7 @@
       >
         <v-list-item
           prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          title="John Leider"
+          :title="UserName"
           nav
         >
           <template v-slot:append>
@@ -33,15 +33,13 @@
     </v-layout>
   </v-card>
 </template>
-<script >
-export default {
-  data () {
-    return {
-      drawer: true,
-      rail: true,
-    }
-  },
-  setup(){
-}
-}
+<script setup>
+import {ref} from "vue";
+import {useAuth} from "@/store/auth.js";
+
+const drawer= ref(true);
+const rail= ref(true);
+const user=useAuth();
+const UserName=user.user.data.name;
+
 </script>

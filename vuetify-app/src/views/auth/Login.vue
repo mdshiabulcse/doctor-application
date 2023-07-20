@@ -21,7 +21,6 @@ const toggleShow = () => {
 const onSubmit = async (values, {setErrors}) => {
   const res = await auth.login(values);
   if (res.data) {
-    console.log(res.data)
     router.push({name: 'user.dashboard'});
     ElNotification({
       title: 'Success',

@@ -2,21 +2,21 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import DashboardHome from "@/views/dashboard/DashboardHome.vue";
 import UserLogin from "@/views/auth/Login.vue";
+import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
 
 const routes = [
   {
-    path: '/',
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '', name: 'user.login', component: UserLogin, meta:{title:"User Login", guest:true},
-      },
-    ],
+    path: '/', name: 'user.login', component: UserLogin, meta:{title:"User Login", guest:true},
   },
   {
-    path: '/dashboard', name: 'user.dashboard', component: DashboardHome, meta:{title:"User Dashboard", requiresAuth:true}
-
+    path: '/dashboard',
+    component: DefaultPage,
+    children: [
+      {
+        path: '/dashboard', name: 'user.dashboard', component: DashboardHome, meta:{title:"User Dashboard", requiresAuth:true}
+      },
+    ],
   },
 ]
 
