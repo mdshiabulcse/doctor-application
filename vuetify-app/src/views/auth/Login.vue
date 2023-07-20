@@ -71,16 +71,14 @@ const schema = yup.object({
                           v-slot="{errors, isSubmitting}">
                       <div class="col-12">
                         <label for="yourUsername" class="form-label">Phone</label>
-                        <div class="input-group has-validation">
                           <Field
                             name="phone"
                             type="text"
-                            class="form-control "
+                            class="form-control"
                             placeholder="phone no"
                             :class="{'is-invalid':errors.phone}"
                           />
                           <span class="text-danger">{{ errors.phone }}</span>
-                        </div>
                       </div>
 
                       <div class="col-12">
