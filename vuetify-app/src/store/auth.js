@@ -1,6 +1,8 @@
 
 import { defineStore } from 'pinia'
 import axiosInstance from "@/services/axiosService";
+import {ElNotification} from "element-plus";
+import router from "@/router/index.js";
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -31,6 +33,24 @@ export const useAuth = defineStore('auth', {
           })
         }
 
+      }
+    },
+    async logout(){
+      try {
+        const res=  await axiosInstance.post("/user/logout").then(response =>{
+          this.user=[];
+          router.push({name:'user.login'});
+          ElNotification({
+            title: 'Success',
+            message: "Logout Success",
+            type: 'success',
+            position: 'top-left',
+          })
+
+        });
+        console.log(res);
+      }catch (error){
+        console.log(error);
       }
     },
   },

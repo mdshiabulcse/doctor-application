@@ -1,6 +1,7 @@
 // Composables
 import {createRouter, createWebHistory} from 'vue-router'
 import DashboardHome from "@/views/dashboard/DashboardHome.vue";
+import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
@@ -14,7 +15,12 @@ const routes = [
     component: DefaultPage,
     children: [
       {
-        path: '/dashboard', name: 'user.dashboard', component: DashboardHome, meta:{title:"User Dashboard", requiresAuth:true}
+        path: '/dashboard', name: 'user.dashboard', component: DashboardHome, meta:{title:"User Dashboard", requiresAuth:true},
+
+      },
+      {
+        path: '/user-profile', name: 'user.profile', component: UserProfile, meta:{title:"User Profile", requiresAuth:true},
+
       },
     ],
   },
