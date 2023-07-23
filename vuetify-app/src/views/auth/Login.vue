@@ -1,33 +1,26 @@
 <script setup>
 
 import {useAuth} from "@/store/auth";
+import {useNotification} from "@/store/notification";
 import {ref} from "vue";
 import {Field, Form} from 'vee-validate';
 import * as yup from 'yup';
 import {useRouter} from 'vue-router';
-import {ElNotification} from 'element-plus';
 
+
+const notify=useNotification();
 const auth = useAuth();
 const router = useRouter();
 const showPassword = ref(false);
 const toggleShow = () => {
   showPassword.value = !showPassword.value
 };
-// const form= reactive({
-//   phone:"",
-//   password:"",
-//
-// })
+
 const onSubmit = async (values, {setErrors}) => {
   const res = await auth.login(values);
   if (res.data) {
     router.push({name: 'user.dashboard'});
-    ElNotification({
-      title: 'Success',
-      message: "Login Success!",
-      position: 'top-left',
-      type: 'success',
-    })
+    notify.Success('Login Successfully!');
   } else {
     setErrors(res);
   }
@@ -54,7 +47,7 @@ const schema = yup.object({
                 <div class="d-flex justify-content-center py-4">
                   <a href="index.html" class="logo d-flex align-items-center w-auto">
                     <!--                    <img src="assets/img/logo.png" alt="">-->
-                    <span class="d-none d-lg-block">Doc App</span>
+                    <span class="d-none d-lg-block">APP</span>
                   </a>
                 </div><!-- End Logo -->
 

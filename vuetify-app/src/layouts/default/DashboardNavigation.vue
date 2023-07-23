@@ -26,10 +26,10 @@
         <v-list density="compact" nav>
           <router-link :to="{name:'user.dashboard'}" > <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item></router-link>
           <router-link :to="{name:'user.profile'}" ><v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item></router-link>
-          <a href="javascript::void(0)"  @click="userLogout"><v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item></a>
+          <a href="javascript::void(0)"  @click="userLogout"><v-list-item prepend-icon="mdi-power" title="Logout" ></v-list-item></a>
         </v-list>
       </v-navigation-drawer>
-      <v-main style="height: 250px">
+      <v-main style="height: 700px">
         <router-view/>
       </v-main>
     </v-layout>
@@ -48,19 +48,9 @@ const UserName=userData.user.data.name;
 
 const auth=useAuth();
 const {user}=storeToRefs(auth);
+
 const userLogout= async()=>{
   await auth.logout();
-
-
-  // if (res.data){
-  //   router.push({ name:'/' });
-  //   ElNotification({
-  //     title: 'Success',
-  //     message: 'Login Success',
-  //     type: 'success',
-  //     position: 'top-left',
-  //   })
-  // }
 }
 
 </script>

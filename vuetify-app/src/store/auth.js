@@ -41,9 +41,9 @@ export const useAuth = defineStore('auth', {
           this.user=[];
           router.push({name:'user.login'});
           ElNotification({
-            title: 'Success',
+            title: 'Info',
             message: "Logout Success",
-            type: 'success',
+            type: 'info',
             position: 'top-left',
           })
 
