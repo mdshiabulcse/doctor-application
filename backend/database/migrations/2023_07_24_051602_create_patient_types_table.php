@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('patient_types', function (Blueprint $table) {
             $table->id();
+            $table->string('patient_type');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

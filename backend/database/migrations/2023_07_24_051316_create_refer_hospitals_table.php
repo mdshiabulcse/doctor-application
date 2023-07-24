@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('refer_hospitals', function (Blueprint $table) {
             $table->id();
+            $table->string('hospital_name');
+            $table->string('hospital_details')->nullable();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
