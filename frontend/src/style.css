@@ -1,12 +1,24 @@
-@import "@/assets/fonts/flaticon/flaticon.css" ;
-@import "@/assets/fonts/icofont/icofont.min.css" ;
-@import "@/assets/fonts/fontawesome/fontawesome.min.css" ;
-@import "@/assets/vendor/venobox/venobox.min.css" ;
-@import "@/assets/vendor/slickslider/slick.min.css" ;
-@import "@/assets/vendor/niceselect/nice-select.min.css" ;
-@import "@/assets/vendor/bootstrap/bootstrap.min.css" ;
-@import "@/assets/css/main.css" ;
-@import "@/assets/css/home-category.css" ;
+/*@import "@/assets/fonts/flaticon/flaticon.css" ;*/
+/*@import "@/assets/fonts/icofont/icofont.min.css" ;*/
+/*@import "@/assets/fonts/fontawesome/fontawesome.min.css" ;*/
+/*@import "@/assets/vendor/venobox/venobox.min.css" ;*/
+/*@import "@/assets/vendor/slickslider/slick.min.css" ;*/
+/*@import "@/assets/vendor/niceselect/nice-select.min.css" ;*/
+/*@import "@/assets/vendor/bootstrap/bootstrap.min.css" ;*/
+/*@import "@/assets/css/main.css" ;*/
+/*@import "@/assets/css/home-category.css" ;*/
+
+/*<!-- Vendor CSS Files -->*/
+@import "@/dashboard_assets/assets/vendor/bootstrap/css/bootstrap.min.css" ;
+@import "@/dashboard_assets/assets/vendor/bootstrap-icons/bootstrap-icons.css" ;
+@import "@/dashboard_assets/assets/vendor/boxicons/css/boxicons.min.css" ;
+@import "@/dashboard_assets/assets/vendor/quill/quill.snow.css" ;
+@import "@/dashboard_assets/assets/vendor/quill/quill.bubble.css" ;
+@import "@/dashboard_assets/assets/vendor/remixicon/remixicon.css" ;
+@import "@/dashboard_assets/assets/vendor/simple-datatables/style.css" ;
+
+/*<!-- Template Main CSS File -->*/
+@import "@/dashboard_assets/assets/css/style.css" ;
 
 /*=======packages css=======*/
 @import 'element-plus/dist/index.css';
@@ -22,20 +34,3 @@
 }
 
 
-/*=========dashboard css start========*/
-@import "@/dashboard_assets/assets/img/favicon.png";
-
-@import "@/dashboard_assets/assets/css/bootstrap.min.css";
-
-@import "@/dashboard_assets/assets/plugins/fontawesome/css/fontawesome.min.css";
-@import "@/dashboard_assets/assets/plugins/fontawesome/css/all.min.css";
-
-@import "@/dashboard_assets/assets/css/feather.css";
-
-@import "@/dashboard_assets/assets/plugins/select2/css/select2.min.css";
-
-@import "@/dashboard_assets/assets/plugins/owl-carousel/owl.carousel.min.css";
-
-@import "@/dashboard_assets/assets/plugins/daterangepicker/daterangepicker.css";
-
-@import "@/dashboard_assets/assets/css/style.css";

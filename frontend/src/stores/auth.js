@@ -50,7 +50,7 @@ export const useAuth = defineStore("auth", {
                 });
                 console.log(res);
             }catch (error){
-
+                console.log(res);
             }
         },
         async register(formData) {

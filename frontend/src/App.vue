@@ -3,9 +3,6 @@ import {HeaderPart,NavBar,CartSidebar,MobileMenu,LoginModal,NewsLetter,FooterPar
 
 
 </script>
-
-
-
 <template>
   <div>
     <div class="backdrop"></div>

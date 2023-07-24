@@ -7,16 +7,6 @@ const {user}=storeToRefs(auth);
 const userLogout= async()=>{
   await auth.logout();
 
-
-  // if (res.data){
-  //   router.push({ name:'/' });
-  //   ElNotification({
-  //     title: 'Success',
-  //     message: 'Login Success',
-  //     type: 'success',
-  //     position: 'top-left',
-  //   })
-  // }
 }
 function search() {
   $(".header-form").toggleClass("active"),
@@ -82,7 +72,10 @@ function cartShow() {
               <a class="nav-link header-widget" href="#" data-bs-toggle="dropdown"><i class="fas fa-user"></i></a>
               <ul class="dropdown-menu dropdown-menu-end" v-if="!user?.data">
                 <li>
-                  <router-link :to="{name:'user.login'}" class="dropdown-item"> Login</router-link>
+                  <router-link :to="{name:'auth.login'}" class="dropdown-item"> Login</router-link>
+                </li>
+                <li>
+                  <router-link :to="{name:'user.login'}" class="dropdown-item">User Login</router-link>
                 </li>
                 <li>
                   <router-link :to="{name:'user.register'}" class="dropdown-item"> Register</router-link>
@@ -99,7 +92,7 @@ function cartShow() {
                   <router-link :to="{name:'user.wishlist'}" class="dropdown-item">My Wishlist</router-link>
                 </li>
                 <li>
-                  <router-link :to="{name:'user.dashboard'}" class="dropdown-item">My Dashboard</router-link>
+                  <router-link :to="{name:'user.dashboard'}" class="dropdown-item">Dashboard</router-link>
                 </li>
                 <li>
                   <a href="javascript::void(0)" class="dropdown-item" @click="userLogout">Logout</a>
