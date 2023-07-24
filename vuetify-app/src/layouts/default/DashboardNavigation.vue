@@ -5,8 +5,7 @@
         v-model="drawer"
         :rail="rail"
         permanent
-        @click="rail = false"
-      >
+        @click="rail = false">
         <v-list-item
           prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
           :title="UserName"
@@ -24,9 +23,15 @@
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <router-link :to="{name:'user.dashboard'}" > <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item></router-link>
-          <router-link :to="{name:'user.profile'}" ><v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item></router-link>
-          <a href="javascript::void(0)"  @click="userLogout"><v-list-item prepend-icon="mdi-power" title="Logout" ></v-list-item></a>
+          <router-link :to="{name:'user.dashboard'}">
+            <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+          </router-link>
+          <router-link :to="{name:'user.profile'}">
+            <v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item>
+          </router-link>
+          <a href="javascript::void(0)" @click="userLogout">
+            <v-list-item prepend-icon="mdi-power" title="Logout"></v-list-item>
+          </a>
         </v-list>
       </v-navigation-drawer>
       <v-main style="height: 700px">
@@ -41,15 +46,15 @@ import {useAuth} from "@/store/auth.js";
 import {storeToRefs} from "pinia";
 
 
-const drawer= ref(true);
-const rail= ref(true);
-const userData=useAuth();
-const UserName=userData.user.data.name;
+const drawer = ref(true);
+const rail = ref(true);
+const userData = useAuth();
+const UserName = userData.user.data.name;
 
-const auth=useAuth();
-const {user}=storeToRefs(auth);
+const auth = useAuth();
+const {user} = storeToRefs(auth);
 
-const userLogout= async()=>{
+const userLogout = async () => {
   await auth.logout();
 }
 
