@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('branch_email')->nullable();
             $table->string('country')->nullable();
             $table->longText('branch_details')->nullable();
+            $table->integer('user_id');
+            $table->string('ip_address')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
