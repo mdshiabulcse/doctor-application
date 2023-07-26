@@ -29,6 +29,7 @@
           <router-link :to="{name:'user.profile'}">
             <v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item>
           </router-link>
+          <v-list-item prepend-icon="mdi-admin" title="Administrative" value="Administrative"></v-list-item>
           <a href="javascript::void(0)" @click="userLogout">
             <v-list-item prepend-icon="mdi-power" title="Logout"></v-list-item>
           </a>
