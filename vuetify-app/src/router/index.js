@@ -5,6 +5,7 @@ import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
+import {DoctorList} from "@/views/dashboard/Index";
 
 const routes = [
   {
@@ -20,6 +21,10 @@ const routes = [
       },
       {
         path: '/user-profile', name: 'user.profile', component: UserProfile, meta:{title:"User Profile", requiresAuth:true},
+
+      },
+      {
+        path: '/doctor-list', name: 'doctor.list', component: DoctorList, meta:{title:"Doctor List", requiresAuth:true},
 
       },
     ],
