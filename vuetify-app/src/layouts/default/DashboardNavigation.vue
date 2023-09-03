@@ -1,4 +1,6 @@
+
 <template>
+  <v-app-bar></v-app-bar>
   <v-card>
     <v-layout>
       <v-navigation-drawer
@@ -28,6 +30,9 @@
           </router-link>
           <router-link :to="{name:'user.profile'}">
             <v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item>
+          </router-link>
+          <router-link :to="{name:'doctor.list'}">
+            <v-list-item prepend-icon="mdi-account" title="Doctor List" value="profile"></v-list-item>
           </router-link>
           <router-link :to="{name:'user.profile'}">
             <v-list-item prepend-icon="mdi-security" title="Administrative" value="Administrative"></v-list-item>

@@ -10,7 +10,7 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
-
+import { VDataTableServer } from 'vuetify/labs/VDataTable'
 
 
 
@@ -25,5 +25,8 @@ export default createVuetify({
         },
       },
     },
+  },
+  components: {
+    VDataTableServer,
   },
 })
