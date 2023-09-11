@@ -123,6 +123,7 @@ const FakeAPI = {
 
 export default {
   data: () => ({
+
     itemsPerPage: 5,
     headers: [
       {
