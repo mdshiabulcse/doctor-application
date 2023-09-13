@@ -7,10 +7,7 @@
       permanent
       @click="rail = false">
       <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-        :title="UserName"
-        nav
-      >
+        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" :title="UserName" nav>
         <template v-slot:append>
           <v-btn
             variant="text"
@@ -19,23 +16,9 @@
           ></v-btn>
         </template>
       </v-list-item>
-
       <v-divider></v-divider>
-
       <v-list density="compact" nav>
-        <router-link :to="{name:'user.dashboard'}">
-          <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-        </router-link>
-        <router-link :to="{name:'user.profile'}">
-          <v-list-item prepend-icon="mdi-account" title="My Account" value="profile"></v-list-item>
-        </router-link>
-        <router-link :to="{name:'doctor.list'}">
-          <v-list-item prepend-icon="mdi-doctor" title="Doctor List" value="doctor"></v-list-item>
-        </router-link>
-        <router-link :to="{name:'user.profile'}">
-          <v-list-item prepend-icon="mdi-security" title="Administrative" value="Administrative"></v-list-item>
-        </router-link>
-
+        <Sidbar/>
         <a href="javascript::void(0)" @click="userLogout">
           <v-list-item prepend-icon="mdi-power" title="Logout"></v-list-item>
         </a>
@@ -70,6 +53,7 @@
 import {ref} from "vue";
 import {useAuth} from "@/store/auth.js";
 import {storeToRefs} from "pinia";
+import Sidbar from "@/views/dashboard/Sidebar.vue"
 
 
 const drawer = ref(true);
