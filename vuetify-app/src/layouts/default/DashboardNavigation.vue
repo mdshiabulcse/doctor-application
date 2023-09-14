@@ -57,7 +57,7 @@ import Sidbar from "@/views/dashboard/Sidebar.vue"
 
 
 const drawer = ref(true);
-const rail = ref(true);
+const rail = ref(false);
 const order = ref(0);
 const userData = useAuth();
 const UserName = userData.user.data.name;
