@@ -1,17 +1,66 @@
 <template>
-  <v-data-table-server
-    v-model:items-per-page="itemsPerPage"
-    :headers="headers"
-    :items-length="totalItems"
-    :items="serverItems"
-    :loading="loading"
-    :search="search"
-    class="elevation-1"
-    item-value="name"
-    @update:options="loadItems"
-  ></v-data-table-server>
+  <v-container >
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-sheet class="">
+          <v-breadcrumbs :items="items">
+            <template v-slot:prepend>
+              <v-icon size="small" icon="$vuetify"></v-icon>
+            </template>
+          </v-breadcrumbs>
+          <v-col cols="auto">
+            <v-dialog
+              transition="dialog-top-transition"
+              width="auto"
+            >
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  color="primary"
+                  v-bind="props"
+                >Add Doctor</v-btn>
+              </template>
+              <template v-slot:default="{ isActive }">
+                <v-card>
+                  <v-toolbar
+                    color="primary"
+                    title="Opening from the top"
+                  ></v-toolbar>
+                  <v-card-text>
+                    <div class="text-h2 pa-12">Hello world!</div>
+                  </v-card-text>
+                  <v-card-actions class="justify-end">
+                    <v-btn
+                      variant="text"
+                      @click="isActive.value = false"
+                    >Close</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+          </v-col>
+        </v-sheet>
+      </v-col>
+      <v-col cols="12">
+        <v-sheet class="">
+          <v-data-table-server
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items-length="totalItems"
+            :items="serverItems"
+            :loading="loading"
+            :search="search"
+            class="elevation-1"
+            item-value="name"
+            @update:options="loadItems"
+          ></v-data-table-server>
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
+
 </template>
-<script>
+
+<script >
 const desserts = [
   {
     name: 'Frozen Yogurt',
@@ -123,7 +172,23 @@ const FakeAPI = {
 
 export default {
   data: () => ({
-
+    items: [
+      {
+        title: 'Dashboard',
+        disabled: false,
+        href: 'breadcrumbs_dashboard',
+      },
+      {
+        title: 'Link 1',
+        disabled: false,
+        href: 'breadcrumbs_link_1',
+      },
+      {
+        title: 'Link 2',
+        disabled: true,
+        href: 'breadcrumbs_link_2',
+      },
+    ],
     itemsPerPage: 5,
     headers: [
       {

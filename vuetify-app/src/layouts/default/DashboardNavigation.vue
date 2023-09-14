@@ -54,10 +54,11 @@ import {ref} from "vue";
 import {useAuth} from "@/store/auth.js";
 import {storeToRefs} from "pinia";
 import Sidbar from "@/views/dashboard/Sidebar.vue"
+import Footer from "./Footer.vue"
 
 
 const drawer = ref(true);
-const rail = ref(true);
+const rail = ref(false);
 const order = ref(0);
 const userData = useAuth();
 const UserName = userData.user.data.name;

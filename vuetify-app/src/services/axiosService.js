@@ -8,9 +8,6 @@ const axiosInstance = axios.create({
 });
 axiosInstance.interceptors.request.use(function (config) {
   const authInfo=useAuth();
-  console.log("authInfo")
-  console.log(authInfo)
-  console.log("authInfo")
   if (authInfo.user?.meta?.token) {
     config.headers.Authorization = "Bearer " + authInfo.user.meta.token;
   }
