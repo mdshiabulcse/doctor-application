@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\dashboard\DoctorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +35,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //        Route::get('/user', 'user');
 //    });
 //});
+
 
