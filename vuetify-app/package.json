@@ -17,6 +17,7 @@
     "pinia": "^2.0.0",
     "pinia-plugin-persistedstate": "^3.1.0",
     "roboto-fontface": "*",
+    "uuid": "^9.0.1",
     "vee-validate": "^4.10.6",
     "vue": "^3.2.0",
     "vue-chartjs": "^5.2.0",
