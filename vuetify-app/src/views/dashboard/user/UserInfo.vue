@@ -1,38 +1,26 @@
 <template>
-  <v-container>
-  <v-row no-gutters>
-    <v-col cols="12">
-      <v-sheet class="pa-2 ma-2">
-        .v-col-2
-      </v-sheet>
-    </v-col>
-    <v-col cols="12">
-        <v-data-table
+  <v-data-table
 
-          :headers="headers"
-          :items="desserts"
-          :search="search"
-          class="elevation-1"
-          item-value="name"
-        >
-          <template v-slot:top>
-            <v-text-field
-              v-model="search"
-              label="Search"
-              class="pa-4"
-            ></v-text-field>
-          </template>
-        </v-data-table>
-    </v-col>
-  </v-row>
-  </v-container>
-
+    :headers="headers"
+    :items="desserts"
+    :search="search"
+    class="elevation-1"
+    item-value="name"
+  >
+    <template v-slot:top>
+      <v-text-field
+        v-model="search"
+        label="Search"
+        class="pa-4"
+      ></v-text-field>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
 import {ref,computed,onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
-
+import router from "@/router";
 export default {
   setup() {
     const itemsPerPage=ref(5);
