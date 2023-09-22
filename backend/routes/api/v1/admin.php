@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\dashboard\DoctorsController;
+use App\Http\Controllers\Api\User\UserController;
 
 
 
@@ -22,3 +23,4 @@ Route::middleware('auth:admin-api')->group(function () {
 });
 
 Route::resource('doctor-data',DoctorsController::class);
+Route::resource('user-data',UserController::class);

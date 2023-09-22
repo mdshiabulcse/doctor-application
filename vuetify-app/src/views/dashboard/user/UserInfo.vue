@@ -19,12 +19,13 @@
                   Add User
                 </v-btn>
               </template>
-              <v-form @submit="handleSubmit">
+
               <v-card>
                 <v-toolbar
                   color="primary"
                   title="User Form"
                 ></v-toolbar>
+                <v-form @submit="handleSubmit">
                 <v-card-text>
 
                     <v-container>
@@ -64,29 +65,20 @@
                           cols="12"
                         >
                           <v-select
-                            v-model="value"
-                            :items="items"
+                            v-model="formData.role_data"
+                            :items="group_role"
                             label="Select Item"
+                            item-text="description"
+                            item-value="id"
                             multiple
                           >
-                            <template v-slot:selection="{ item, index }">
-                              <v-chip v-if="index < 2">
-                                <span>{{ item.title }}</span>
-                              </v-chip>
-                              <span
-                                v-if="index === 2"
-                                class="text-grey text-caption align-self-center"
-                              >
-                              (+{{ value.length - 2 }} others)
-                            </span>
-                            </template>
                           </v-select>
                         </v-col>
                       </v-row>
                     </v-container>
 
 
-                  <small>*indicates required field</small>
+
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -106,8 +98,9 @@
                     Save
                   </v-btn>
                 </v-card-actions>
+                </v-form>
               </v-card>
-              </v-form>
+
             </v-dialog>
           </v-row>
         </v-sheet>
@@ -134,63 +127,55 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 
-
-export default {
-  setup() {
     const itemsPerPage = ref(5);
     const search = ref('');
     const desserts = ref([]);
+    const group_role = ref([]);
     const breadcrumbs = computed(() => [
       {
-        title: 'Dashboard',
+        title: 'Home',
         disabled: false,
-        href: 'breadcrumbs_dashboard',
+        href: '/',
       },
       {
-        title: 'Link 1',
+        title: 'Administrative',
         disabled: false,
-        href: 'breadcrumbs_link_1',
+        href: '#',
       },
       {
-        title: 'Link 2',
+        title: 'User List',
         disabled: true,
-        href: 'breadcrumbs_link_2',
+        href: 'user-list',
       },
     ]);
     const headers = computed(() => [
-      {title: 'Name', align: 'start', sortable: false, key: 'doctor_name',},
-      {title: 'Mail', align: 'end', key: 'doctor_id',},
-      {title: 'Phone', align: 'end', key: 'hospital_name'},
-      {title: 'Group', align: 'end', key: 'hospital_name'},
+      {title: 'Name', align: 'start', sortable: false, key: 'name',},
+      {title: 'Mail', align: 'end', key: 'email',},
+      {title: 'Phone', align: 'end', key: 'phone'},
+      {title: 'Group', align: 'end', key: 'isVerified'},
+      {title: 'Status', align: 'end', key: 'status'},
 
     ]);
     const dialog = ref(false);
-    const items=ref( ['foo', 'bar', 'fizz', 'buzz', 'fizzbuzz', 'foobar']);
-    const value= ref(['foo', 'bar', 'fizz']);
-
     const formData = ref({
       name: '',
       email: '',
       phone: '',
       password: '',
+      role_data: [],
 
     });
 
     const handleSubmit = async (event) => {
       event.preventDefault();
-
-      console.log('Form Data:', formData.value); // Log the form data
-
       try {
         const response = await axiosInstance.post('/admin/user-data', formData.value);
-
         console.log('Response Data:', response.data); // Log the response data
-
-        if (response.status === 201) {
+        if (response.status === 200) {
           console.log('Item created successfully'); // Log a success message
           // Handle success, e.g., show a success message or redirect
         } else {
@@ -203,29 +188,19 @@ export default {
       }
     };
 
-    const fetchPosts = async () => {
+
+    onMounted(async () => {
       try {
-        const response = await axiosInstance('/admin/doctor-data'); // Replace with your API endpoint
-        desserts.value = response.data.doctors;
+        const response = await axiosInstance('/admin/user-data'); // Replace with your API endpoint
+        desserts.value = response.data.user_list;
+        group_role.value = response.data.group_role.map(item => ({
+          id: item.id,
+          description: item.description,
+        }));
+        console.log('data', group_role.value)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    };
-    onMounted(() => {
-      fetchPosts();
     });
-    return {
-      search,
-      desserts,
-      headers,
-      breadcrumbs,
-      itemsPerPage,
-      dialog,
-      items,
-      value,
-      formData,
-      handleSubmit
-    };
-  },
-};
+
 </script>

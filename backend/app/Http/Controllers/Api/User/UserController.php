@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\GroupRole;
+use App\Models\User;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 
@@ -16,7 +18,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $data['user_list']=User::all();
+        $data['group_role']=GroupRole::all();
+        return $this->successApiResponse($data);
     }
 
     /**
