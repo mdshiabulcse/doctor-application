@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\dashboard\GroupRole;
+use App\Models\dashboard\UserGroup;
 use App\Models\User;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -41,8 +43,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->successApiResponse($request->all());
+        DB::beginTransaction();
+        try {
+            $user = new User();
+            $user->name = $request['formData']['name'];
+            $user->email = $request['formData']['email'];
+            $user->phone = $request['formData']['phone'];
+            $user->password = Hash::make($request['formData']['password']);
+            $user->created_on = time();
+            $user->idVerified= 1;
+            $user->status = 1;
+            $user->save();
+
+            foreach ($request['formData']['selectedGroupRoles'] as $user_group_id) {
+                $userGroup = new UserGroup();
+                $userGroup->user_id = $user->id;
+                $userGroup->group_id = $user_group_id;
+                $userGroup->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = 'Something Went Wrong! Please Try again';
+            return $this->failureApiResponse($response);
+        }
+
+
+        $response['message'] = 'Created Successfully';
+        return $this->successApiResponse($response);
     }
+
 
     /**
      * Display the specified resource.

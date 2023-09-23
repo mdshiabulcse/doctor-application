@@ -64,21 +64,16 @@
                         <v-col
                           cols="12"
                         >
-                          <v-select
-                            v-model="formData.role_data"
-                            :items="group_role"
-                            label="Select Item"
-                            item-text="description"
-                            item-value="id"
-                            multiple
-                          >
-                          </v-select>
+                          <v-checkbox
+                            v-for="role in groupRoles"
+                            :key="role.id"
+                            v-model="formData.selectedGroupRoles"
+                            :label="role.description"
+                            :value="role.id"
+                          ></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-container>
-
-
-
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -134,7 +129,7 @@ import axiosInstance from "@/services/axiosService";
     const itemsPerPage = ref(5);
     const search = ref('');
     const desserts = ref([]);
-    const group_role = ref([]);
+    const groupRoles = ref([]);
     const breadcrumbs = computed(() => [
       {
         title: 'Home',
@@ -166,7 +161,8 @@ import axiosInstance from "@/services/axiosService";
       email: '',
       phone: '',
       password: '',
-      role_data: [],
+      selectedGroupRoles:[]
+
 
     });
 
@@ -193,11 +189,11 @@ import axiosInstance from "@/services/axiosService";
       try {
         const response = await axiosInstance('/admin/user-data'); // Replace with your API endpoint
         desserts.value = response.data.user_list;
-        group_role.value = response.data.group_role.map(item => ({
-          id: item.id,
-          description: item.description,
+        groupRoles.value = response.data["group_role"].map(role => ({
+          id: role.id,
+          description: role.description,
         }));
-        console.log('data', group_role.value)
+        console.log('data', groupRoles.value)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
