@@ -26,7 +26,7 @@
                   title="User Form"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
-                <v-card-text>
+                  <v-card-text>
 
                     <v-container>
                       <v-row>
@@ -74,25 +74,25 @@
                         </v-col>
                       </v-row>
                     </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="dialog = false"
-                  >
-                    Close
-                  </v-btn>
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="dialog = false"
-                    type="submit"
-                  >
-                    Save
-                  </v-btn>
-                </v-card-actions>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="blue-darken-1"
+                      variant="text"
+                      @click="dialog = false"
+                    >
+                      Close
+                    </v-btn>
+                    <v-btn
+                      color="blue-darken-1"
+                      variant="text"
+                      @click="dialog = false"
+                      type="submit"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
                 </v-form>
               </v-card>
 
@@ -125,78 +125,76 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
+import {useNotification} from "@/store/notification";
 
-    const itemsPerPage = ref(5);
-    const search = ref('');
-    const desserts = ref([]);
-    const groupRoles = ref([]);
-    const breadcrumbs = computed(() => [
-      {
-        title: 'Home',
-        disabled: false,
-        href: '/',
-      },
-      {
-        title: 'Administrative',
-        disabled: false,
-        href: '#',
-      },
-      {
-        title: 'User List',
-        disabled: true,
-        href: 'user-list',
-      },
-    ]);
-    const headers = computed(() => [
-      {title: 'Name', align: 'start', sortable: false, key: 'name',},
-      {title: 'Mail', align: 'end', key: 'email',},
-      {title: 'Phone', align: 'end', key: 'phone'},
-      {title: 'Group', align: 'end', key: 'isVerified'},
-      {title: 'Status', align: 'end', key: 'status'},
+const itemsPerPage = ref(5);
+const search = ref('');
+const desserts = ref([]);
+const groupRoles = ref([]);
+const notify = useNotification();
+const breadcrumbs = computed(() => [
+  {
+    title: 'Home',
+    disabled: false,
+    href: '/',
+  },
+  {
+    title: 'Administrative',
+    disabled: false,
+    href: '#',
+  },
+  {
+    title: 'User List',
+    disabled: true,
+    href: 'user-list',
+  },
+]);
+const headers = computed(() => [
+  {title: 'Name', align: 'start', sortable: false, key: 'name',},
+  {title: 'Mail', align: 'end', key: 'email',},
+  {title: 'Phone', align: 'end', key: 'phone'},
+  {title: 'Group', align: 'end', key: 'isVerified'},
+  {title: 'Status', align: 'end', key: 'status'},
 
-    ]);
-    const dialog = ref(false);
-    const formData = ref({
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
-      selectedGroupRoles:[]
-
-
-    });
-
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      try {
-        const response = await axiosInstance.post('/admin/user-data', formData.value);
-        console.log('Response Data:', response.data); // Log the response data
-        if (response.status === 200) {
-          console.log('Item created successfully'); // Log a success message
-          // Handle success, e.g., show a success message or redirect
-        } else {
-          console.error('Error:', response.data); // Log the error response
-          // Handle errors, e.g., display validation errors
-        }
-      } catch (error) {
-        console.error('Network Error:', error); // Log network errors
-        // Handle network errors
-      }
-    };
+]);
+const dialog = ref(false);
+const formData = ref({
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  selectedGroupRoles: []
 
 
-    onMounted(async () => {
-      try {
-        const response = await axiosInstance('/admin/user-data'); // Replace with your API endpoint
-        desserts.value = response.data.user_list;
-        groupRoles.value = response.data["group_role"].map(role => ({
-          id: role.id,
-          description: role.description,
-        }));
-        console.log('data', groupRoles.value)
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    });
+});
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  try {
+    const response = await axiosInstance.post('/admin/user-data', formData.value);
+    if (response.data.message) {
+      notify.Success(response.data.message);
+    } else {
+      notify.Error(response.data.message);
+    }
+  } catch (error) {
+    notify.Error(error);
+  }
+};
+
+
+onMounted(async () => {
+  try {
+    const response = await axiosInstance('/admin/user-data'); // Replace with your API endpoint
+    desserts.value = response.data.user_list;
+    groupRoles.value = response.data["group_role"].map(role => ({
+      id: role.id,
+      description: role.description,
+    }));
+    console.log('data', groupRoles.value)
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
 
 </script>

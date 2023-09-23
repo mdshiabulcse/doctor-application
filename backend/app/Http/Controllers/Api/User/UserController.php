@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -43,19 +44,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
+
         DB::beginTransaction();
         try {
             $user = new User();
-            $user->name = $request['formData']['name'];
-            $user->email = $request['formData']['email'];
-            $user->phone = $request['formData']['phone'];
-            $user->password = Hash::make($request['formData']['password']);
-            $user->created_on = time();
-            $user->idVerified= 1;
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->phone = $request['phone'];
+            $user->password =bcrypt($request['password']);
+            $user->isVerified= 1;
             $user->status = 1;
             $user->save();
 
-            foreach ($request['formData']['selectedGroupRoles'] as $user_group_id) {
+            foreach ($request['selectedGroupRoles'] as $user_group_id) {
                 $userGroup = new UserGroup();
                 $userGroup->user_id = $user->id;
                 $userGroup->group_id = $user_group_id;
@@ -65,7 +67,7 @@ class UserController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            $response['message'] = 'Something Went Wrong! Please Try again';
+            $response['message'] = $e->getMessage();
             return $this->failureApiResponse($response);
         }
 
