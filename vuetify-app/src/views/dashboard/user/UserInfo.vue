@@ -61,6 +61,13 @@
                             required
                           ></v-text-field>
                         </v-col>
+                        <v-col cols="12">
+                          <v-checkbox
+                            v-model="formData.isVerified"
+                            label="Is Verified"
+                            value="1"
+                          ></v-checkbox>
+                        </v-col>
                         <v-col
                           cols="12"
                         >
@@ -163,6 +170,7 @@ const formData = ref({
   email: '',
   phone: '',
   password: '',
+  isVerified:'',
   selectedGroupRoles: []
 
 
