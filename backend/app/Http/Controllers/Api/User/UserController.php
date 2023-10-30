@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\RegisterRequest;
 use App\Models\dashboard\GroupRole;
 use App\Models\dashboard\UserGroup;
 use App\Models\User;
@@ -42,20 +43,20 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-
 
         DB::beginTransaction();
         try {
-            $user = new User();
-            $user->name = $request['name'];
-            $user->email = $request['email'];
-            $user->phone = $request['phone'];
-            $user->password =bcrypt($request['password']);
-            $user->isVerified= 1;
-            $user->status = 1;
-            $user->save();
+//            $user = new User();
+//            $user->name = $request['name'];
+//            $user->email = $request['email'];
+//            $user->phone = $request['phone'];
+//            $user->password = bcrypt($request['password']);
+//            $user->isVerified= 1;
+//            $user->status = 1;
+//            $user->save();
+            $user=User::create($request->validated());
 
             foreach ($request['selectedGroupRoles'] as $user_group_id) {
                 $userGroup = new UserGroup();
