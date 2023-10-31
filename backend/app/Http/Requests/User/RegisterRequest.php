@@ -28,7 +28,6 @@ class RegisterRequest extends FormRequest
             'phone'=> ['required', 'unique:users,phone','min:11'],
             'email'=> ['required', 'email','unique:users,email'],
             'password'=> ['required'],
-            'isVerified'=> [''],
         ];
     }
 }

@@ -48,15 +48,15 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
-//            $user = new User();
-//            $user->name = $request['name'];
-//            $user->email = $request['email'];
-//            $user->phone = $request['phone'];
-//            $user->password = bcrypt($request['password']);
-//            $user->isVerified= 1;
-//            $user->status = 1;
-//            $user->save();
-            $user=User::create($request->validated());
+            $user = new User();
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->phone = $request['phone'];
+            $user->password = Hash::make($request->password);
+            $user->isVerified= $request['isVerified'];;
+            $user->status = 1;
+            $user->save();
+//            $user=User::create($request->validated());
 
             foreach ($request['selectedGroupRoles'] as $user_group_id) {
                 $userGroup = new UserGroup();
