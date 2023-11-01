@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-alert
+      color="success"
+      icon="$success"
+      title="Alert title"
+      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus..."
+    ></v-alert>
     <v-row no-gutters>
       <v-col cols="12">
         <v-sheet class="pa-2 ma-2">
@@ -126,12 +132,15 @@
 import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
+import {useAuth} from "@/store/auth";
 
 const itemsPerPage = ref(5);
 const search = ref('');
 const desserts = ref([]);
 const groupRoles = ref([]);
 const notify = useNotification();
+const userData = useAuth();
+const user_id = userData.user.data.id;
 const breadcrumbs = computed(() => [
   {
     title: 'Home',
@@ -171,7 +180,7 @@ const formData = ref({
 const handleSubmit = async (event) => {
   event.preventDefault();
   try {
-    const response = await axiosInstance.post('/admin/user-data', formData.value);
+    const response = await axiosInstance.post('/admin/user-data', formData.value); //user get result data=========
     if (response.data.message) {
       notify.Success(response.data.message);
     } else {
@@ -185,7 +194,7 @@ const handleSubmit = async (event) => {
 
 onMounted(async () => {
   try {
-    const response = await axiosInstance('/admin/user-data'); // Replace with your API endpoint
+    const response = await axiosInstance('/admin/user-data/'+user_id); // Replace with your API endpoint
     desserts.value = response.data.user_list;
     groupRoles.value = response.data["group_role"].map(role => ({
       id: role.id,
