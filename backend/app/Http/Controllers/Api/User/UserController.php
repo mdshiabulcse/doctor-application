@@ -62,7 +62,7 @@ class UserController extends Controller
             $user->email = $request['email'];
             $user->phone = $request['phone'];
             $user->password = Hash::make($request['password']);
-            $user->isVerified = $request['isVerified'];
+            $user->isVerified = 1;
             $user->status = 1;
             $user->save();
 //            $user=User::create($request->validated());

@@ -61,13 +61,6 @@
                             required
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12">
-                          <v-checkbox
-                            v-model="formData.isVerified"
-                            label="Is Verified"
-                            value="1"
-                          ></v-checkbox>
-                        </v-col>
                         <v-col
                           cols="12"
                         >
@@ -157,11 +150,11 @@ const breadcrumbs = computed(() => [
   },
 ]);
 const headers = computed(() => [
-  {title: 'Name', align: 'start', sortable: false, key: 'name',},
+  {title: 'Name', align: 'start',key: 'name',},
   {title: 'Mail', align: 'end', key: 'email',},
   {title: 'Phone', align: 'end', key: 'phone'},
-  {title: 'Group', align: 'end', key: 'isVerified'},
-  {title: 'Status', align: 'end', key: 'status'},
+  {title: 'Group', align: 'end', key: '{{isVerified == 1? Active : Inactive }}'},
+  {title: 'Action', align: 'end', key: 'status'},
 
 ]);
 const dialog = ref(false);
@@ -170,7 +163,6 @@ const formData = ref({
   email: '',
   phone: '',
   password: '',
-  isVerified:'',
   selectedGroupRoles: []
 
 
