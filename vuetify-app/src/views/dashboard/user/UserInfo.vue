@@ -1,11 +1,5 @@
 <template>
   <v-container>
-    <v-alert
-      color="success"
-      icon="$success"
-      title="Alert title"
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus..."
-    ></v-alert>
     <v-row no-gutters>
       <v-col cols="12">
         <v-sheet class="pa-2 ma-2">
@@ -194,7 +188,7 @@ const handleSubmit = async (event) => {
 
 onMounted(async () => {
   try {
-    const response = await axiosInstance('/admin/user-data/'+user_id); // Replace with your API endpoint
+    const response = await axiosInstance('/admin/user-data?user_login_id='+user_id); // Replace with your API endpointa
     desserts.value = response.data.user_list;
     groupRoles.value = response.data["group_role"].map(role => ({
       id: role.id,

@@ -21,8 +21,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
+
+
+        $userGroup = UserGroup::where(['user_id' => $request->user_login_id])->whereIn('group_id', [1,2])->first();
+        if (!$userGroup) {
+            $response['message'] = 'Sorry! You Have Not Allowed';
+            return $this->notAllowedApiResponse($response);
+        }
         $data['user_list'] = User::all();
         $data['group_role'] = GroupRole::all();
         return $this->successApiResponse($data);

@@ -18,12 +18,7 @@ class DoctorsController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->successApiResponse($request->all());
-        $userGroup = UserGroup::where(['user_id' => $request->login_user_id])->whereIn('group_id', [1,4])->first();
-        if (!$userGroup) {
-            $response['message'] = 'Sorry! You Have Not Allowed';
-            return $this->notAllowedApiResponse($response);
-        }
+
         $data['doctors']=DoctorInfo::get();
         return $this->successApiResponse($data);
     }
