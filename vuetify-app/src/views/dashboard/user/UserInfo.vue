@@ -115,6 +115,33 @@
               class="pa-4"
             ></v-text-field>
           </template>
+
+<!--          <template v-slot:desserts.actions="{ desserts }">-->
+<!--            <v-icon-->
+<!--              size="small"-->
+<!--              class="me-2"-->
+<!--              @click="editItem(desserts.id)"-->
+<!--            >-->
+<!--              mdi-pencil-->
+<!--            </v-icon>-->
+<!--          </template>-->
+<!--          <template v-slot:item.actions="{ item }">-->
+<!--            <v-btn @click="showDeleteModal(item)" color="error">Delete</v-btn>-->
+<!--          </template>-->
+
+            <template v-slot:item.actions="{ item }">
+              <v-chip
+                @click="showDeleteModal(item)"
+                dark
+                class="ma-2"
+                color="error"
+                label
+                outlined
+                small
+              >
+                <v-icon> mdi-delete</v-icon>
+              </v-chip>
+            </template>
         </v-data-table>
 
       </v-col>
@@ -153,13 +180,14 @@ const breadcrumbs = computed(() => [
   },
 ]);
 const headers = computed(() => [
-  {title: 'Name', align: 'start',key: 'name',},
-  {title: 'Mail', align: 'end', key: 'email',},
-  {title: 'Phone', align: 'end', key: 'phone'},
-  {title: 'Group', align: 'end', key: '{{isVerified == 1? Active : Inactive }}'},
-  {title: 'Action', align: 'end', key: 'status'},
+  {id:'id', title: 'Name', align: 'start',key: 'name',},
+  {id:'id', title: 'Mail', align: 'end', key: 'email',},
+  {id:'id', title: 'Phone', align: 'end', key: 'phone'},
+  {id:'id', title: 'Group', align: 'end', key: 'isVerified'},
+  { id:'id', title: 'Actions', key: 'actions', sortable: false },
 
 ]);
+
 const dialog = ref(false);
 const formData = ref({
   name: '',
@@ -200,4 +228,19 @@ onMounted(async () => {
   }
 });
 
+
+const showDeleteModal = (item) => {
+  console.log("Delete Item with ID:", item.id); // Log the ID
+  // You can implement your delete confirmation modal here
+  // After confirmation, call the delete function with the item
+  deleteItem(item);
+};
+const deleteItem = (itemToDelete) => {
+  // Find the index of the item to delete
+  const indexToDelete = desserts.value.indexOf(itemToDelete);
+  if (indexToDelete !== -1) {
+    desserts.value.splice(indexToDelete, 1); // Remove the item from the data source
+  }
+  // You can also make an API request to delete the item on the server.
+};
 </script>
