@@ -106,7 +106,8 @@
           :items="desserts"
           :search="search"
           class="elevation-1"
-          item-value="name"
+          item-value="id"
+
         >
           <template v-slot:top>
             <v-text-field
@@ -129,20 +130,27 @@
 <!--            <v-btn @click="showDeleteModal(item)" color="error">Delete</v-btn>-->
 <!--          </template>-->
 
-            <template v-slot:item.actions="{ item }">
-              <v-chip
-                @click="showDeleteModal(item)"
-                dark
-                class="ma-2"
-                color="error"
-                label
-                outlined
-                small
-              >
-                <v-icon> mdi-delete</v-icon>
-              </v-chip>
-            </template>
+          <template v-slot:item.actions="{ item }">
+            <v-btn @click="showDeleteModal(item)" color="error">
+              Delete
+            </v-btn>
+          </template>
+
         </v-data-table>
+        <v-dialog v-model="deleteDialog" max-width="400">
+          <v-card>
+            <v-card-title class="headline">
+              Delete Confirmation
+            </v-card-title>
+            <v-card-text>
+              Are you sure you want to delete this item?
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" @click="deleteItem">Yes</v-btn>
+              <v-btn color="red" @click="deleteDialog = false">No</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
       </v-col>
     </v-row>
@@ -189,6 +197,7 @@ const headers = computed(() => [
 ]);
 
 const dialog = ref(false);
+const deleteDialog = ref(false);
 const formData = ref({
   name: '',
   email: '',
@@ -198,13 +207,17 @@ const formData = ref({
 
 
 });
-
+onMounted(() => {
+  fetchData(); // Fetch data when the component is mounted
+});
 const handleSubmit = async (event) => {
   event.preventDefault();
   try {
-    const response = await axiosInstance.post('/admin/user-data', formData.value); //user get result data=========
+    const response = await axiosInstance.post('/admin/user-data', formData.value);
     if (response.data.message) {
       notify.Success(response.data.message);
+      desserts.value.push(response.data.user_list);
+      fetchData(); // Refresh the table data
     } else {
       notify.Error(response.data.message);
     }
@@ -214,7 +227,7 @@ const handleSubmit = async (event) => {
 };
 
 
-onMounted(async () => {
+const fetchData =async () => {
   try {
     const response = await axiosInstance('/admin/user-data?user_login_id='+user_id); // Replace with your API endpointa
     desserts.value = response.data.user_list;
@@ -226,21 +239,25 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-});
+};
 
 
 const showDeleteModal = (item) => {
-  console.log("Delete Item with ID:", item.id); // Log the ID
-  // You can implement your delete confirmation modal here
-  // After confirmation, call the delete function with the item
-  deleteItem(item);
+
+  console.log("in")
+  console.log(item)
+  // Store the ID of the item to delete
+  deleteDialog = true; // Show the delete confirmation modal
 };
-const deleteItem = (itemToDelete) => {
+
+const deleteItem = () => {
   // Find the index of the item to delete
-  const indexToDelete = desserts.value.indexOf(itemToDelete);
+  const indexToDelete = desserts.value.findIndex(item => item.id === deleteItemId);
   if (indexToDelete !== -1) {
     desserts.value.splice(indexToDelete, 1); // Remove the item from the data source
+    deleteDialog = false; // Close the delete confirmation modal
   }
-  // You can also make an API request to delete the item on the server.
+  // You can also make an API request to delete the item on the server here.
 };
+
 </script>
