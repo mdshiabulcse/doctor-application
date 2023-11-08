@@ -137,6 +137,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $response['delete']=User::find($id)->delete();
+        $response['message'] = 'Delete Successfully';
+        return $this->successApiResponse($response);
     }
 }

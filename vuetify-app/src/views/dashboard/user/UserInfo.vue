@@ -242,22 +242,33 @@ const fetchData =async () => {
 };
 
 
-const showDeleteModal = (item) => {
+let deleteItemId = null;
 
-  console.log("in")
-  console.log(item)
-  // Store the ID of the item to delete
-  deleteDialog = true; // Show the delete confirmation modal
+const showDeleteModal = (item) => {
+  deleteItemId = item.value;
+  deleteDialog.value = true; // Open the delete confirmation modal
 };
 
-const deleteItem = () => {
-  // Find the index of the item to delete
-  const indexToDelete = desserts.value.findIndex(item => item.id === deleteItemId);
-  if (indexToDelete !== -1) {
-    desserts.value.splice(indexToDelete, 1); // Remove the item from the data source
-    deleteDialog = false; // Close the delete confirmation modal
+
+
+const deleteItem = async () => {
+  try {
+    const response = await axiosInstance.delete(`/admin/user-data/${deleteItemId}`);
+    if (response.data.message) {
+      notify.Success(response.data.message);
+    } else {
+      notify.Error(response.data.message);
+    }
+  } catch (error) {
+    notify.Error(error);
   }
-  // You can also make an API request to delete the item on the server here.
+
+  const indexToDelete = desserts.value.findIndex((item) => item.id === deleteItemId);
+  if (indexToDelete !== -1) {
+    desserts.value.splice(indexToDelete, 1);
+  }
+
+  deleteDialog.value = false; // Close the delete confirmation modal
 };
 
 </script>
