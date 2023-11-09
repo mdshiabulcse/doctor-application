@@ -4,9 +4,10 @@ import axiosInstance from "@/services/axiosService";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 
-export const useAuth = defineStore('auth', {
+export const useAuth = defineStore('auth',{
   state: () => ({
-    user:{}
+    user:{},
+    userAccess:{}
   }),
   persist: {
     paths: ['user'],
@@ -36,8 +37,10 @@ export const useAuth = defineStore('auth', {
       }
     },
     async logout(){
+
       try {
-        const res=  await axiosInstance.post("/user/logout").then(response =>{
+        let id =this.user.data.id;
+        const res=  await axiosInstance.post("/user/logout?id="+id).then(response =>{
           this.user=[];
           router.push({name:'user.login'});
           ElNotification({

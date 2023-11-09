@@ -54,7 +54,7 @@ import {ref} from "vue";
 import {useAuth} from "@/store/auth.js";
 import {storeToRefs} from "pinia";
 import Sidbar from "@/views/dashboard/Sidebar.vue"
-import Footer from "./Footer.vue"
+
 
 
 const drawer = ref(true);
