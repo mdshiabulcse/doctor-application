@@ -47,13 +47,14 @@ class AuthController extends Controller
             $userLog->user_id = $user->id;
             $userLog->login_time = now();
             $userLog->save();
+            $userAccess=$userLog->id;
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             $response['message'] = $e->getMessage().$e->getLine();
             return $this->failureApiResponse($response);
         }
-        return $this->makeToken($user);
+        return $this->makeToken($user,$userAccess);
 
     }
 
@@ -94,8 +95,6 @@ class AuthController extends Controller
         }
 
 
-//        return send_ms('OTP send success',$res->status,200);
-//        print($verification_check->status);
     }
 
     public function otpResend(Request $request)
@@ -112,14 +111,16 @@ class AuthController extends Controller
 
     }
 
-    public function makeToken($user)
+    public function makeToken($user,$userAccess)
     {
         try {
+            @$userAccessLog=UserAccessLog::where('id',$userAccess)->first();
             $token = $user->createToken('user-token')->plainTextToken;
             return (new AuthResource($user))
                 ->additional(['meta' => [
                     'token' => $token,
                     'token_type' => 'Bearer',
+                    'user_access_log'=>@$userAccessLog,
                 ]]);
         } catch (\Exception $e) {
             return send_ms($e->getMessage(), false, $e->getCode());
@@ -129,6 +130,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
+            $userAccessLog=UserAccessLog::where('id',$request->id)->first();
+            $userAccessLog->logout_time = now();
+            $userAccessLog->save();
             $request->user()->tokens()->delete();
             return send_ms('User Logout', true, 200);
         } catch (\Exception $e) {
@@ -140,6 +144,5 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return AuthResource::make($request->user());
-
     }
 }

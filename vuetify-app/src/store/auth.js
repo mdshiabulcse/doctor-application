@@ -39,7 +39,7 @@ export const useAuth = defineStore('auth',{
     async logout(){
 
       try {
-        let id =this.user.data.id;
+        let id =this.user.meta.user_access_log.id;
         const res=  await axiosInstance.post("/user/logout?id="+id).then(response =>{
           this.user=[];
           router.push({name:'user.login'});
