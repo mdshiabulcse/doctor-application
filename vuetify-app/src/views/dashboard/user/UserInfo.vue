@@ -98,6 +98,88 @@
 
             </v-dialog>
           </v-row>
+          <v-row>
+            <v-dialog
+              v-model="dialogEdit"
+              width="500"
+            >
+              <v-card>
+                <v-toolbar
+                  color="primary"
+                  title="User Form"
+                ></v-toolbar>
+                <v-form @submit="handleSubmit">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-text-field
+                            label="Name*"
+                            v-model="editItmeData.name"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Email*"
+                            v-model="editItmeData.email"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Phone*"
+                            v-model="editItmeData.phone"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="editItmeData.password"
+                            label="Password*"
+                            type="password"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-checkbox
+                            v-for="role in groupRoles"
+                            :key="role.id"
+                            v-model="editItmeData.selectedGroupRoles"
+                            :label="role.description"
+                            :value="role.id"
+                          ></v-checkbox>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="blue-darken-1"
+                      variant="text"
+                      @click="dialogEdit = false"
+                    >
+                      Close
+                    </v-btn>
+                    <v-btn
+                      color="blue-darken-1"
+                      variant="text"
+                      @click="dialogEdit = false"
+                      type="submit"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-form>
+              </v-card>
+
+            </v-dialog>
+          </v-row>
         </v-sheet>
       </v-col>
       <v-col cols="12">
@@ -116,26 +198,21 @@
               class="pa-4"
             ></v-text-field>
           </template>
-
-<!--          <template v-slot:desserts.actions="{ desserts }">-->
-<!--            <v-icon-->
-<!--              size="small"-->
-<!--              class="me-2"-->
-<!--              @click="editItem(desserts.id)"-->
-<!--            >-->
-<!--              mdi-pencil-->
-<!--            </v-icon>-->
-<!--          </template>-->
-<!--          <template v-slot:item.actions="{ item }">-->
-<!--            <v-btn @click="showDeleteModal(item)" color="error">Delete</v-btn>-->
-<!--          </template>-->
-
           <template v-slot:item.actions="{ item }">
-            <v-btn @click="showDeleteModal(item)" color="error">
-              Delete
-            </v-btn>
+            <v-icon
+              size="small"
+              class="me-2"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              size="small"
+              @click="showDeleteModal(item)"
+            >
+              mdi-delete
+            </v-icon>
           </template>
-
         </v-data-table>
         <v-dialog v-model="deleteDialog" max-width="400">
           <v-card>
@@ -197,6 +274,7 @@ const headers = computed(() => [
 ]);
 
 const dialog = ref(false);
+const dialogEdit = ref(false);
 const deleteDialog = ref(false);
 const formData = ref({
   name: '',
@@ -204,8 +282,13 @@ const formData = ref({
   phone: '',
   password: '',
   selectedGroupRoles: []
-
-
+});
+const editItmeData = ref({
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  selectedGroupRoles: []
 });
 onMounted(() => {
   fetchData(); // Fetch data when the component is mounted
@@ -240,13 +323,18 @@ const fetchData =async () => {
     console.error('Error fetching data:', error);
   }
 };
-
+let editItemId = null;
+const editItem=(item)=>{
+  editItemId= item.value;
+  const itemToEdit = desserts.value.find((item) => item.id === editItemId);
+  editItmeData.value = { ...itemToEdit }; // Populate editItmeData with the existing data
+  dialogEdit.value = true;
+};
 
 let deleteItemId = null;
-
 const showDeleteModal = (item) => {
   deleteItemId = item.value;
-  deleteDialog.value = true; // Open the delete confirmation modal
+  deleteDialog.value = true;
 };
 
 
