@@ -31,7 +31,7 @@ class UserController extends Controller
             $response['message'] = 'Sorry! You Have Not Allowed';
             return $this->notAllowedApiResponse($response);
         }
-        $data['user_list'] = User::all();
+        $data['user_list'] = User::with('user_group')->get();
         $data['group_role'] = GroupRole::all();
         return $this->successApiResponse($data);
     }
