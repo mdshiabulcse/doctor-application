@@ -149,7 +149,7 @@
                           <v-checkbox
                             v-for="role in groupRoles"
                             :key="role.id"
-                            v-model="editItmeData.selectedGroupRoles"
+                            v-model="editItmeData.user_group"
                             :label="role.description"
                             :value="role.id"
                           ></v-checkbox>
@@ -240,7 +240,6 @@ import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
 
-const itemsPerPage = ref(5);
 const search = ref('');
 const desserts = ref([]);
 const groupRoles = ref([]);
@@ -265,11 +264,11 @@ const breadcrumbs = computed(() => [
   },
 ]);
 const headers = computed(() => [
-  {id:'id', title: 'Name', align: 'start',key: 'name',},
-  {id:'id', title: 'Mail', align: 'end', key: 'email',},
-  {id:'id', title: 'Phone', align: 'end', key: 'phone'},
-  {id:'id', title: 'Group', align: 'end', key: 'isVerified'},
-  { id:'id', title: 'Actions', key: 'actions', sortable: false },
+  {id: 'id', title: 'Name', align: 'start', key: 'name',},
+  {id: 'id', title: 'Mail', align: 'end', key: 'email',},
+  {id: 'id', title: 'Phone', align: 'end', key: 'phone'},
+  {id: 'id', title: 'Status', align: 'end', key: 'isVerified'},
+  {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
 ]);
 
@@ -288,7 +287,7 @@ const editItmeData = ref({
   email: '',
   phone: '',
   password: '',
-  selectedGroupRoles: []
+  user_group: []
 });
 onMounted(() => {
   fetchData(); // Fetch data when the component is mounted
@@ -310,9 +309,9 @@ const handleSubmit = async (event) => {
 };
 
 
-const fetchData =async () => {
+const fetchData = async () => {
   try {
-    const response = await axiosInstance('/admin/user-data?user_login_id='+user_id); // Replace with your API endpointa
+    const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
     desserts.value = response.data.user_list;
     groupRoles.value = response.data["group_role"].map(role => ({
       id: role.id,
@@ -324,10 +323,11 @@ const fetchData =async () => {
   }
 };
 let editItemId = null;
-const editItem=(item)=>{
-  editItemId= item.value;
+const editItem = (item) => {
+  editItemId = item.value;
   const itemToEdit = desserts.value.find((item) => item.id === editItemId);
-  editItmeData.value = { ...itemToEdit }; // Populate editItmeData with the existing data
+  editItmeData.value = {...itemToEdit}; // Populate editItmeData with the existing data
+  editItmeData.value.user_group = itemToEdit.user_group.map(role => role.group_id);
   dialogEdit.value = true;
 };
 
@@ -336,7 +336,6 @@ const showDeleteModal = (item) => {
   deleteItemId = item.value;
   deleteDialog.value = true;
 };
-
 
 
 const deleteItem = async () => {
