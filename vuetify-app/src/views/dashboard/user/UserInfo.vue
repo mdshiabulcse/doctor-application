@@ -246,6 +246,10 @@ const groupRoles = ref([]);
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
+const dialog = ref(false);
+const dialogEdit = ref(false);
+const deleteDialog = ref(false);
+
 const breadcrumbs = computed(() => [
   {
     title: 'Home',
@@ -272,9 +276,6 @@ const headers = computed(() => [
 
 ]);
 
-const dialog = ref(false);
-const dialogEdit = ref(false);
-const deleteDialog = ref(false);
 const formData = ref({
   name: '',
   email: '',
@@ -282,6 +283,7 @@ const formData = ref({
   password: '',
   selectedGroupRoles: []
 });
+
 const editItmeData = ref({
   name: '',
   email: '',
@@ -289,39 +291,26 @@ const editItmeData = ref({
   password: '',
   user_group: []
 });
+
 onMounted(() => {
   fetchData(); // Fetch data when the component is mounted
 });
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  try {
-    const response = await axiosInstance.post('/admin/user-data', formData.value);
-    if (response.data.message) {
-      notify.Success(response.data.message);
-      desserts.value.push(response.data.user_list);
-      fetchData(); // Refresh the table data
-    } else {
-      notify.Error(response.data.message);
-    }
-  } catch (error) {
-    notify.Error(error);
-  }
-};
-
 
 const fetchData = async () => {
-  try {
-    const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
-    desserts.value = response.data.user_list;
-    groupRoles.value = response.data["group_role"].map(role => ({
-      id: role.id,
-      description: role.description,
-    }));
-    console.log('data', groupRoles.value)
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+    try {
+        const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
+        desserts.value = response.data.user_list;
+        groupRoles.value = response.data["group_role"].map(role => ({
+            id: role.id,
+            description: role.description,
+        }));
+        console.log('data', groupRoles.value)
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 };
+
+
 let editItemId = null;
 const editItem = (item) => {
   editItemId = item.value;
@@ -330,13 +319,46 @@ const editItem = (item) => {
   editItmeData.value.user_group = itemToEdit.user_group.map(role => role.group_id);
   dialogEdit.value = true;
 };
+const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+        if (editItemId) {
+            // If editItemId is present, update the user data
+            const response = await axiosInstance.put(`/admin/user-data/${editItemId}`, editItmeData.value);
+            if (response.data.message) {
+                notify.Success(response.data.message);
+                // Find the edited item and update its data
+                const editedItemIndex = desserts.value.findIndex((item) => item.id === editItemId);
+                if (editedItemIndex !== -1) {
+                    desserts.value[editedItemIndex] = response.data.user_list;
+                }
+                // Reset editItemId after successful update
+                editItemId = null;
+                dialogEdit.value = false;
+                fetchData();
+            } else {
+                notify.Error(response.data.message);
+            }
+        } else {
+            const response = await axiosInstance.post('/admin/user-data', formData.value);
+            if (response.data.message) {
+                notify.Success(response.data.message);
+                desserts.value.push(response.data.user_list);
+                fetchData(); // Refresh the table data
+            } else {
+                notify.Error(response.data.message);
+            }
+        }
+    } catch (error) {
+        notify.Error(error);
+    }
+};
 
 let deleteItemId = null;
 const showDeleteModal = (item) => {
   deleteItemId = item.value;
   deleteDialog.value = true;
 };
-
 
 const deleteItem = async () => {
   try {

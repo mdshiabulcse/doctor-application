@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
     use ApiStatusTrait;
 
     /**
@@ -23,8 +24,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
-
 
         $userGroup = UserGroup::where(['user_id' => $request->user_login_id])->whereIn('group_id', [1,2])->first();
         if (!$userGroup) {
@@ -73,7 +72,6 @@ class UserController extends Controller
             $user->isVerified = 1;
             $user->status = 1;
             $user->save();
-//            $user=User::create($request->validated());
 
             foreach ($request['selectedGroupRoles'] as $user_group_id) {
                 $userGroup = new UserGroup();
@@ -126,7 +124,43 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+
+        DB::beginTransaction();
+        try {
+
+            $user =User::find($id);
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->phone = $request['phone'];
+            $user->password = Hash::make($request['password']);
+            $user->isVerified = 1;
+            $user->status = 1;
+            $user->save();
+
+            $response['delete']=UserGroup::where('user_id', $id)->get();
+            foreach ($response['delete'] as $value){
+                UserGroup::where('user_id', $id)->delete();
+            }
+
+            foreach ($request['user_group'] as $user_group_id) {
+
+                $userGroup = new UserGroup();
+                $userGroup->user_id = $user->id;
+                $userGroup->group_id = $user_group_id;
+                $userGroup->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = $e->getMessage();
+            return $this->failureApiResponse($response);
+        }
+
+
+        $response['message'] = 'Created Successfully';
+        return $this->successApiResponse($response);
     }
 
     /**
@@ -138,6 +172,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         $response['delete']=User::find($id)->delete();
+        $response['delete_group']=UserGroup::where('user_id', $id)->get();
+        foreach ($response['delete'] as $value){
+            UserGroup::where('user_id', $id)->delete();
+        }
         $response['message'] = 'Delete Successfully';
         return $this->successApiResponse($response);
     }
