@@ -10,9 +10,9 @@
           </v-breadcrumbs>
           <v-row>
             <v-dialog
-              v-model="dialog"
-              persistent
-              width="500"
+                v-model="dialog"
+                persistent
+                width="500"
             >
               <template v-slot:activator="{ props }">
                 <v-btn color="primary" v-bind="props" class="ma-2">
@@ -22,8 +22,8 @@
 
               <v-card>
                 <v-toolbar
-                  color="primary"
-                  title="User Form"
+                    color="primary"
+                    title="User Form"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
@@ -31,45 +31,45 @@
                     <v-container>
                       <v-row>
                         <v-col
-                          cols="12"
+                            cols="12"
                         >
                           <v-text-field
-                            label="Name*"
-                            v-model="formData.name"
-                            required
+                              label="Name*"
+                              v-model="formData.name"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            label="Email*"
-                            v-model="formData.email"
-                            required
+                              label="Email*"
+                              v-model="formData.email"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            label="Phone*"
-                            v-model="formData.phone"
-                            required
+                              label="Phone*"
+                              v-model="formData.phone"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            v-model="formData.password"
-                            label="Password*"
-                            type="password"
-                            required
+                              v-model="formData.password"
+                              label="Password*"
+                              type="password"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col
-                          cols="12"
+                            cols="12"
                         >
                           <v-checkbox
-                            v-for="role in groupRoles"
-                            :key="role.id"
-                            v-model="formData.selectedGroupRoles"
-                            :label="role.description"
-                            :value="role.id"
+                              v-for="role in groupRoles"
+                              :key="role.id"
+                              v-model="formData.selectedGroupRoles"
+                              :label="role.description"
+                              :value="role.id"
                           ></v-checkbox>
                         </v-col>
                       </v-row>
@@ -78,17 +78,17 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="dialog = false"
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="dialog = false"
                     >
                       Close
                     </v-btn>
                     <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="dialog = false"
-                      type="submit"
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="dialog = false"
+                        type="submit"
                     >
                       Save
                     </v-btn>
@@ -100,58 +100,58 @@
           </v-row>
           <v-row>
             <v-dialog
-              v-model="dialogEdit"
-              width="500"
+                v-model="dialogEdit"
+                width="500"
             >
               <v-card>
                 <v-toolbar
-                  color="primary"
-                  title="User Form"
+                    color="primary"
+                    title="User Form"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
                     <v-container>
                       <v-row>
                         <v-col
-                          cols="12"
+                            cols="12"
                         >
                           <v-text-field
-                            label="Name*"
-                            v-model="editItmeData.name"
-                            required
+                              label="Name*"
+                              v-model="editItmeData.name"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            label="Email*"
-                            v-model="editItmeData.email"
-                            required
+                              label="Email*"
+                              v-model="editItmeData.email"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            label="Phone*"
-                            v-model="editItmeData.phone"
-                            required
+                              label="Phone*"
+                              v-model="editItmeData.phone"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            v-model="editItmeData.password"
-                            label="Password*"
-                            type="password"
-                            required
+                              v-model="editItmeData.password"
+                              label="Password*"
+                              type="password"
+                              required
                           ></v-text-field>
                         </v-col>
                         <v-col
-                          cols="12"
+                            cols="12"
                         >
                           <v-checkbox
-                            v-for="role in groupRoles"
-                            :key="role.id"
-                            v-model="editItmeData.user_group"
-                            :label="role.description"
-                            :value="role.id"
+                              v-for="role in groupRoles"
+                              :key="role.id"
+                              v-model="editItmeData.user_group"
+                              :label="role.description"
+                              :value="role.id"
                           ></v-checkbox>
                         </v-col>
                       </v-row>
@@ -160,17 +160,17 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="dialogEdit = false"
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="dialogEdit = false"
                     >
                       Close
                     </v-btn>
                     <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="dialogEdit = false"
-                      type="submit"
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="dialogEdit = false"
+                        type="submit"
                     >
                       Save
                     </v-btn>
@@ -184,34 +184,42 @@
       </v-col>
       <v-col cols="12">
         <v-data-table
-          :headers="headers"
-          :items="desserts"
-          :search="search"
-          class="elevation-1"
-          item-value="id"
+            :headers="headers"
+            :items="desserts"
+            :search="search"
+            class="elevation-1"
+            item-value="id"
+            :loading="loading"
 
         >
           <template v-slot:top>
             <v-text-field
-              v-model="search"
-              label="Search"
-              class="pa-4"
+                v-model="search"
+                label="Search"
+                class="pa-4"
             ></v-text-field>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon
-              size="small"
-              class="me-2"
-              @click="editItem(item)"
+                size="small"
+                class="me-2"
+                @click="editItem(item)"
             >
               mdi-pencil
             </v-icon>
             <v-icon
-              size="small"
-              @click="showDeleteModal(item)"
+                size="small"
+                @click="showDeleteModal(item)"
             >
               mdi-delete
             </v-icon>
+            <v-switch
+                :color="item.columns.isVerified === 1 ? 'success' : ''"
+                :label="item.columns.isVerified === 1 ? 'Active' : 'Inactive'"
+                :model-value="item.columns.isVerified === 1 ? true : false"
+                hide-details
+                @change="toggleStatus(item, item.columns.isVerified)"
+            ></v-switch>
           </template>
         </v-data-table>
         <v-dialog v-model="deleteDialog" max-width="400">
@@ -249,6 +257,7 @@ const user_id = userData.user.data.id;
 const dialog = ref(false);
 const dialogEdit = ref(false);
 const deleteDialog = ref(false);
+const loading = ref(false);
 
 const breadcrumbs = computed(() => [
   {
@@ -297,17 +306,20 @@ onMounted(() => {
 });
 
 const fetchData = async () => {
-    try {
-        const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
-        desserts.value = response.data.user_list;
-        groupRoles.value = response.data["group_role"].map(role => ({
-            id: role.id,
-            description: role.description,
-        }));
-        console.log('data', groupRoles.value)
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+  try {
+    loading.value = true;
+    const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
+    desserts.value = response.data.user_list;
+    groupRoles.value = response.data["group_role"].map(role => ({
+      id: role.id,
+      description: role.description,
+
+    }));
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    loading.value = false; // Set loading to false after the request is complete
+  }
 };
 
 
@@ -320,38 +332,43 @@ const editItem = (item) => {
   dialogEdit.value = true;
 };
 const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-        if (editItemId) {
-            // If editItemId is present, update the user data
-            const response = await axiosInstance.put(`/admin/user-data/${editItemId}`, editItmeData.value);
-            if (response.data.message) {
-                notify.Success(response.data.message);
-                // Find the edited item and update its data
-                const editedItemIndex = desserts.value.findIndex((item) => item.id === editItemId);
-                if (editedItemIndex !== -1) {
-                    desserts.value[editedItemIndex] = response.data.user_list;
-                }
-                // Reset editItemId after successful update
-                editItemId = null;
-                dialogEdit.value = false;
-                fetchData();
-            } else {
-                notify.Error(response.data.message);
-            }
-        } else {
-            const response = await axiosInstance.post('/admin/user-data', formData.value);
-            if (response.data.message) {
-                notify.Success(response.data.message);
-                desserts.value.push(response.data.user_list);
-                fetchData(); // Refresh the table data
-            } else {
-                notify.Error(response.data.message);
-            }
+  event.preventDefault();
+  try {
+    if (editItemId) {
+      // If editItemId is present, update the user data
+      const response = await axiosInstance.put(`/admin/user-data/${editItemId}`, editItmeData.value);
+      if (response.data.message) {
+        notify.Success(response.data.message);
+        // Find the edited item and update its data
+        const editedItemIndex = desserts.value.findIndex((item) => item.id === editItemId);
+        if (editedItemIndex !== -1) {
+          desserts.value[editedItemIndex] = response.data.user_list;
         }
-    } catch (error) {
-        notify.Error(error);
+        // Reset editItemId after successful update
+
+        editItemId = null;
+        dialogEdit.value = false;
+        loading.value = true;
+        fetchData();
+        loading.value = false;
+      } else {
+        notify.Error(response.data.message);
+      }
+    } else {
+      const response = await axiosInstance.post('/admin/user-data', formData.value);
+      if (response.data.message) {
+        notify.Success(response.data.message);
+        desserts.value.push(response.data.user_list);
+        loading.value = true;
+        fetchData();
+        loading.value = false;
+      } else {
+        notify.Error(response.data.message);
+      }
     }
+  } catch (error) {
+    notify.Error(error);
+  }
 };
 
 let deleteItemId = null;
@@ -367,6 +384,9 @@ const deleteItem = async () => {
       notify.Success(response.data.message);
     } else {
       notify.Error(response.data.message);
+      loading.value = true;
+      fetchData();
+      loading.value = false;
     }
   } catch (error) {
     notify.Error(error);
@@ -375,9 +395,33 @@ const deleteItem = async () => {
   const indexToDelete = desserts.value.findIndex((item) => item.id === deleteItemId);
   if (indexToDelete !== -1) {
     desserts.value.splice(indexToDelete, 1);
+    loading.value = true;
+    fetchData();
+    loading.value = false;
   }
 
   deleteDialog.value = false; // Close the delete confirmation modal
 };
 
+
+const toggleStatus = async (item) => {
+  try {
+
+    const newStatus = item.selectable.isVerified === 1 ? 0 : 1;
+
+    const response = await axiosInstance.get(`/admin/verified-status/${item.value}?isVerified=${newStatus}`);
+    if (response.data.message) {
+      notify.Success(response.data.message);
+    } else {
+      notify.Error(response.data.message);
+    }
+  } catch (error) {
+    notify.Error(error);
+  } finally {
+    // Refresh the table data after updating the status
+    loading.value = true;
+    fetchData();
+    loading.value = false;
+  }
+};
 </script>
