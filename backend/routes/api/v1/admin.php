@@ -24,3 +24,4 @@ Route::middleware('auth:admin-api')->group(function () {
 
 Route::resource('doctor-data',DoctorsController::class);
 Route::resource('user-data',UserController::class);
+Route::get('verified-status/{id}',[UserController::class,'isVerifiedChange']);

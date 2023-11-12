@@ -179,4 +179,23 @@ class UserController extends Controller
         $response['message'] = 'Delete Successfully';
         return $this->successApiResponse($response);
     }
+    public function isVerifiedChange(Request $request, $id){
+        DB::beginTransaction();
+        try {
+
+            $user =User::find($id);
+            $user->isVerified =$request->query('isVerified');
+            $user->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = $e->getMessage();
+            return $this->failureApiResponse($response);
+        }
+
+
+        $response['message'] = 'Status Change Successfully';
+        return $this->successApiResponse($response);
+    }
 }
