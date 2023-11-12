@@ -7,7 +7,6 @@ import router from "@/router/index.js";
 export const useAuth = defineStore('auth',{
   state: () => ({
     user:{},
-    userAccess:{}
   }),
   persist: {
     paths: ['user'],

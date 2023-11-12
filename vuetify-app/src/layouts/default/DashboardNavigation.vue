@@ -20,7 +20,7 @@
       <v-list density="compact" nav>
         <Sidbar/>
         <a href="javascript::void(0)" @click="userLogout">
-          <v-list-item prepend-icon="mdi-power" title="Logout"></v-list-item>
+          <v-list-item prepend-icon="mdi-power">Logout</v-list-item>
         </a>
       </v-list>
     </v-navigation-drawer>
@@ -29,7 +29,7 @@
       :order="order"
       color="#4DB6AC"
       flat
-      title="DOCTOR APPLICATION"
+      title="DOCTUCH"
     >
       <template v-slot:append>
         <v-switch

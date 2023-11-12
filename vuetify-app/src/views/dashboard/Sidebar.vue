@@ -64,9 +64,7 @@ import { ref } from 'vue';
 export default {
   setup() {
     const mini = ref(false);
-
     const childItemsVisible = ref([false, false]);
-
     const childItems = [
       [
         { title: 'Doctor List', icon: 'mdi-plus', route: '/doctor-list' },
@@ -75,7 +73,7 @@ export default {
       ],
       [
         { title: 'User Info', icon: 'mdi-plus', route: '/user-list' },
-        { title: 'Doctor Bill', icon: 'mdi-plus', route: '/child2' },
+        { title: 'Patient Source', icon: 'mdi-plus', route: '/patient-source' },
         { title: 'Doctor Chamber', icon: 'mdi-plus', route: '/child3' },
       ],
     ];

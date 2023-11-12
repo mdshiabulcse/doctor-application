@@ -16,7 +16,7 @@
             >
               <template v-slot:activator="{ props }">
                 <v-btn color="primary" v-bind="props" class="ma-2">
-                  Add User
+                  Add Source
                 </v-btn>
               </template>
 
@@ -270,16 +270,15 @@ const breadcrumbs = computed(() => [
     href: '#',
   },
   {
-    title: 'User List',
+    title: 'Patient Source',
     disabled: true,
-    href: 'user-list',
+    href: 'patient-source',
   },
 ]);
 const headers = computed(() => [
-  {id: 'id', title: 'Name', align: 'start', key: 'name',},
-  {id: 'id', title: 'Mail', align: 'end', key: 'email',},
-  {id: 'id', title: 'Phone', align: 'end', key: 'phone'},
-  {id: 'id', title: 'Status', align: 'end', key: 'isVerified'},
+  {id: 'id', title: 'PSID', align: 'start', key: 'source_id',},
+  {id: 'id', title: 'Name', align: 'end', key: 'source_name',},
+  {id: 'id', title: 'Location', align: 'end', key: 'source_location'},
   {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
 ]);
@@ -307,13 +306,9 @@ onMounted(() => {
 const fetchData = async () => {
   try {
     loading.value = true;
-    const response = await axiosInstance('/admin/user-data?user_login_id=' + user_id); // Replace with your API endpointa
-    desserts.value = response.data.user_list;
-    groupRoles.value = response.data["group_role"].map(role => ({
-      id: role.id,
-      description: role.description,
-
-    }));
+    const response = await axiosInstance('/admin/administrative/patient-source'); // Replace with your API endpointa
+    desserts.value = response.data.patient_source;
+    loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
