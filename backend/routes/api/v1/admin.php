@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\dashboard\DoctorsController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\administrative\AdministrativeController;
 
 
 
@@ -25,3 +26,7 @@ Route::middleware('auth:admin-api')->group(function () {
 Route::resource('doctor-data',DoctorsController::class);
 Route::resource('user-data',UserController::class);
 Route::get('verified-status/{id}',[UserController::class,'isVerifiedChange']);
+Route::group(['prefix' => 'administrative'], function (){
+    Route::resource('patient-source',AdministrativeController::class);
+});
+
