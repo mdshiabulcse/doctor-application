@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('source_id')->comment("patient source unique ID");
             $table->string('source_name');
+            $table->string('source_phone')->nullable();
             $table->string('source_location')->nullable();
             $table->integer('status')->default(0);
             $table->integer('user_id');
