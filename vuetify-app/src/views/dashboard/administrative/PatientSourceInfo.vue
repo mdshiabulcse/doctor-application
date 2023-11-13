@@ -23,7 +23,7 @@
               <v-card>
                 <v-toolbar
                     color="primary"
-                    title="User Form"
+                    title="Source Create"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
@@ -34,43 +34,24 @@
                             cols="12"
                         >
                           <v-text-field
-                              label="Name*"
-                              v-model="formData.name"
+                              label="Source Name*"
+                              v-model="formData.source_name"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                              label="Email*"
-                              v-model="formData.email"
+                              label="Source Location*"
+                              v-model="formData.source_location"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                              label="Phone*"
-                              v-model="formData.phone"
+                              label="Source Phone*"
+                              v-model="formData.source_phone"
                               required
                           ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              v-model="formData.password"
-                              label="Password*"
-                              type="password"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                        >
-                          <v-checkbox
-                              v-for="role in groupRoles"
-                              :key="role.id"
-                              v-model="formData.selectedGroupRoles"
-                              :label="role.description"
-                              :value="role.id"
-                          ></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -279,24 +260,21 @@ const headers = computed(() => [
   {id: 'id', title: 'PSID', align: 'start', key: 'source_id',},
   {id: 'id', title: 'Name', align: 'end', key: 'source_name',},
   {id: 'id', title: 'Location', align: 'end', key: 'source_location'},
+  {id: 'id', title: 'Created', align: 'end', key: 'user_data.name'},
   {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
 ]);
 
 const formData = ref({
-  name: '',
-  email: '',
-  phone: '',
-  password: '',
-  selectedGroupRoles: []
+  source_name: '',
+  source_location: '',
+  source_phone: '',
 });
 
 const editItmeData = ref({
-  name: '',
-  email: '',
-  phone: '',
-  password: '',
-  user_group: []
+  source_name: '',
+  source_location: '',
+  source_phone: '',
 });
 
 onMounted(() => {
@@ -308,6 +286,7 @@ const fetchData = async () => {
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/patient-source'); // Replace with your API endpointa
     desserts.value = response.data.patient_source;
+      console.log(desserts);
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -349,10 +328,10 @@ const handleSubmit = async (event) => {
         notify.Error(response.data.message);
       }
     } else {
-      const response = await axiosInstance.post('/admin/user-data', formData.value);
+      const response = await axiosInstance.post('/admin/administrative/patient-source?user_id='+user_id, formData.value);
       if (response.data.message) {
         notify.Success(response.data.message);
-        desserts.value.push(response.data.user_list);
+        desserts.value.push(response.data.patient_source);
         loading.value = true;
         fetchData();
         loading.value = false;
