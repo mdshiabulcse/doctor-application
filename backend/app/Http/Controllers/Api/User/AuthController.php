@@ -51,7 +51,7 @@ class AuthController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            $response['message'] = $e->getMessage().$e->getLine();
+            $response['errors']=$e->getMessage().$e->getLine()  ;
             return $this->failureApiResponse($response);
         }
         return $this->makeToken($user,$userAccess);
