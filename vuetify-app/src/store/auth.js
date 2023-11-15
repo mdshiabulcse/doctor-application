@@ -27,7 +27,7 @@ export const useAuth = defineStore('auth',{
         }
       }catch (error){
         if (error.response.data){
-          // this.errors =error.response.data.errors;
+          this.errors =error.response.data.errors;
           return new Promise((reject)=>{
             reject(error.response.data.errors);
           })

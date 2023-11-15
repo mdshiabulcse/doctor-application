@@ -17,12 +17,18 @@ const toggleShow = () => {
 };
 
 const onSubmit = async (values, {setErrors}) => {
+  if (auth.errors){
+    notify.Error(auth.errors);
+  }
   const res = await auth.login(values);
+
   if (res.data) {
     router.push({name: 'user.dashboard'});
     notify.Success('Login Successfully!');
   } else {
+
     setErrors(res);
+
   }
 
 };
