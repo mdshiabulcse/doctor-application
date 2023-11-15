@@ -28,5 +28,6 @@ Route::resource('user-data',UserController::class);
 Route::get('verified-status/{id}',[UserController::class,'isVerifiedChange']);
 Route::group(['prefix' => 'administrative'], function (){
     Route::resource('patient-source',AdministrativeController::class);
+    Route::get('change-status/{id}',[AdministrativeController::class,'statusChange']);
 });
 

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 class AdministrativeController extends Controller
 {
     use ApiStatusTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -22,7 +23,7 @@ class AdministrativeController extends Controller
      */
     public function index()
     {
-        $data['patient_source']=PatientSourceinfo::with('user_data')->get();
+        $data['patient_source'] = PatientSourceinfo::with('user_data')->get();
         return $this->successApiResponse($data);
     }
 
@@ -39,7 +40,7 @@ class AdministrativeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -74,7 +75,7 @@ class AdministrativeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -85,7 +86,7 @@ class AdministrativeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -96,19 +97,38 @@ class AdministrativeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+
+        DB::beginTransaction();
+        try {
+
+            $patientSource = PatientSourceinfo::find($id);
+            $patientSource->source_name = $request['source_name'];
+            $patientSource->source_phone = $request['source_phone'];
+            $patientSource->source_location = $request['source_location'];
+            $patientSource->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = $e->getMessage();
+            return $this->failureApiResponse($response);
+        }
+
+        $response['message'] = 'Updated Successfully';
+        return $this->successApiResponse($response);
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -121,6 +141,25 @@ class AdministrativeController extends Controller
         // Step 1: Count Primary IDs
         $primaryIdCount = PatientSourceinfo::count();
         $primaryIdCount++;
-        return  'PSID' . substr('0000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
+        return 'PSID' . substr('0000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
+    }
+    public function statusChange(Request $request,$id){
+        DB::beginTransaction();
+        try {
+
+            $user =PatientSourceinfo::find($id);
+            $user->status =$request->query('status');
+            $user->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = $e->getMessage();
+            return $this->failureApiResponse($response);
+        }
+
+
+        $response['message'] = 'Status Change Successfully';
+        return $this->successApiResponse($response);
     }
 }

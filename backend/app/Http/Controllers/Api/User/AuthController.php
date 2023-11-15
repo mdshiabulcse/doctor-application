@@ -25,8 +25,8 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
 
-        DB::beginTransaction();
-        try {
+//        DB::beginTransaction();
+//        try {
             $user = User::where('phone', $request->phone)->first();
             if (!$user || !Hash::check($request->password, $user->password)) {
                 throw ValidationException::withMessages([
@@ -48,12 +48,12 @@ class AuthController extends Controller
             $userLog->login_time = now();
             $userLog->save();
             $userAccess=$userLog->id;
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $response['errors']=$e->getMessage().$e->getLine()  ;
-            return $this->failureApiResponse($response);
-        }
+//            DB::commit();
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            $response['errors']=$e->getMessage().$e->getLine()  ;
+//            return $this->failureApiResponse($response);
+//        }
         return $this->makeToken($user,$userAccess);
 
     }
