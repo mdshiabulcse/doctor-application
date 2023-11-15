@@ -87,7 +87,7 @@
               <v-card>
                 <v-toolbar
                     color="primary"
-                    title="User Form"
+                    title="Edit Source Info"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
@@ -97,43 +97,24 @@
                             cols="12"
                         >
                           <v-text-field
-                              label="Name*"
-                              v-model="editItmeData.name"
+                              label="Source Name*"
+                              v-model="editItmeData.source_name"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                              label="Email*"
-                              v-model="editItmeData.email"
+                              label="Source Location*"
+                              v-model="editItmeData.source_location"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
                               label="Phone*"
-                              v-model="editItmeData.phone"
+                              v-model="editItmeData.source_phone"
                               required
                           ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              v-model="editItmeData.password"
-                              label="Password*"
-                              type="password"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                        >
-                          <v-checkbox
-                              v-for="role in groupRoles"
-                              :key="role.id"
-                              v-model="editItmeData.user_group"
-                              :label="role.description"
-                              :value="role.id"
-                          ></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -194,11 +175,11 @@
               mdi-delete
             </v-icon>
             <v-switch
-                :color="item.columns.isVerified === 1 ? 'success' : ''"
-                :label="item.columns.isVerified === 1 ? 'Active' : 'Inactive'"
-                :model-value="item.columns.isVerified === 1 ? true : false"
+                :color="item.columns.status === 1 ? 'success' : ''"
+                :label="item.columns.status === 1 ? 'Active' : 'Inactive'"
+                :model-value="item.columns.status === 1 ? true : false"
                 hide-details
-                @change="toggleStatus(item, item.columns.isVerified)"
+                @change="toggleStatus(item, item.columns.status)"
             ></v-switch>
           </template>
         </v-data-table>
@@ -260,6 +241,7 @@ const headers = computed(() => [
   {id: 'id', title: 'PSID', align: 'start', key: 'source_id',},
   {id: 'id', title: 'Name', align: 'end', key: 'source_name',},
   {id: 'id', title: 'Location', align: 'end', key: 'source_location'},
+  {id: 'id', title: 'Status', align: 'end', key: 'status'},
   {id: 'id', title: 'Created', align: 'end', key: 'user_data.name'},
   {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
@@ -286,7 +268,6 @@ const fetchData = async () => {
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/patient-source'); // Replace with your API endpointa
     desserts.value = response.data.patient_source;
-      console.log(desserts);
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -301,7 +282,6 @@ const editItem = (item) => {
   editItemId = item.value;
   const itemToEdit = desserts.value.find((item) => item.id === editItemId);
   editItmeData.value = {...itemToEdit}; // Populate editItmeData with the existing data
-  editItmeData.value.user_group = itemToEdit.user_group.map(role => role.group_id);
   dialogEdit.value = true;
 };
 const handleSubmit = async (event) => {
@@ -309,13 +289,13 @@ const handleSubmit = async (event) => {
   try {
     if (editItemId) {
       // If editItemId is present, update the user data
-      const response = await axiosInstance.put(`/admin/user-data/${editItemId}`, editItmeData.value);
+      const response = await axiosInstance.put(`/admin/administrative/patient-source/${editItemId}`, editItmeData.value);
       if (response.data.message) {
         notify.Success(response.data.message);
         // Find the edited item and update its data
         const editedItemIndex = desserts.value.findIndex((item) => item.id === editItemId);
         if (editedItemIndex !== -1) {
-          desserts.value[editedItemIndex] = response.data.user_list;
+          desserts.value[editedItemIndex] = response.data.patient_source;
         }
         // Reset editItemId after successful update
 
@@ -379,10 +359,10 @@ const deleteItem = async () => {
 
 const toggleStatus = async (item) => {
   try {
-
-    const newStatus = item.selectable.isVerified === 1 ? 0 : 1;
-
-    const response = await axiosInstance.get(`/admin/verified-status/${item.value}?isVerified=${newStatus}`);
+      console.log("item")
+      console.log(item)
+    const newStatus = item.selectable.status === 1 ? 0 : 1;
+    const response = await axiosInstance.get(`/admin/administrative/change-status/${item.value}?status=${newStatus}`);
     if (response.data.message) {
       notify.Success(response.data.message);
     } else {
