@@ -167,6 +167,7 @@ class AdministrativeController extends Controller
     //-----doctor information start-----//
     public function doctorData(){
         $response['doctor_data']=DoctorInfo::all();
+        $response['hospital_data']=PatientSourceinfo::whereStatus(1)->get();
         return $this->successApiResponse($response);
     }
     //-----doctor information end-----//

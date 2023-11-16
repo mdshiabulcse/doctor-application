@@ -34,22 +34,47 @@
                             cols="12"
                         >
                           <v-text-field
-                              label="Source Name*"
-                              v-model="formData.source_name"
+                              label="Doctor Name*"
+                              v-model="formData.doctor_name"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                              label="Source Location*"
-                              v-model="formData.source_location"
+                              label="Doctor Fees*"
+                              v-model="formData.doctor_fees"
                               required
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                              label="Source Phone*"
-                              v-model="formData.source_phone"
+                              label="Doctor Phone*"
+                              v-model="formData.dr_phone"
+                              required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-autocomplete
+                              label="Doctor Type*"
+                              v-model="formData.dr_type"
+                              :items="['Special', 'Referral']"
+                              required
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-autocomplete
+                              label="Hospital*"
+                              v-model="formData.hospital_name"
+                              :items="hospital_value"
+                              item-value="id"
+                              item-text="source_name"
+                              required
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                              label="Doctor Details*"
+                              v-model="formData.doctor_details"
                               required
                           ></v-text-field>
                         </v-col>
@@ -211,6 +236,7 @@ import {useAuth} from "@/store/auth";
 
 const search = ref('');
 const desserts = ref([]);
+const hospital_value = ref([]);
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
@@ -248,9 +274,12 @@ const headers = computed(() => [
 ]);
 
 const formData = ref({
-  source_name: '',
-  source_location: '',
-  source_phone: '',
+  doctor_name: '',
+  doctor_fees: '',
+  dr_phone: '',
+  dr_type: '',
+  hospital_name: '',
+  doctor_details: '',
 });
 
 const editItmeData = ref({
@@ -268,6 +297,8 @@ const fetchData = async () => {
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
     desserts.value = response.data.doctor_data;
+    hospital_value.value = response.data.hospital_data;
+    console.log('Hospital Data:', hospital_value.value);
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
