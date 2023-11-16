@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('doctor_name');
             $table->string('doctor_id');
             $table->decimal('doctor_fees', 8,2)->nullable();
+            $table->string('dr_phone')->nullable();
+            $table->string('dr_type');
             $table->string('hospital_name')->nullable();
             $table->longText('doctor_details')->nullable();
             $table->integer('user_id');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\administrative;
 
 use App\Http\Controllers\Controller;
 use App\Models\administrative\PatientSourceinfo;
+use App\Models\dashboard\DoctorInfo;
 use App\Models\dashboard\PatientInfo;
 use App\Models\dashboard\UserGroup;
 use App\Models\User;
@@ -162,4 +163,11 @@ class AdministrativeController extends Controller
         $response['message'] = 'Status Change Successfully';
         return $this->successApiResponse($response);
     }
+
+    //-----doctor information start-----//
+    public function doctorData(){
+        $response['doctor_data']=DoctorInfo::all();
+        return $this->successApiResponse($response);
+    }
+    //-----doctor information end-----//
 }
