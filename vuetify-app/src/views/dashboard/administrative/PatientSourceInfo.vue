@@ -211,7 +211,6 @@ import {useAuth} from "@/store/auth";
 
 const search = ref('');
 const desserts = ref([]);
-const groupRoles = ref([]);
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
@@ -359,8 +358,6 @@ const deleteItem = async () => {
 
 const toggleStatus = async (item) => {
   try {
-      console.log("item")
-      console.log(item)
     const newStatus = item.selectable.status === 1 ? 0 : 1;
     const response = await axiosInstance.get(`/admin/administrative/change-status/${item.value}?status=${newStatus}`);
     if (response.data.message) {
