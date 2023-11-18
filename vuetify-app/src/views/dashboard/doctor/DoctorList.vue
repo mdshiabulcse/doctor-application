@@ -23,7 +23,7 @@
               <v-card>
                 <v-toolbar
                     color="primary"
-                    title="Source Create"
+                    title="Doctor List"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
@@ -63,12 +63,11 @@
                         </v-col>
                         <v-col cols="12">
                           <v-autocomplete
-                              label="Hospital*"
+                              label="Select Hospital*"
                               v-model="formData.hospital_name"
-                              :items="hospital_value"
+                              :items="hospital_data"
                               item-value="id"
                               item-text="source_name"
-                              required
                           ></v-autocomplete>
                         </v-col>
                         <v-col cols="12">
@@ -236,7 +235,7 @@ import {useAuth} from "@/store/auth";
 
 const search = ref('');
 const desserts = ref([]);
-const hospital_value = ref([]);
+const hospital_data = ref([]);
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
@@ -289,16 +288,15 @@ const editItmeData = ref({
 });
 
 onMounted(() => {
-  fetchData(); // Fetch data when the component is mounted
+  fetchDoctorData (); // Fetch data when the component is mounted
 });
 
-const fetchData = async () => {
+const fetchDoctorData = async () => {
   try {
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
     desserts.value = response.data.doctor_data;
-    hospital_value.value = response.data.hospital_data;
-    console.log('Hospital Data:', hospital_value.value);
+    hospital_data.value = response.data.hospital_data;
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -306,7 +304,6 @@ const fetchData = async () => {
     loading.value = false; // Set loading to false after the request is complete
   }
 };
-
 
 let editItemId = null;
 const editItem = (item) => {
@@ -333,18 +330,19 @@ const handleSubmit = async (event) => {
         editItemId = null;
         dialogEdit.value = false;
         loading.value = true;
-        fetchData();
+        fetchDoctorData();
         loading.value = false;
       } else {
         notify.Error(response.data.message);
       }
     } else {
+      console.log('API submit:', formData.value)
       const response = await axiosInstance.post('/admin/administrative/patient-source?user_id=' + user_id, formData.value);
       if (response.data.message) {
         notify.Success(response.data.message);
         desserts.value.push(response.data.patient_source);
         loading.value = true;
-        fetchData();
+        fetchDoctorData();
         loading.value = false;
       } else {
         notify.Error(response.data.message);
@@ -369,7 +367,7 @@ const deleteItem = async () => {
     } else {
       notify.Error(response.data.message);
       loading.value = true;
-      fetchData();
+      fetchDoctorData();
       loading.value = false;
     }
   } catch (error) {
@@ -380,7 +378,7 @@ const deleteItem = async () => {
   if (indexToDelete !== -1) {
     desserts.value.splice(indexToDelete, 1);
     loading.value = true;
-    fetchData();
+    fetchDoctorData();
     loading.value = false;
   }
 
@@ -402,7 +400,7 @@ const toggleStatus = async (item) => {
   } finally {
     // Refresh the table data after updating the status
     loading.value = true;
-    fetchData();
+    fetchDoctorData();
     loading.value = false;
   }
 };
