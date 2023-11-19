@@ -23,7 +23,7 @@
               <v-card>
                 <v-toolbar
                     color="primary"
-                    title="Doctor List"
+                    title="Source Create"
                 ></v-toolbar>
                 <v-form @submit="handleSubmit">
                   <v-card-text>
@@ -61,21 +61,22 @@
                               required
                           ></v-autocomplete>
                         </v-col>
+
                         <v-col cols="12">
                           <v-autocomplete
-                              label="Select Hospital*"
+                              label="Select"
                               v-model="formData.hospital_name"
                               :items="hospital_data"
+                              color="blue-grey-lighten-2"
                               item-value="id"
-                              item-text="source_name"
-                          ></v-autocomplete>
+                              item-title="source_name"
+                          >
+                          </v-autocomplete>
                         </v-col>
                         <v-col cols="12">
-                          <v-text-field
-                              label="Doctor Details*"
-                              v-model="formData.doctor_details"
-                              required
-                          ></v-text-field>
+                          <div>
+                            <MyEditor />
+                          </div>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -232,6 +233,7 @@ import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
+import MyEditor from '@/views/dashboard/vueeditor/VueEditor.vue'
 
 const search = ref('');
 const desserts = ref([]);
@@ -293,10 +295,14 @@ onMounted(() => {
 
 const fetchDoctorData = async () => {
   try {
+
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
+    console.log('API Response:', response.data);
     desserts.value = response.data.doctor_data;
     hospital_data.value = response.data.hospital_data;
+
+
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -304,6 +310,7 @@ const fetchDoctorData = async () => {
     loading.value = false; // Set loading to false after the request is complete
   }
 };
+
 
 let editItemId = null;
 const editItem = (item) => {
@@ -405,3 +412,4 @@ const toggleStatus = async (item) => {
   }
 };
 </script>
+
