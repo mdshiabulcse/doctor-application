@@ -74,9 +74,11 @@
                           </v-autocomplete>
                         </v-col>
                         <v-col cols="12">
-                          <div>
-                            <MyEditor />
-                          </div>
+                          <v-text-field
+                              label="Doctor Details*"
+                              v-model="formData.doctor_details"
+                              required
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -233,7 +235,6 @@ import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
-import MyEditor from '@/views/dashboard/vueeditor/VueEditor.vue'
 
 const search = ref('');
 const desserts = ref([]);
