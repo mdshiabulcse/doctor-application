@@ -74,11 +74,7 @@
                           </v-autocomplete>
                         </v-col>
                         <v-col cols="12">
-                          <v-text-field
-                              label="Doctor Details*"
-                              v-model="formData.doctor_details"
-                              required
-                          ></v-text-field>
+                          <QuillEditor v-model:content="formData.doctor_details" />
                         </v-col>
                       </v-row>
                     </v-container>
@@ -235,6 +231,7 @@ import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
+import {QuillEditor} from "@vueup/vue-quill";
 
 const search = ref('');
 const desserts = ref([]);
@@ -246,6 +243,7 @@ const dialog = ref(false);
 const dialogEdit = ref(false);
 const deleteDialog = ref(false);
 const loading = ref(false);
+
 
 const breadcrumbs = computed(() => [
   {
@@ -344,8 +342,9 @@ const handleSubmit = async (event) => {
         notify.Error(response.data.message);
       }
     } else {
+
       console.log('API submit:', formData.value)
-      const response = await axiosInstance.post('/admin/administrative/patient-source?user_id=' + user_id, formData.value);
+      const response = await axiosInstance.post('/admin/administrative/save-doctor?user_id=' + user_id, formData.value);
       if (response.data.message) {
         notify.Success(response.data.message);
         desserts.value.push(response.data.patient_source);

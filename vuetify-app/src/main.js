@@ -13,7 +13,8 @@ import { createApp } from 'vue'
 import { Field, Form, ErrorMessage } from 'vee-validate';
 // Plugins
 import { registerPlugins } from '@/plugins'
-
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 
 
@@ -23,7 +24,7 @@ app.component('Field', Field);
 app.component('Form', Form);
 app.component('ErrorMessage', ErrorMessage);
 // Register Vuetify components
-
+app.component('QuillEditor', QuillEditor);
 
 // app.component('VTextField', VTextField);
 const pinia = createPinia()

@@ -30,5 +30,6 @@ Route::group(['prefix' => 'administrative'], function (){
     Route::resource('patient-source',AdministrativeController::class);
     Route::get('change-status/{id}',[AdministrativeController::class,'statusChange']);
     Route::get('doctor-data',[AdministrativeController::class,'doctorData']);
+    Route::post('save-doctor',[AdministrativeController::class,'saveDoctorData']);
 });
 

@@ -170,5 +170,8 @@ class AdministrativeController extends Controller
         $response['hospital_data']=PatientSourceinfo::whereStatus(1)->get();
         return $this->successApiResponse($response);
     }
+    public function saveDoctorData(Request $request){
+        return $this->successApiResponse($request->all());
+    }
     //-----doctor information end-----//
 }
