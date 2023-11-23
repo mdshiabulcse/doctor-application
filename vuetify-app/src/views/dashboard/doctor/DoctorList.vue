@@ -76,6 +76,10 @@
                         <v-col cols="12">
                           <QuillEditor v-model:content="formData.doctor_details" />
                         </v-col>
+                        <v-col cols="12">
+                          <vuequill />
+                          <pre>store.re.body : {{ store.re?.body }}</pre>
+                        </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -232,11 +236,15 @@ import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
 import {QuillEditor} from "@vueup/vue-quill";
+import {VueQuillEditor} from "@/views/dashboard/texteditor/VueQuillEditor.vue";
+import {quillstore} from "@/views/dashboard/texteditor/quill_store.js";
+
 
 const search = ref('');
 const desserts = ref([]);
 const hospital_data = ref([]);
 const notify = useNotification();
+const vuequill = VueQuillEditor();
 const userData = useAuth();
 const user_id = userData.user.data.id;
 const dialog = ref(false);
