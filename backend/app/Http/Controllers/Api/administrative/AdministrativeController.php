@@ -12,6 +12,7 @@ use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AdministrativeController extends Controller
 {
@@ -171,7 +172,52 @@ class AdministrativeController extends Controller
         return $this->successApiResponse($response);
     }
     public function saveDoctorData(Request $request){
-        return $this->successApiResponse($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'doctor_name' => 'required',
+            'doctor_fees' => 'required',
+            'dr_phone' => 'required',
+            'dr_type' => 'required',
+            'hospital_name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return $this->validationfailureApiResponse($response);
+        }
+
+            DB::beginTransaction();
+        try {
+
+            $data = new DoctorInfo();
+            $data->doctor_name = $request['doctor_name'];
+            $data->doctor_fees = $request['doctor_fees'];
+            $data->dr_phone = $request['dr_phone'];
+            $data->dr_type = $request['dr_type'];
+            $data->hospital_name = $request['hospital_name'];
+            $data->doctor_details = 'null';
+            $data->doctor_id = $this->generateUniqueDRID();
+            $data->status = 1;
+            $data->user_id = $request['user_id'];
+            $data->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['message'] = $e->getMessage();
+            return $this->failureApiResponse($response);
+        }
+
+
+        $response['message'] = 'Created Successfully';
+        return $this->successApiResponse($response);
+    }
+    public function generateUniqueDRID()
+    {
+        // Step 1: Count Primary IDs
+        $primaryIdCount = DoctorInfo::count();
+        $primaryIdCount++;
+        return 'DRID' . substr('00', 0, -strlen($primaryIdCount)) . $primaryIdCount;
     }
     //-----doctor information end-----//
 }
