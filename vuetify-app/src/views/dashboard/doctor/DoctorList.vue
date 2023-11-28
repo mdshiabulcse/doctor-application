@@ -73,9 +73,9 @@
                           >
                           </v-autocomplete>
                         </v-col>
-                        <v-col cols="12">
-                          <QuillEditor v-model:content="formData.doctor_details"  />
-                        </v-col>
+<!--                        <v-col cols="12">-->
+<!--                          <QuillEditor v-model:content="formData.doctor_details"  />-->
+<!--                        </v-col>-->
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -231,7 +231,7 @@ import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
-import {QuillEditor} from "@vueup/vue-quill";
+// import {QuillEditor} from "@vueup/vue-quill";
 
 
 const search = ref('');
@@ -280,7 +280,7 @@ const formData = ref({
   dr_phone: '',
   dr_type: '',
   hospital_name: '',
-  doctor_details: '',
+  // doctor_details: '',
 });
 
 const editItmeData = ref({
@@ -351,6 +351,7 @@ const handleSubmit = async (event) => {
         loading.value = false;
       } else {
         notify.Error(response.data.message);
+        console.log('data inn',response.data.message);
       }
     }
   } catch (error) {
