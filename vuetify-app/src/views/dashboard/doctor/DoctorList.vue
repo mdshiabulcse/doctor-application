@@ -74,11 +74,7 @@
                           </v-autocomplete>
                         </v-col>
                         <v-col cols="12">
-                          <QuillEditor v-model:content="formData.doctor_details" />
-                        </v-col>
-                        <v-col cols="12">
-                          <vuequill />
-                          <pre>store.re.body : {{ store.re?.body }}</pre>
+                          <QuillEditor v-model:content="formData.doctor_details"  />
                         </v-col>
                       </v-row>
                     </v-container>
@@ -236,15 +232,12 @@ import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
 import {QuillEditor} from "@vueup/vue-quill";
-import {VueQuillEditor} from "@/views/dashboard/texteditor/VueQuillEditor.vue";
-import {quillstore} from "@/views/dashboard/texteditor/quill_store.js";
 
 
 const search = ref('');
 const desserts = ref([]);
 const hospital_data = ref([]);
 const notify = useNotification();
-const vuequill = VueQuillEditor();
 const userData = useAuth();
 const user_id = userData.user.data.id;
 const dialog = ref(false);
@@ -302,14 +295,11 @@ onMounted(() => {
 
 const fetchDoctorData = async () => {
   try {
-
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
     console.log('API Response:', response.data);
     desserts.value = response.data.doctor_data;
     hospital_data.value = response.data.hospital_data;
-
-
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -419,5 +409,6 @@ const toggleStatus = async (item) => {
     loading.value = false;
   }
 };
+
 </script>
 

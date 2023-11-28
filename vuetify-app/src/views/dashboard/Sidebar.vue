@@ -73,7 +73,8 @@ export default {
       [
         {title: 'User Info', icon: 'mdi-plus', route: '/user-list'},
         {title: 'Patient Source', icon: 'mdi-plus', route: '/patient-source'},
-        {title: 'Doctor List', icon: 'mdi-plus', route: '/doctor-list'}
+        {title: 'Doctor List', icon: 'mdi-plus', route: '/doctor-list'},
+        {title: 'Tiptap', icon: 'mdi-plus', route: '/tip-tap'},
       ],
     ];
 

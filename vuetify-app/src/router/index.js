@@ -5,7 +5,7 @@ import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
-import {DoctorList,UserInfo,PatientSourceInfo} from "@/views/dashboard/Index";
+import {DoctorList,UserInfo,PatientSourceInfo,TipTapEditor} from "@/views/dashboard/Index";
 
 const routes = [
   {
@@ -30,6 +30,9 @@ const routes = [
       },
       {
         path: '/patient-source', name: 'patient.source', component: PatientSourceInfo, meta:{title:"Patient Source", requiresAuth:true},
+      },
+      {
+        path: '/tip-tap', name: 'tiptap', component: TipTapEditor, meta:{title:"Patient Source", requiresAuth:true},
       },
     ],
   },
