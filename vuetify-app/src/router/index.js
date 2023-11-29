@@ -5,7 +5,7 @@ import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
-import {DoctorList,UserInfo,PatientSourceInfo,TipTapEditor} from "@/views/dashboard/Index";
+import {DoctorList,UserInfo,PatientSourceInfo,TipTapEditor,PatientData} from "@/views/dashboard/Index";
 
 const routes = [
   {
@@ -19,12 +19,7 @@ const routes = [
         path: '/dashboard', name: 'user.dashboard', component: DashboardHome, meta:{title:"User Dashboard", requiresAuth:true},
 
       },
-      {
-        path: '/doctor-list', name: 'doctor.list', component: DoctorList, meta:{title:"Doctor List", requiresAuth:true},
-      },
-      {
-        path: '/user-profile', name: 'user.profile', component: UserProfile, meta:{title:"User Profile", requiresAuth:true},
-      },
+      // -----------Adminstration Start-----------
       {
         path: '/user-list', name: 'user.list', component: UserInfo, meta:{title:"User Info", requiresAuth:true},
       },
@@ -32,8 +27,17 @@ const routes = [
         path: '/patient-source', name: 'patient.source', component: PatientSourceInfo, meta:{title:"Patient Source", requiresAuth:true},
       },
       {
+        path: '/doctor-list', name: 'doctor.list', component: DoctorList, meta:{title:"Doctor List", requiresAuth:true},
+      },
+      {
         path: '/tip-tap', name: 'tiptap', component: TipTapEditor, meta:{title:"Patient Source", requiresAuth:true},
       },
+      // -----------Adminstration End-----------
+      // -----------Patients  Info Start-----------
+      {
+        path: '/patient-info', name: 'patient.info', component: PatientData, meta:{title:"Patient Info", requiresAuth:true},
+      },
+      // -----------Patients  Info End-----------
     ],
   },
 ]

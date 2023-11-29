@@ -5,8 +5,8 @@
     <router-link :to="{name:'user.dashboard'}">
       <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
     </router-link>
-    <router-link :to="{name:'user.profile'}">
-      <v-list-item prepend-icon="mdi-account-injury-outline" title="Patients" value="profile"></v-list-item>
+    <router-link :to="{name:'patient.info'}">
+      <v-list-item prepend-icon="mdi-account-injury-outline" title="Patients" value="Patient Info"></v-list-item>
     </router-link>
 
     <!-- Parent Menu 1 -->
