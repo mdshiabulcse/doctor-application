@@ -1,326 +1,137 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
-  >
-    <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
+  <v-container>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-sheet class="pa-2 ma-2">
+          <v-breadcrumbs :items="breadcrumbs">
+            <template v-slot:prepend>
+              <v-icon size="small" icon="$vuetify"></v-icon>
+            </template>
+          </v-breadcrumbs>
+        </v-sheet>
+      </v-col>
+      <v-col cols="12">
+        <v-data-table
+          :headers="headers"
+          :items="desserts"
+          :search="search"
+          class="elevation-1"
+          item-value="id"
+          :loading="loading"
         >
-          <template v-slot:activator="{ props }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="props"
-            >
-              New Item
-            </v-btn>
+          <template v-slot:top>
+            <v-text-field
+              v-model="search"
+              label="Search"
+              class="pa-4"
+            ></v-text-field>
           </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              size="small"
+              class="me-2"
+              color="green-darken-2"
+              icon="mdi-file-document-edit-outline"
+              @click="pathologyInvoice(item)"
+            >
+
+            </v-icon>
+          </template>
+        </v-data-table>
+        <v-dialog v-model="deleteDialog" max-width="400">
           <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+            <v-card-title class="headline">
+              Delete Confirmation
             </v-card-title>
-
             <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
+              Are you sure you want to delete this item?
             </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" @click="deleteItem">Yes</v-btn>
+              <v-btn color="red" @click="deleteDialog = false">No</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="save"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        size="small"
-        class="me-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        size="small"
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
-    </template>
-  </v-data-table>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        title: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        key: 'name',
-      },
-      { title: 'Calories', key: 'calories' },
-      { title: 'Fat (g)', key: 'fat' },
-      { title: 'Carbs (g)', key: 'carbs' },
-      { title: 'Protein (g)', key: 'protein' },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-    defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-  }),
+<script setup>
+import {ref, computed, onMounted} from 'vue';
+import axiosInstance from "@/services/axiosService";
+import {useNotification} from "@/store/notification";
+import {useAuth} from "@/store/auth";
+// import {QuillEditor} from "@vueup/vue-quill";
 
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
+
+const search = ref('');
+const desserts = ref([]);
+const hospital_data = ref([]);
+const notify = useNotification();
+const userData = useAuth();
+const user_id = userData.user.data.id;
+const dialogEdit = ref(false);
+const deleteDialog = ref(false);
+const loading = ref(false);
+
+
+const breadcrumbs = computed(() => [
+  {
+    title: 'Home',
+    disabled: false,
+    href: '/',
   },
-
-  watch: {
-    dialog (val) {
-      val || this.close()
-    },
-    dialogDelete (val) {
-      val || this.closeDelete()
-    },
+  {
+    title: 'Doctors',
+    disabled: false,
+    href: '#',
   },
-
-  created () {
-    this.initialize()
+  {
+    title: 'Doctor List',
+    disabled: true,
+    href: 'doctor-list',
   },
+]);
+const headers = computed(() => [
+  {id: 'id', title: 'DID', align: 'start', key: 'doctor_id',},
+  {id: 'id', title: 'Name', align: 'end', key: 'doctor_name',},
+  {id: 'id', title: 'Doctor Fees', align: 'end', key: 'doctor_fees'},
+  {id: 'id', title: 'Doctor Phone', align: 'end', key: 'dr_phone'},
+  {id: 'id', title: 'Type', align: 'end', key: 'dr_type'},
+  {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
-  methods: {
-    initialize () {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
-      ]
-    },
+]);
 
-    editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
 
-    deleteItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
+onMounted(() => {
+  fetchDoctorData (); // Fetch data when the component is mounted
+});
 
-    deleteItemConfirm () {
-      this.desserts.splice(this.editedIndex, 1)
-      this.closeDelete()
-    },
+const fetchDoctorData = async () => {
+  try {
+    loading.value = true;
+    const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
+    console.log('API Response:', response.data);
+    desserts.value = response.data.doctor_data;
+    hospital_data.value = response.data.hospital_data;
+    loading.value = true;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    loading.value = false; // Set loading to false after the request is complete
+  }
+};
 
-    close () {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
 
-    closeDelete () {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
+const pathologyInvoice = (item) => {
+  console.log(item)
+};
 
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        this.desserts.push(this.editedItem)
-      }
-      this.close()
-    },
-  },
-}
+
+
+
+
 </script>
+
