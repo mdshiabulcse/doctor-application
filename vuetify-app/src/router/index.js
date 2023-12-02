@@ -5,7 +5,7 @@ import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
-import {DoctorList,UserInfo,PatientSourceInfo,TipTapEditor,PatientData} from "@/views/dashboard/Index";
+import {DoctorList,UserInfo,PatientSourceInfo,TipTapEditor,PatientData,PatientCreate} from "@/views/dashboard/Index";
 
 const routes = [
   {
@@ -36,6 +36,9 @@ const routes = [
       // -----------Patients  Info Start-----------
       {
         path: '/patient-info', name: 'patient.info', component: PatientData, meta:{title:"Patient Info", requiresAuth:true},
+      },
+      {
+        path: '/patient-create', name: 'patient.create', component: PatientCreate, meta:{title:"Patient Create", requiresAuth:true},
       },
       // -----------Patients  Info End-----------
     ],

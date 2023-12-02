@@ -355,7 +355,7 @@ const handleSubmit = async (event) => {
       }
     }
   } catch (error) {
-    notify.Error(error);
+    notify.Error(error.response.data.message);
   }
 };
 

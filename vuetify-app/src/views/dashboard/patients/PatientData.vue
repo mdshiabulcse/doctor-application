@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-row no-gutters>
-      <v-col cols="12">
-        <v-sheet class="pa-2 ma-2">
+      <v-col cols="8">
+        <v-sheet>
           <v-breadcrumbs :items="breadcrumbs">
             <template v-slot:prepend>
               <v-icon size="small" icon="$vuetify"></v-icon>
@@ -11,6 +11,17 @@
         </v-sheet>
       </v-col>
       <v-col cols="12">
+        <v-sheet class="d-flex align-end flex-column ">
+          <div class="ma-2 pa-2 mt-auto">
+            <v-btn
+              append-icon="mdi-plus"
+              color="primary"
+              @click="patientCreate()"
+            >
+              Create
+            </v-btn>
+          </div>
+        </v-sheet>
         <v-data-table
           :headers="headers"
           :items="desserts"
@@ -23,7 +34,7 @@
             <v-text-field
               v-model="search"
               label="Search"
-              class="pa-4"
+              class="pa-0"
             ></v-text-field>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -34,7 +45,6 @@
               icon="mdi-file-document-edit-outline"
               @click="pathologyInvoice(item)"
             >
-
             </v-icon>
           </template>
         </v-data-table>
@@ -63,7 +73,7 @@ import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
-// import {QuillEditor} from "@vueup/vue-quill";
+import { useRouter } from 'vue-router';
 
 
 const search = ref('');
@@ -75,6 +85,7 @@ const user_id = userData.user.data.id;
 const dialogEdit = ref(false);
 const deleteDialog = ref(false);
 const loading = ref(false);
+const router = useRouter();
 
 
 const breadcrumbs = computed(() => [
@@ -84,14 +95,9 @@ const breadcrumbs = computed(() => [
     href: '/',
   },
   {
-    title: 'Doctors',
+    title: 'Patients',
     disabled: false,
     href: '#',
-  },
-  {
-    title: 'Doctor List',
-    disabled: true,
-    href: 'doctor-list',
   },
 ]);
 const headers = computed(() => [
@@ -106,10 +112,10 @@ const headers = computed(() => [
 
 
 onMounted(() => {
-  fetchDoctorData (); // Fetch data when the component is mounted
+  fetchData(); // Fetch data when the component is mounted
 });
 
-const fetchDoctorData = async () => {
+const fetchData = async () => {
   try {
     loading.value = true;
     const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
@@ -128,9 +134,9 @@ const fetchDoctorData = async () => {
 const pathologyInvoice = (item) => {
   console.log(item)
 };
-
-
-
+const patientCreate = () => {
+  router.push({ path: '/patient-create' });
+};
 
 
 </script>
