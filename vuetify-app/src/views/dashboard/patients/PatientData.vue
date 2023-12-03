@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row no-gutters>
-      <v-col cols="8">
+      <v-col cols="12">
         <v-sheet>
           <v-breadcrumbs :items="breadcrumbs">
             <template v-slot:prepend>
