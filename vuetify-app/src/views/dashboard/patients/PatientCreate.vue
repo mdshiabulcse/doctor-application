@@ -36,23 +36,38 @@
           <v-text-field
             v-model="email.value.value"
             label="E-mail"
-          ></v-text-field>
-          <v-text-field
-            v-model="selectedDate"
-            label="Select Date"
-            prepend-icon="mdi-calendar"
-            readonly
-          ></v-text-field>
+          >
+          </v-text-field>
 
-          <v-date-picker v-model="selectedDate" ></v-date-picker>
+            <v-menu
+              v-model="closeDatePicker"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  type="date"
+                  :disabled="readonly"
+                  v-model="selectedDate"
+                  clearable
+
+                >
+                </v-text-field>
+              </template>
+              <v-date-picker v-model="selectedDate" ></v-date-picker>
+            </v-menu>
+
 
           <v-select
             v-model="select.value.value"
             :items="items"
             :error-messages="select.errorMessage.value"
             label="Reference"
-          ></v-select>
-
+          >
+          </v-select>
           <v-btn prepend-icon="mdi-check-circle"
                  class="me-4"
                  type="submit"
@@ -75,6 +90,9 @@
 <script setup>
 import {computed, ref} from 'vue'
 import {useField, useForm} from 'vee-validate'
+
+
+
 
 const breadcrumbs = computed(() => [
   {
@@ -132,18 +150,11 @@ const items = ref([
 
 const submit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2))
-})
-const selectedDate = ref(null);
+});
+const selectedDate = ref('');
 
-const openDatePicker = () => {
-  // Open the date picker when the text field is clicked
-  // You can customize the behavior based on your requirements
-  selectedDate.value = true;
-};
+console.log("date log",selectedDate)
 
-const closeDatePicker = () => {
-  // Close the date picker when a date is selected
-  // You can customize the behavior based on your requirements
-  selectedDate.value = false;
-};
+const closeDatePicker = ref(false)
+
 </script>
