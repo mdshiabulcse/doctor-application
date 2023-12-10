@@ -51,14 +51,31 @@
                 <v-text-field
                   type="date"
                   :disabled="readonly"
-                  v-model="selectedDate"
+                  v-model="selectedDate.value"
                   clearable
 
                 >
                 </v-text-field>
               </template>
-              <v-date-picker v-model="selectedDate" ></v-date-picker>
+              <v-date-picker v-model="selectedDate.value" ></v-date-picker>
             </v-menu>
+
+                <v-text-field
+                  type="date"
+                  :disabled="readonly"
+                  v-model="selectedDate"
+                  clearable
+
+                >
+                  <v-container>
+                    <v-row justify="space-around">
+                      <v-date-picker
+                        color="primary"
+                      ></v-date-picker>
+                    </v-row>
+                  </v-container>
+                </v-text-field>
+
 
 
           <v-select
@@ -90,6 +107,7 @@
 <script setup>
 import {computed, ref} from 'vue'
 import {useField, useForm} from 'vee-validate'
+
 
 
 

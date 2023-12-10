@@ -7,6 +7,7 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
+import DayJsAdapter from '@date-io/dayjs'
 
 // Composables
 import { createVuetify } from 'vuetify'
@@ -29,5 +30,8 @@ export default createVuetify({
   components: {
     VDataTableServer,
     VDataTable,
+  },
+  date: {
+    adapter: DayJsAdapter,
   },
 })
