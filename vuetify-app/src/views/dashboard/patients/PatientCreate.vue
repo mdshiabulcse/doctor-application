@@ -40,43 +40,28 @@
           </v-text-field>
 
             <v-menu
-              v-model="closeDatePicker"
-              :close-on-content-click="false"
-              :nudge-right="40"
               transition="scale-transition"
               offset-y
               min-width="auto"
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  type="date"
-                  :disabled="readonly"
-                  v-model="selectedDate.value"
-                  clearable
-
-                >
-                </v-text-field>
-              </template>
-              <v-date-picker v-model="selectedDate.value" ></v-date-picker>
-            </v-menu>
-
-                <v-text-field
-                  type="date"
                   :disabled="readonly"
                   v-model="selectedDate"
                   clearable
 
                 >
-                  <v-container>
-                    <v-row justify="space-around">
-                      <v-date-picker
-                        color="primary"
-                      ></v-date-picker>
-                    </v-row>
-                  </v-container>
                 </v-text-field>
+              </template>
 
-
+            </v-menu>
+          <v-container>
+            <v-row justify="space-around">
+              <v-date-picker
+                color="primary"
+              ></v-date-picker>
+            </v-row>
+          </v-container>
 
           <v-select
             v-model="select.value.value"
@@ -107,6 +92,9 @@
 <script setup>
 import {computed, ref} from 'vue'
 import {useField, useForm} from 'vee-validate'
+import {VDatePicker} from "vuetify/labs/VDatePicker";
+
+
 
 
 
