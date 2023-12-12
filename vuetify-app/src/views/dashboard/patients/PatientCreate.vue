@@ -18,86 +18,106 @@
           rel="noopener"
           color="warning"
         ></v-card>
-        <form @submit.prevent="submit">
-          <v-text-field
-            v-model="name.value.value"
-            :counter="10"
-            :error-messages="name.errorMessage.value"
-            label="Name"
-          ></v-text-field>
+        <v-card>
+          <v-card-text>
+            <form @submit.prevent="submit">
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="name.value.value"
+                    :counter="10"
+                    :error-messages="name.errorMessage.value"
+                    label="Name"
+                  ></v-text-field>
+                </v-col>
 
-          <v-text-field
-            v-model="phone.value.value"
-            :counter="7"
-            :error-messages="phone.errorMessage.value"
-            label="Phone Number"
-          ></v-text-field>
-
-          <v-text-field
-            v-model="email.value.value"
-            label="E-mail"
-          >
-          </v-text-field>
-
-            <v-menu
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  :disabled="readonly"
-                  v-model="selectedDate"
-                  clearable
-
-                >
-                </v-text-field>
-              </template>
-
-            </v-menu>
-          <v-container>
-            <v-row justify="space-around">
-              <v-date-picker
-                color="primary"
-              ></v-date-picker>
-            </v-row>
-          </v-container>
-
-          <v-select
-            v-model="select.value.value"
-            :items="items"
-            :error-messages="select.errorMessage.value"
-            label="Reference"
-          >
-          </v-select>
-          <v-btn prepend-icon="mdi-check-circle"
-                 class="me-4"
-                 type="submit"
-                 color="primary"
-          >
-            submit
-          </v-btn>
-
-          <v-btn prepend-icon="mdi-trash-can-outline" @click="handleReset">
-            clear
-          </v-btn>
-        </form>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="phone.value.value"
+                    :counter="7"
+                    :error-messages="phone.errorMessage.value"
+                    label="Phone Number"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="email.value.value"
+                    label="E-mail"
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col cols="12" sm="7">
+                  <v-text-field
+                    label="Date Of Birth"
+                    v-model="selectedDob"
+                    clearable
+                    type="date"
+                    :max="new Date().toISOString().substr(0, 10)"
+                    min="1930-01-01"
+                    @input="calculateAgeFromDate"
+                  >
+                  </v-text-field>
+                </v-col>
+                <span>Or</span>
+                <v-col cols="12" sm="4">
+                  <v-text-field
+                    label="Patient Age"
+                    v-model="selectedAge"
+                    clearable
+                    @input="calculateDateFromAge"
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-radio-group
+                    inline
+                  >
+                    <v-radio
+                      label="Male"
+                      value="Male"
+                    ></v-radio>
+                    <v-radio
+                      label="Female"
+                      value="Female"
+                    ></v-radio>
+                    <v-radio
+                      label="Others"
+                      value="Others"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    label="Source"
+                    placeholder="Select..."
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn prepend-icon="mdi-check-circle"
+                         class="me-4"
+                         type="submit"
+                         color="primary"
+                  >
+                    submit
+                  </v-btn>
+                  <v-btn prepend-icon="mdi-trash-can-outline" @click="handleReset">
+                    clear
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </form>
+          </v-card-text>
+        </v-card>
       </v-col>
-      <v-col cols="5">
 
-      </v-col>
     </v-row>
   </v-container>
 </template>
 <script setup>
 import {computed, ref} from 'vue'
 import {useField, useForm} from 'vee-validate'
-import {VDatePicker} from "vuetify/labs/VDatePicker";
-
-
-
-
-
+// import {VDatePicker} from "vuetify/labs/VDatePicker";
 
 
 const breadcrumbs = computed(() => [
@@ -107,7 +127,7 @@ const breadcrumbs = computed(() => [
     href: '/',
   },
   {
-    title: 'Patients',
+    title: 'Patients Create',
     disabled: false,
     href: '#',
   },
@@ -129,38 +149,53 @@ const {handleSubmit, handleReset} = useForm({
 
       return 'Must be a valid e-mail.'
     },
-    select(value) {
-      if (value) return true
-
-      return 'Select an item.'
-    },
-    checkbox(value) {
-      if (value === '1') return true
-
-      return 'Must be checked.'
-    },
   },
 })
 const name = useField('name')
 const phone = useField('phone')
 const email = useField('email')
-const select = useField('select')
 
-
-const items = ref([
-  'Item 1',
-  'Item 2',
-  'Item 3',
-  'Item 4',
-])
 
 const submit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2))
 });
-const selectedDate = ref('');
+const selectedDob = ref('');
+const selectedAge = ref('');
 
-console.log("date log",selectedDate)
+const calculateAgeFromDate = () => {
+  const birthDate = new Date(selectedDob.value);
+  if (isNaN(birthDate.getTime())) {
+    console.error('Invalid date entered for Date of Birth');
+    return;
+  }
 
-const closeDatePicker = ref(false)
+  if (birthDate > new Date()) {
+    console.error('Date of Birth cannot be in the future');
+    return;
+  }
+
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  selectedAge.value = age.toString();
+};
+
+const calculateDateFromAge = () => {
+  const enteredAge = parseInt(selectedAge.value);
+  if (isNaN(enteredAge) || enteredAge < 0) {
+    return;
+  }
+
+  const today = new Date();
+  const birthYear = today.getFullYear() - enteredAge;
+  const birthDate = new Date(birthYear, today.getMonth(), today.getDate());
+
+  if (birthDate > today) {
+    console.error('Date of Birth calculated from age cannot be in the future');
+    return;
+  }
+
+  selectedDob.value = birthDate.toISOString().substr(0, 10);
+};
+
 
 </script>
