@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('patient_father')->nullable();
             $table->string('patient_mother')->nullable();
             $table->string('hospital_name')->nullable();
+            $table->string('gender');
             $table->string('patient_dob')->nullable();
             $table->date('patient_age')->nullable();
             $table->integer('user_id');
