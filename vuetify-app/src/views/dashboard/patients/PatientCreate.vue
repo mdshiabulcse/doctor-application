@@ -27,8 +27,8 @@
                     v-model="submitForm.name"
                     required
                     minlength="2"
-                    :error-messages="validationErrors.name"
                     label="Name"
+                    :rules="nameRules"
                   ></v-text-field>
                 </v-col>
 
@@ -37,8 +37,8 @@
                     v-model="submitForm.phone"
                     required
                     pattern="\d{11,}"
-                    :error-messages="validationErrors.phone"
                     label="Phone Number"
+                    :rules="phoneRules"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -57,6 +57,8 @@
                     :max="new Date().toISOString().substr(0, 10)"
                     min="1920-01-01"
                     @input="calculateAgeFromDate"
+                    :rules="dobRules"
+                    required
                   >
                   </v-text-field>
                 </v-col>
@@ -67,13 +69,21 @@
                     v-model="submitForm.selectedAge"
                     clearable
                     @input="calculateDateFromAge"
+                    :rules="ageRules"
+                    required
                   >
                   </v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-radio-group
                     inline
+                    v-model="submitForm.gender"
+                    required
+                    :rules="genderRules"
                   >
+                    <template v-slot:label>
+                      <div>Select <strong>Gender</strong></div>
+                    </template>
                     <v-radio
                       label="Male"
                       value="Male"
@@ -83,8 +93,8 @@
                       value="Female"
                     ></v-radio>
                     <v-radio
-                      label="Others"
-                      value="Others"
+                      label="Other"
+                      value="Other"
                     ></v-radio>
                   </v-radio-group>
                 </v-col>
@@ -141,43 +151,77 @@ const submitForm=ref({
   email:'',
   selectedDob:'',
   selectedAge:'',
+  gender:'',
 });
 
 
-const validationErrors = ref({
-  name: '',
-  phone: '',
-  // Add other fields as needed
-});
+
+const nameRules = [
+  (v) => !!v || 'Name is required',
+  (v) => (v && v.length >= 2) || 'Name must be at least 2 characters',
+];
+
+const phoneRules = [
+  (v) => !!v || 'Phone Number is required',
+  (v) => (v && /^\d{11,}$/.test(v)) || 'Invalid Phone Number',
+];
+const dobRules = [
+  (v) => !!v || 'Date of Birth is required',
+];
+const ageRules = [
+  (v) => !!v || 'Age is required',
+  (v) => !isNaN(parseInt(v)) || 'Age must be a valid number',
+];
+const genderRules = [
+  (v) => !!v || 'Gender is required',
+];
+
+
+
+// Add rules for other form fields
 
 const submit = async () => {
-  // Reset previous validation errors
-  const form = document.forms[0];
 
-  // Use reportValidity to display validation messages
-  if (!form.reportValidity()) {
-    console.log('Form validation failed. Please check the fields.');
-    return;
+  // Validate form fields
+  const isFormValid = await validateForm();
+
+  if (isFormValid) {
+    // Proceed with API submission
+    try {
+      console.log('this data log',submitForm.value.gender)
+      const response = await fetch('your-api-endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitForm.value),
+      });
+
+      const data = await response.json();
+      console.log('API Response:', data);
+
+      // Optionally reset the form after successful submission
+      handleReset();
+    } catch (error) {
+      console.error('Error submitting data to API:', error);
+    }
+  } else {
+    console.error('Form validation failed. Please check the fields.');
   }
+};
 
-  // If validation passes, proceed with API submission
-  try {
-    const response = await fetch('your-api-endpoint', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(submitForm.value),
-    });
+const validateForm = async () => {
+  const results = await Promise.all([
+    ...nameRules.map((rule) => rule(submitForm.value.name)),
+    ...phoneRules.map((rule) => rule(submitForm.value.phone)),
+    ...dobRules.map((rule) => rule(submitForm.value.selectedDob)),
+    ...ageRules.map((rule) => rule(submitForm.value.selectedAge)),
+    ...genderRules.map((rule) => rule(submitForm.value.gender)),
 
-    const data = await response.json();
-    console.log('API Response:', data);
+  ]);
 
-    // Optionally reset the form after successful submission
-    handleReset();
-  } catch (error) {
-    console.error('Error submitting data to API:', error);
-  }
+  // Check if all validation results are truthy (indicating valid)
+  return results.every((result) => result === true);
 };
 const calculateAgeFromDate = () => {
   console.log("log date of birth",submitForm.value.selectedDob)
