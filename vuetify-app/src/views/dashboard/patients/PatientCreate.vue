@@ -24,24 +24,26 @@
               <v-row>
                 <v-col cols="12">
                   <v-text-field
-                    v-model="name.value.value"
-                    :counter="10"
-                    :error-messages="name.errorMessage.value"
+                    v-model="submitForm.name"
+                    required
+                    minlength="2"
+                    :error-messages="validationErrors.name"
                     label="Name"
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="phone.value.value"
-                    :counter="7"
-                    :error-messages="phone.errorMessage.value"
+                    v-model="submitForm.phone"
+                    required
+                    pattern="\d{11,}"
+                    :error-messages="validationErrors.phone"
                     label="Phone Number"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
-                    v-model="email.value.value"
+                    v-model="submitForm.email"
                     label="E-mail"
                   >
                   </v-text-field>
@@ -49,11 +51,11 @@
                 <v-col cols="12" sm="7">
                   <v-text-field
                     label="Date Of Birth"
-                    v-model="selectedDob"
+                    v-model="submitForm.selectedDob"
                     clearable
                     type="date"
                     :max="new Date().toISOString().substr(0, 10)"
-                    min="1930-01-01"
+                    min="1920-01-01"
                     @input="calculateAgeFromDate"
                   >
                   </v-text-field>
@@ -62,7 +64,7 @@
                 <v-col cols="12" sm="4">
                   <v-text-field
                     label="Patient Age"
-                    v-model="selectedAge"
+                    v-model="submitForm.selectedAge"
                     clearable
                     @input="calculateDateFromAge"
                   >
@@ -90,14 +92,14 @@
                   <v-autocomplete
                     label="Source"
                     placeholder="Select..."
-                    required
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
-                  <v-btn prepend-icon="mdi-check-circle"
-                         class="me-4"
-                         type="submit"
-                         color="primary"
+                  <v-btn
+                    prepend-icon="mdi-check-circle"
+                    class="me-4"
+                    type="submit"
+                    color="primary"
                   >
                     submit
                   </v-btn>
@@ -116,7 +118,7 @@
 </template>
 <script setup>
 import {computed, ref} from 'vue'
-import {useField, useForm} from 'vee-validate'
+// import {useField, useForm} from 'vee-validate'
 // import {VDatePicker} from "vuetify/labs/VDatePicker";
 
 
@@ -132,38 +134,54 @@ const breadcrumbs = computed(() => [
     href: '#',
   },
 ]);
-const {handleSubmit, handleReset} = useForm({
-  validationSchema: {
-    name(value) {
-      if (value?.length >= 2) return true
 
-      return 'Name needs to be at least 2 characters.'
-    },
-    phone(value) {
-      if (value?.length > 9 && /[0-9-]+/.test(value)) return true
-
-      return 'Phone number needs to be at least 9 digits.'
-    },
-    email(value) {
-      if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true
-
-      return 'Must be a valid e-mail.'
-    },
-  },
-})
-const name = useField('name')
-const phone = useField('phone')
-const email = useField('email')
-
-
-const submit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2))
+const submitForm=ref({
+  name:'',
+  phone:'',
+  email:'',
+  selectedDob:'',
+  selectedAge:'',
 });
-const selectedDob = ref('');
-const selectedAge = ref('');
 
+
+const validationErrors = ref({
+  name: '',
+  phone: '',
+  // Add other fields as needed
+});
+
+const submit = async () => {
+  // Reset previous validation errors
+  const form = document.forms[0];
+
+  // Use reportValidity to display validation messages
+  if (!form.reportValidity()) {
+    console.log('Form validation failed. Please check the fields.');
+    return;
+  }
+
+  // If validation passes, proceed with API submission
+  try {
+    const response = await fetch('your-api-endpoint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submitForm.value),
+    });
+
+    const data = await response.json();
+    console.log('API Response:', data);
+
+    // Optionally reset the form after successful submission
+    handleReset();
+  } catch (error) {
+    console.error('Error submitting data to API:', error);
+  }
+};
 const calculateAgeFromDate = () => {
-  const birthDate = new Date(selectedDob.value);
+  console.log("log date of birth",submitForm.value.selectedDob)
+  const birthDate = new Date(submitForm.value.selectedDob);
   if (isNaN(birthDate.getTime())) {
     console.error('Invalid date entered for Date of Birth');
     return;
@@ -176,11 +194,12 @@ const calculateAgeFromDate = () => {
 
   const today = new Date();
   const age = today.getFullYear() - birthDate.getFullYear();
-  selectedAge.value = age.toString();
+  submitForm.value.selectedAge = age.toString();
 };
 
 const calculateDateFromAge = () => {
-  const enteredAge = parseInt(selectedAge.value);
+  console.log("log date of age",submitForm.value.selectedAge)
+  const enteredAge = parseInt(submitForm.value.selectedAge);
   if (isNaN(enteredAge) || enteredAge < 0) {
     return;
   }
@@ -194,8 +213,21 @@ const calculateDateFromAge = () => {
     return;
   }
 
-  selectedDob.value = birthDate.toISOString().substr(0, 10);
+  submitForm.value.selectedDob = birthDate.toISOString().substr(0, 10);
 };
 
+
+
+
+const handleReset = () => {
+  // Reset the form fields
+  submitForm.value = {
+    name: '',
+    phone: '',
+    email: '',
+    selectedDob: '',
+    selectedAge: '',
+  };
+};
 
 </script>
