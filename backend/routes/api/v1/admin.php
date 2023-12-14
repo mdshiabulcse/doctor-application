@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\dashboard\DoctorsController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\administrative\AdministrativeController;
+use App\Http\Controllers\Api\patients\PatientsController;
 
 
 
@@ -31,5 +32,10 @@ Route::group(['prefix' => 'administrative'], function (){
     Route::get('change-status/{id}',[AdministrativeController::class,'statusChange']);
     Route::get('doctor-data',[AdministrativeController::class,'doctorData']);
     Route::post('save-doctor',[AdministrativeController::class,'saveDoctorData']);
+});
+
+Route::group(['prefix' => 'patients'], function (){
+    Route::resource('patients',PatientsController::class);
+    Route::get('patient-sources',[PatientsController::class,'patientSources']);
 });
 
