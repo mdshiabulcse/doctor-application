@@ -341,7 +341,6 @@ const handleSubmit = async (event) => {
       }
     } else {
 
-      console.log('API submit:', formData.value)
       const response = await axiosInstance.post('/admin/administrative/save-doctor?user_id=' + user_id, formData.value);
       if (response.data.message) {
         notify.Success(response.data.message);

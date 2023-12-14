@@ -100,9 +100,14 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    label="Source"
-                    placeholder="Select..."
-                  ></v-autocomplete>
+                    label="Patient Source"
+                    v-model="submitForm.source_name"
+                    :items="patient_sources"
+                    color="blue-grey-lighten-2"
+                    item-value="id"
+                    item-title="source_name"
+                  >
+                  </v-autocomplete>
                 </v-col>
                 <v-col cols="12">
                   <v-btn
@@ -127,10 +132,15 @@
   </v-container>
 </template>
 <script setup>
-import {computed, ref} from 'vue'
-// import {useField, useForm} from 'vee-validate'
-// import {VDatePicker} from "vuetify/labs/VDatePicker";
+import {computed, onMounted, ref} from 'vue'
+import axiosInstance from "@/services/axiosService";
+import {useNotification} from "@/store/notification";
+import {useAuth} from "@/store/auth";
 
+const notify = useNotification();
+const userData = useAuth();
+const user_id = userData.user.data.id;
+const patient_sources=ref([]);
 
 const breadcrumbs = computed(() => [
   {
@@ -152,8 +162,22 @@ const submitForm=ref({
   selectedDob:'',
   selectedAge:'',
   gender:'',
+  source_name:'',
 });
 
+
+onMounted(() => {
+  fetchPatientSources (); // Fetch data when the component is mounted
+});
+
+const fetchPatientSources = async () => {
+  try {
+    const response = await axiosInstance('/admin/patients/patient-sources'); // Replace with your API endpointa
+    patient_sources.value = response.data.patient_sources;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
 
 const nameRules = [
@@ -188,20 +212,13 @@ const submit = async () => {
   if (isFormValid) {
     // Proceed with API submission
     try {
-      console.log('this data log',submitForm.value.gender)
-      const response = await fetch('your-api-endpoint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitForm.value),
-      });
-
-      const data = await response.json();
-      console.log('API Response:', data);
-
-      // Optionally reset the form after successful submission
-      handleReset();
+      const response = await axiosInstance.post('/admin/patients/patients?user_id=' + user_id, submitForm.value);
+      if (response.data.message) {
+        notify.Success(response.data.message);
+      } else {
+        notify.Error(response.data.message);
+        console.log('data inn',response.data.message);
+      }
     } catch (error) {
       console.error('Error submitting data to API:', error);
     }
