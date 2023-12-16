@@ -78,11 +78,10 @@ import { useRouter } from 'vue-router';
 
 const search = ref('');
 const desserts = ref([]);
-const hospital_data = ref([]);
-const notify = useNotification();
-const userData = useAuth();
-const user_id = userData.user.data.id;
-const dialogEdit = ref(false);
+// const notify = useNotification();
+// const userData = useAuth();
+// const user_id = userData.user.data.id;
+// const dialogEdit = ref(false);
 const deleteDialog = ref(false);
 const loading = ref(false);
 const router = useRouter();
@@ -101,11 +100,10 @@ const breadcrumbs = computed(() => [
   },
 ]);
 const headers = computed(() => [
-  {id: 'id', title: 'DID', align: 'start', key: 'doctor_id',},
-  {id: 'id', title: 'Name', align: 'end', key: 'doctor_name',},
-  {id: 'id', title: 'Doctor Fees', align: 'end', key: 'doctor_fees'},
-  {id: 'id', title: 'Doctor Phone', align: 'end', key: 'dr_phone'},
-  {id: 'id', title: 'Type', align: 'end', key: 'dr_type'},
+  {id: 'id', title: 'PID', align: 'start', key: 'patient_id',},
+  {id: 'id', title: 'Name', align: 'end', key: 'patient_name',},
+  {id: 'id', title: 'Phone', align: 'end', key: 'patient_phone'},
+  {id: 'id', title: 'DOB', align: 'end', key: 'patient_dob'},
   {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 
 ]);
@@ -118,10 +116,8 @@ onMounted(() => {
 const fetchData = async () => {
   try {
     loading.value = true;
-    const response = await axiosInstance('/admin/administrative/doctor-data'); // Replace with your API endpointa
-    console.log('API Response:', response.data);
-    desserts.value = response.data.doctor_data;
-    hospital_data.value = response.data.hospital_data;
+    const response = await axiosInstance('/admin/patients/patients'); // Replace with your API endpointa
+    desserts.value = response.data.patient_info;
     loading.value = true;
   } catch (error) {
     console.error('Error fetching data:', error);
