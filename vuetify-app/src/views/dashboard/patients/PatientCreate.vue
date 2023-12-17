@@ -106,7 +106,6 @@
                     color="blue-grey-lighten-2"
                     item-value="id"
                     item-title="source_name"
-                    @change="handleSourceChange"
                   >
                   </v-autocomplete>
                 </v-col>
@@ -164,7 +163,6 @@ const submitForm=ref({
   selectedAge:'',
   gender:'',
   source_name:'',
-  source_id: '1'
 
 });
 
@@ -182,13 +180,6 @@ const fetchPatientSources = async () => {
   }
 };
 
-const handleSourceChange = (value) => {
-  // Assuming that the item-value is 'id' in the autocomplete
-  const selectedSource = patient_sources.find(source => source.id === value);
-  if (selectedSource) {
-    submitForm.source_name = selectedSource.source_name;
-  }
-};
 
 const nameRules = [
   (v) => !!v || 'Name is required',
@@ -226,11 +217,10 @@ const submit = async () => {
       if (response.data.message) {
         notify.Success(response.data.message);
       } else {
-        notify.Error(response.data.message);
-        console.log('data inn',response.data.message);
+        notify.Error(response.data.errors);
       }
     } catch (error) {
-      console.error('Error submitting data to API:', error);
+      notify.Error(error.response.data.errors);
     }
   } else {
     console.error('Form validation failed. Please check the fields.');

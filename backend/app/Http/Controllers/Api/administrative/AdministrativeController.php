@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Api\administrative;
 use App\Http\Controllers\Controller;
 use App\Models\administrative\PatientSourceinfo;
 use App\Models\dashboard\DoctorInfo;
-use App\Models\dashboard\PatientInfo;
-use App\Models\dashboard\UserGroup;
-use App\Models\User;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AdministrativeController extends Controller

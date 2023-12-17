@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api\patients;
 
 use App\Http\Controllers\Controller;
 use App\Models\administrative\PatientSourceinfo;
+use App\Models\dashboard\patient\PatientInfo;
 use App\Models\dashboard\patient\PatientLog;
-use App\Models\dashboard\PatientInfo;
 use App\Traits\ApiStatusTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Jenssegers\Agent\Facades\Agent;
 
 class PatientsController extends Controller
@@ -45,11 +47,49 @@ class PatientsController extends Controller
      */
     public function store(Request $request)
     {
+//        return $this->successApiResponse($request->all());
 
-        return $this->successApiResponse($request->all());
+
 
         DB::beginTransaction();
         try {
+            // Check if the combination of name and phone already exists
+            $existingPatient = PatientInfo::where('patient_name', $request->name)
+                ->where('patient_phone', $request->phone)
+                ->exists();
+
+            if ($existingPatient) {
+                // Combination of name and phone already exists
+                $response['errors'] = 'A patient with the provided name and phone number already exists.';
+                return $this->failureApiResponse($response);
+            }
+
+            // Validation: Check if the name and phone fields are filled
+            $validationRules = [
+                'name' => 'required',
+                'phone' => 'required',
+                'gender' => 'required',
+                'selectedDob' => 'required',
+                'selectedAge' => 'required',
+            ];
+
+            $validationMessages = [
+                'name.required' => 'The patient name is required.',
+                'phone.required' => 'The phone number is required.',
+                'gender.required' => 'The Gender is required.',
+                'selectedDob.required' => 'The Date of Birth is required.',
+                'selectedAge.required' => 'The Age is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $validationRules,$validationMessages);
+
+            if ($validator->fails()) {
+                $response['errors'] = $validator->errors()->all();
+                return $this->failureApiResponse($response);
+            }
+
+            // Continue with the rest of your code to save the data
+
             //user browser history check here
             $browserName = Agent::browser();
             $browserVersion = Agent::version($browserName);
