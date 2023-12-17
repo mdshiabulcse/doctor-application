@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\AuthController;
-
+use Illuminate\Support\Facades\Artisan;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +15,13 @@ use App\Http\Controllers\Api\User\AuthController;
 */
 
 
+
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+
+    return "Cache cleared successfully";
+});
 
 Route::get('/', function () {
     return view('welcome');
