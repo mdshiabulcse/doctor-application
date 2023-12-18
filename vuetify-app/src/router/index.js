@@ -1,11 +1,11 @@
 // Composables
 import {createRouter, createWebHistory} from 'vue-router'
 import DashboardHome from "@/views/dashboard/DashboardHome.vue";
-import UserProfile from "@/views/dashboard/UserProfile.vue";
+// import UserProfile from "@/views/dashboard/UserProfile.vue";
 import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
-import {DoctorList,UserInfo,PatientSourceInfo,PatientData,PatientCreate} from "@/views/dashboard/Index";
+import {DoctorList,UserInfo,PatientSourceInfo,PatientData,PatientCreate,PatientDetails} from "@/views/dashboard/Index";
 
 const routes = [
   {
@@ -36,6 +36,9 @@ const routes = [
       },
       {
         path: '/patient-create', name: 'patient.create', component: PatientCreate, meta:{title:"Patient Create", requiresAuth:true},
+      },
+      {
+        path: '/patient-details/:patientId', name: 'patient.details', component: PatientDetails, meta:{title:"Patient Details", requiresAuth:true},
       },
       // -----------Patients  Info End-----------
     ],

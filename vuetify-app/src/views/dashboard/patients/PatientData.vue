@@ -46,6 +46,14 @@
               @click="pathologyInvoice(item)"
             >
             </v-icon>
+            <v-icon
+              size="small"
+              class="me-2"
+              color="blue-darken-2"
+              icon="mdi-eye-outline"
+              @click="patientDetails(item)"
+            >
+            </v-icon>
           </template>
         </v-data-table>
         <v-dialog v-model="deleteDialog" max-width="400">
@@ -71,8 +79,8 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
-import {useNotification} from "@/store/notification";
-import {useAuth} from "@/store/auth";
+// import {useNotification} from "@/store/notification";
+// import {useAuth} from "@/store/auth";
 import { useRouter } from 'vue-router';
 
 
@@ -133,6 +141,10 @@ const pathologyInvoice = (item) => {
 const patientCreate = () => {
   router.push({ path: '/patient-create' });
 };
+const patientDetails = (item) => {
+  router.push({ path: `/patient-details/${item.selectable.patient_id}` });
+};
+
 
 
 </script>

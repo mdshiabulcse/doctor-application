@@ -3,3 +3,4 @@ export {default as UserInfo} from './user/UserInfo.vue';
 export {default as PatientSourceInfo} from './administrative/PatientSourceInfo.vue';
 export {default as PatientData} from './patients/PatientData.vue';
 export {default as PatientCreate} from './patients/PatientCreate.vue';
+export {default as PatientDetails} from './patients/PatientDetails.vue';
