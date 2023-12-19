@@ -149,7 +149,8 @@ class PatientsController extends Controller
      */
     public function show($id)
     {
-        //
+        $data['patient_details']=PatientInfo::where('patient_id', $id)->first();
+        return $this->successApiResponse($data);
     }
 
     /**
