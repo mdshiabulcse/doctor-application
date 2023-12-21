@@ -33,40 +33,70 @@
               </v-container>
             </v-card>
           </v-col>
-          <v-card>
-            <v-card-text class="">
-              <v-row >
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient ID:</span>
-                  <span class="ma-2 pa-2 mb-1"> {{ patient_details.patient_id }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient Name:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2 mb-1 ">Patient Phone:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient E-mail:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_email }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient DOB:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_dob }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient Gender:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.gender }}</span>
-                </div>
-                <div class="flex-1-1-100">
-                  <span class="ma-2 pa-2  mb-1 ">Patient Registration:</span>
-                  <span class="ma-2 pa-2  mb-1"> {{ patient_details.created_at }}</span>
-                </div>
-              </v-row>
-            </v-card-text>
-          </v-card>
+         <v-col cols="12">
+               <v-row>
+                 <v-col cols="8">
+                   <v-card class="mx-auto">
+                     <v-container>
+                       <form @submit.prevent="submit">
+                         <v-row>
+                           <v-col cols="6">
+                             <v-autocomplete
+                               v-model="name.value.value"
+                               :counter="10"
+                               :error-messages="name.errorMessage.value"
+                               label="Examination Doctor"
+                             ></v-autocomplete>
+                           </v-col>
+                           <v-col cols="6">
+                             <v-autocomplete
+                               v-model="phone.value.value"
+                               :counter="7"
+                               :error-messages="phone.errorMessage.value"
+                               label="Refer Doctor"
+                             ></v-autocomplete>
+                           </v-col>
+
+                           <v-text-field
+                             v-model="email.value.value"
+                             :error-messages="email.errorMessage.value"
+                             label="E-mail"
+                           ></v-text-field>
+
+                           <v-select
+                             v-model="select.value.value"
+                             :items="items"
+                             :error-messages="select.errorMessage.value"
+                             label="Select"
+                           ></v-select>
+
+                           <v-checkbox
+                             v-model="checkbox.value.value"
+                             :error-messages="checkbox.errorMessage.value"
+                             value="1"
+                             label="Option"
+                             type="checkbox"
+                           ></v-checkbox>
+
+                           <v-col cols="12">
+                             <v-btn
+                               class="me-4"
+                               type="submit"
+                             >
+                               submit
+                             </v-btn>
+
+                             <v-btn @click="handleReset">
+                               clear
+                             </v-btn>
+                           </v-col>
+                         </v-row>
+                       </form>
+                     </v-container>
+                   </v-card>
+                 </v-col>
+               </v-row>
+         </v-col>
         </v-col>
 
       </v-row>
@@ -78,6 +108,7 @@ import {computed, onMounted, ref} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
+import { useField, useForm } from 'vee-validate'
 
 const notify = useNotification();
 const patient_details = ref([]);
@@ -116,4 +147,49 @@ const patientExamination = () => {
   router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
 };
 
+const { handleSubmit, handleReset } = useForm({
+  validationSchema: {
+    name (value) {
+      if (value?.length >= 2) return true
+
+      return 'Name needs to be at least 2 characters.'
+    },
+    phone (value) {
+      if (value?.length > 9 && /[0-9-]+/.test(value)) return true
+
+      return 'Phone number needs to be at least 9 digits.'
+    },
+    email (value) {
+      if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true
+
+      return 'Must be a valid e-mail.'
+    },
+    select (value) {
+      if (value) return true
+
+      return 'Select an item.'
+    },
+    checkbox (value) {
+      if (value === '1') return true
+
+      return 'Must be checked.'
+    },
+  },
+})
+const name = useField('name')
+const phone = useField('phone')
+const email = useField('email')
+const select = useField('select')
+const checkbox = useField('checkbox')
+
+const items = ref([
+  'Item 1',
+  'Item 2',
+  'Item 3',
+  'Item 4',
+])
+
+const submit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2))
+})
 </script>

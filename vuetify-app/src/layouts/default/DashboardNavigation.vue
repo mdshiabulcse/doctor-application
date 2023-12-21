@@ -1,7 +1,7 @@
 <template>
   <v-layout class="rounded rounded-md">
     <v-navigation-drawer
-      color="#E0F2F1"
+      color="#EEEEEE"
       v-model="drawer"
       :rail="rail"
       permanent
@@ -27,7 +27,7 @@
 
     <v-app-bar
       :order="order"
-      color="#4DB6AC"
+      color="#66BB6A"
       flat
       title="DOCTUCH"
     >
