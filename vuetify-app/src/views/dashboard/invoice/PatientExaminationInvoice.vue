@@ -44,7 +44,10 @@
                              <v-autocomplete
                                v-model="name.value.value"
                                :counter="10"
-                               :error-messages="name.errorMessage.value"
+                               :items="special_doctor"
+                               color="blue-grey-lighten-2"
+                               item-value="id"
+                               item-title="doctor_name"
                                label="Examination Doctor"
                              ></v-autocomplete>
                            </v-col>
@@ -52,31 +55,54 @@
                              <v-autocomplete
                                v-model="phone.value.value"
                                :counter="7"
-                               :error-messages="phone.errorMessage.value"
+                               :items="referral_doctor"
+                               color="blue-grey-lighten-2"
+                               item-value="id"
+                               item-title="doctor_name"
                                label="Refer Doctor"
                              ></v-autocomplete>
                            </v-col>
 
-                           <v-text-field
-                             v-model="email.value.value"
-                             :error-messages="email.errorMessage.value"
-                             label="E-mail"
-                           ></v-text-field>
-
-                           <v-select
-                             v-model="select.value.value"
-                             :items="items"
-                             :error-messages="select.errorMessage.value"
-                             label="Select"
-                           ></v-select>
-
-                           <v-checkbox
-                             v-model="checkbox.value.value"
-                             :error-messages="checkbox.errorMessage.value"
-                             value="1"
-                             label="Option"
-                             type="checkbox"
-                           ></v-checkbox>
+                          <v-col cols="7">
+                            <v-autocomplete
+                              v-model="email.value.value"
+                              :items="examination_list"
+                              color="blue-grey-lighten-2"
+                              item-value="id"
+                              item-title="ex_name"
+                              label="Examination"
+                            ></v-autocomplete>
+                          </v-col>
+                           <v-col cols="4">
+                             <v-text-field
+                               v-model="select.value.value"
+                               label="Unit Price"
+                             ></v-text-field>
+                           </v-col>
+                           <v-col cols="1">
+                             <v-btn icon="mdi-plus" size="small" color="primary"></v-btn>
+                           </v-col>
+                           <v-col cols="4">
+                             <v-text-field
+                               color="blue-grey-lighten-2"
+                               label="Subtotal"
+                             ></v-text-field>
+                           </v-col>
+                           <v-col cols="3">
+                             <v-text-field
+                               color="blue-grey-lighten-2"
+                               label="Discount"
+                             ></v-text-field>
+                           </v-col>
+                           <v-col cols="1">
+                             <v-btn icon="mdi-plus" size="small" color="primary"></v-btn>
+                           </v-col>
+                           <v-col cols="4">
+                             <v-text-field
+                               color="blue-grey-lighten-2"
+                               label="Total Price"
+                             ></v-text-field>
+                           </v-col>
 
                            <v-col cols="12">
                              <v-btn
@@ -85,7 +111,6 @@
                              >
                                submit
                              </v-btn>
-
                              <v-btn @click="handleReset">
                                clear
                              </v-btn>
@@ -94,6 +119,28 @@
                        </form>
                      </v-container>
                    </v-card>
+                 </v-col>
+                 <v-col cols="4">
+                   <v-card
+                     class="mx-auto"
+                     :title="patient_details.patient_id "
+                     prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
+                     rel="noopener"
+                     color="info"
+                   >
+                       <v-card-text class="">
+                         <v-row >
+                           <div class="flex-1-1-100">
+                             <span class="ma-2 pa-2  mb-1 ">Patient Name:</span>
+                             <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
+                           </div>
+                           <div class="flex-1-1-100">
+                             <span class="ma-2 pa-2 mb-1 ">Patient Phone:</span>
+                             <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
+                           </div>
+                         </v-row>
+                       </v-card-text>
+                     </v-card>
                  </v-col>
                </v-row>
          </v-col>
@@ -114,6 +161,9 @@ const notify = useNotification();
 const patient_details = ref([]);
 const patientId = ref('');
 const router = useRouter();
+const special_doctor = ref([]);
+const referral_doctor = ref([]);
+const examination_list = ref([]);
 
 
 const breadcrumbs = computed(() => [
@@ -133,6 +183,8 @@ const breadcrumbs = computed(() => [
 onMounted(() => {
   patientId.value = useRoute().params.patientId;
   fetchPatientDetails();
+  fetchDoctorData();
+  fetchExaminationListData();
 });
 
 const fetchPatientDetails = async () => {
@@ -143,6 +195,25 @@ const fetchPatientDetails = async () => {
     console.error('Error fetching data:', error);
   }
 };
+
+const fetchDoctorData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/invoice/doctor-data`); // get doctor details
+    special_doctor.value = response.data.special_doctor;
+    referral_doctor.value = response.data.referral_doctor;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const fetchExaminationListData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/invoice/examination-list`); // get doctor details
+    examination_list.value = response.data.examination_list;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
 const patientExamination = () => {
   router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
 };
