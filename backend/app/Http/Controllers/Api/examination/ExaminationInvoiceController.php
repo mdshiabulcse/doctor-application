@@ -99,8 +99,8 @@ class ExaminationInvoiceController extends Controller
 
     public function examinationList()
     {
-
         $data['examination_list']=ExaminationList::whereStatus(1)->get();
         return $this->successApiResponse($data);
     }
+
 }

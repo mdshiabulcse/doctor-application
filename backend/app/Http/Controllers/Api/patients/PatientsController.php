@@ -47,9 +47,6 @@ class PatientsController extends Controller
      */
     public function store(Request $request)
     {
-//        return $this->successApiResponse($request->all());
-
-
 
         DB::beginTransaction();
         try {

@@ -95,7 +95,7 @@
                              ></v-text-field>
                            </v-col>
                            <v-col cols="1">
-                             <v-btn icon="mdi-plus" size="small" color="primary"></v-btn>
+                             <v-btn  @click="dialog = true" icon="mdi-plus" size="small" color="primary"></v-btn>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
@@ -145,7 +145,38 @@
                </v-row>
          </v-col>
         </v-col>
+        <div>
+          <v-row
+            justify="center"
+          >
+            <v-dialog
+              v-model="dialog"
+              width="200"
 
+            >
+              <v-card>
+                <v-card-title>
+                  Discount %
+                </v-card-title>
+                <v-card-text>
+                  <v-select>
+
+                  </v-select>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    color="primary"
+                    variant="text"
+                    @click="dialog = false"
+                  >
+                    Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+          </v-row>
+        </div>
       </v-row>
     </v-row>
   </v-container>
@@ -164,7 +195,7 @@ const router = useRouter();
 const special_doctor = ref([]);
 const referral_doctor = ref([]);
 const examination_list = ref([]);
-
+const dialog=ref(false);
 
 const breadcrumbs = computed(() => [
   {
