@@ -38,11 +38,11 @@
                  <v-col cols="8">
                    <v-card class="mx-auto">
                      <v-container>
-                       <form @submit.prevent="submit">
+                       <form >
                          <v-row>
                            <v-col cols="6">
                              <v-autocomplete
-                               v-model="name.value.value"
+                               v-model="handleSubmit.doctor_id"
                                :counter="10"
                                :items="special_doctor"
                                color="blue-grey-lighten-2"
@@ -53,7 +53,7 @@
                            </v-col>
                            <v-col cols="6">
                              <v-autocomplete
-                               v-model="phone.value.value"
+                               v-model="handleSubmit.ref_doctor_id"
                                :counter="7"
                                :items="referral_doctor"
                                color="blue-grey-lighten-2"
@@ -65,7 +65,7 @@
 
                           <v-col cols="7">
                             <v-autocomplete
-                              v-model="email.value.value"
+                              v-model="handleSubmit.examination_id"
                               :items="examination_list"
                               color="blue-grey-lighten-2"
                               item-value="id"
@@ -75,32 +75,53 @@
                           </v-col>
                            <v-col cols="4">
                              <v-text-field
-                               v-model="select.value.value"
+                               v-model="handleSubmit.ex_unit_price"
                                label="Unit Price"
                              ></v-text-field>
                            </v-col>
                            <v-col cols="1">
-                             <v-btn icon="mdi-plus" size="small" color="primary"></v-btn>
+                             <v-btn @click="addExamination" icon="mdi-plus" size="small" color="primary"></v-btn>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
+                               v-model="handleSubmit.subtotal"
                                color="blue-grey-lighten-2"
                                label="Subtotal"
                              ></v-text-field>
                            </v-col>
                            <v-col cols="3">
                              <v-text-field
+                               v-model="handleSubmit.total_discount"
                                color="blue-grey-lighten-2"
                                label="Discount"
                              ></v-text-field>
                            </v-col>
                            <v-col cols="1">
-                             <v-btn  @click="dialog = true" icon="mdi-plus" size="small" color="primary"></v-btn>
+
+                             <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{handleSubmit.discount}}</v-btn>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
+                               v-model="handleSubmit.total_paid_amount"
                                color="blue-grey-lighten-2"
-                               label="Total Price"
+                               label="Total Paid"
+                             ></v-text-field>
+                           </v-col>
+                           <v-col cols="4">
+                           </v-col>
+                           <v-col cols="4">
+                             <v-text-field
+                               v-model="handleSubmit.due_amount"
+                               color="blue-grey-lighten-2"
+                               label="Due Amount"
+                             ></v-text-field>
+                           </v-col>
+                           <v-col cols="4">
+                             <v-text-field
+                               type="number"
+                               v-model="handleSubmit.received_amount"
+                               color="blue-grey-lighten-2"
+                               label="Total Received"
                              ></v-text-field>
                            </v-col>
 
@@ -110,9 +131,6 @@
                                type="submit"
                              >
                                submit
-                             </v-btn>
-                             <v-btn @click="handleReset">
-                               clear
                              </v-btn>
                            </v-col>
                          </v-row>
@@ -159,7 +177,11 @@
                   Discount %
                 </v-card-title>
                 <v-card-text>
-                  <v-select>
+                  <v-select
+                    v-model="handleSubmit.discount"
+                  :items="discount_list"
+                  item-title="discount"
+                  >
 
                   </v-select>
                 </v-card-text>
@@ -195,7 +217,20 @@ const router = useRouter();
 const special_doctor = ref([]);
 const referral_doctor = ref([]);
 const examination_list = ref([]);
+const discount_list = ref([]);
 const dialog=ref(false);
+const handleSubmit=ref({
+  doctor_id:'',
+  ref_doctor_id:'',
+  examination_id:'',
+  ex_unit_price:'',
+  subtotal:'',
+  total_discount:'',
+  discount:'',
+  total_paid_amount:'',
+  received_amount:'',
+  due_amount:'',
+  });
 
 const breadcrumbs = computed(() => [
   {
@@ -216,6 +251,7 @@ onMounted(() => {
   fetchPatientDetails();
   fetchDoctorData();
   fetchExaminationListData();
+  fetchDiscountListData();
 });
 
 const fetchPatientDetails = async () => {
@@ -236,10 +272,18 @@ const fetchDoctorData = async () => {
     console.error('Error fetching data:', error);
   }
 };
-const fetchExaminationListData = async () => {
+const fetchExaminationListData = async () => { //examination data list
   try {
     const response = await axiosInstance.get(`/admin/invoice/examination-list`); // get doctor details
     examination_list.value = response.data.examination_list;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const fetchDiscountListData = async () => { //discount list
+  try {
+    const response = await axiosInstance.get(`/admin/invoice/discount-list`); // get doctor details
+    discount_list.value = response.data.discount_list;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -248,50 +292,8 @@ const fetchExaminationListData = async () => {
 const patientExamination = () => {
   router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
 };
+const addExamination = () => {
 
-const { handleSubmit, handleReset } = useForm({
-  validationSchema: {
-    name (value) {
-      if (value?.length >= 2) return true
+};
 
-      return 'Name needs to be at least 2 characters.'
-    },
-    phone (value) {
-      if (value?.length > 9 && /[0-9-]+/.test(value)) return true
-
-      return 'Phone number needs to be at least 9 digits.'
-    },
-    email (value) {
-      if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true
-
-      return 'Must be a valid e-mail.'
-    },
-    select (value) {
-      if (value) return true
-
-      return 'Select an item.'
-    },
-    checkbox (value) {
-      if (value === '1') return true
-
-      return 'Must be checked.'
-    },
-  },
-})
-const name = useField('name')
-const phone = useField('phone')
-const email = useField('email')
-const select = useField('select')
-const checkbox = useField('checkbox')
-
-const items = ref([
-  'Item 1',
-  'Item 2',
-  'Item 3',
-  'Item 4',
-])
-
-const submit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2))
-})
 </script>
