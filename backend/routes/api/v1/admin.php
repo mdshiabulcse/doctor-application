@@ -43,6 +43,7 @@ Route::group(['prefix' => 'invoice'], function (){
     Route::resource('examination-invoice',ExaminationInvoiceController::class);
     Route::get('doctor-data',[ExaminationInvoiceController::class,'doctorData']);
     Route::get('examination-list',[ExaminationInvoiceController::class,'examinationList']);
+    Route::get('discount-list',[ExaminationInvoiceController::class,'discountList']);
 });
 
 

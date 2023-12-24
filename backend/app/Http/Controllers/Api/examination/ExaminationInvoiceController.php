@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\examination;
 
 use App\Http\Controllers\Controller;
+use App\Models\administrative\DiscountList;
 use App\Models\dashboard\DoctorInfo;
 use App\Models\dashboard\examination\ExaminationList;
 use App\Traits\ApiStatusTrait;
@@ -100,6 +101,11 @@ class ExaminationInvoiceController extends Controller
     public function examinationList()
     {
         $data['examination_list']=ExaminationList::whereStatus(1)->get();
+        return $this->successApiResponse($data);
+    }
+    public function discountList()
+    {
+        $data['discount_list']=DiscountList::whereStatus(1)->get();
         return $this->successApiResponse($data);
     }
 
