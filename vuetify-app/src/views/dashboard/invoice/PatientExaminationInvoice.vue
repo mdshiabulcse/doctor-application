@@ -63,22 +63,33 @@
                              ></v-autocomplete>
                            </v-col>
 
-                          <v-col cols="7">
-                            <v-autocomplete
-                              v-model="handleSubmit.examination_id"
-                              :items="examination_list"
-                              color="blue-grey-lighten-2"
-                              item-value="id"
-                              item-title="ex_name"
-                              label="Examination"
-                            ></v-autocomplete>
+                          <v-col cols="11">
+                            <v-row v-for="(examination, index) in examinations" :key="index">
+                              <v-col cols="7">
+                                <v-autocomplete
+                                  v-model="examination.examination_id"
+                                  :items="getAvailableExaminations(index)"
+                                  color="blue-grey-lighten-2"
+                                  item-value="id"
+                                  item-title="ex_name"
+                                  label="Examination"
+                                  @change="updateExUnitPrice(index)"
+                                  :rules="[validateUniqueExaminationId(index)]"
+                                ></v-autocomplete>
+                              </v-col>
+                              <v-col cols="4">
+                                <v-text-field
+                                  v-model="examination.ex_unit_price"
+                                  label="Unit Price"
+                                  :readonly="!isFlexiblePrice(index)"
+                                  :rules="[validateNumber, validateNonNegative]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col v-if="index !== 0" cols="1">
+                                <v-btn @click="removeExamination(index)" icon="mdi-minus" size="small" color="error"></v-btn>
+                              </v-col>
+                            </v-row>
                           </v-col>
-                           <v-col cols="4">
-                             <v-text-field
-                               v-model="handleSubmit.ex_unit_price"
-                               label="Unit Price"
-                             ></v-text-field>
-                           </v-col>
                            <v-col cols="1">
                              <v-btn @click="addExamination" icon="mdi-plus" size="small" color="primary"></v-btn>
                            </v-col>
@@ -204,11 +215,11 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, reactive, watch} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
-import { useField, useForm } from 'vee-validate'
+
 
 const notify = useNotification();
 const patient_details = ref([]);
@@ -222,16 +233,16 @@ const dialog=ref(false);
 const handleSubmit=ref({
   doctor_id:'',
   ref_doctor_id:'',
-  examination_id:'',
-  ex_unit_price:'',
   subtotal:'',
   total_discount:'',
   discount:'',
   total_paid_amount:'',
   received_amount:'',
   due_amount:'',
-  });
 
+  });
+const examinations = reactive([]);
+const selectedExaminationIds = ref(new Set());
 const breadcrumbs = computed(() => [
   {
     title: 'Home',
@@ -252,6 +263,7 @@ onMounted(() => {
   fetchDoctorData();
   fetchExaminationListData();
   fetchDiscountListData();
+  addExamination();
 });
 
 const fetchPatientDetails = async () => {
@@ -292,8 +304,60 @@ const fetchDiscountListData = async () => { //discount list
 const patientExamination = () => {
   router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
 };
-const addExamination = () => {
 
+const addExamination = () => {
+  examinations.push({
+    examination_id: '',
+    ex_unit_price: '',
+  });
 };
 
+const removeExamination = (index) => {
+  const removedId = examinations[index].examination_id;
+  examinations.splice(index, 1);
+  selectedExaminationIds.value.delete(removedId);
+};
+
+const isFlexiblePrice = (index) => {
+  const selectedExamination = examination_list.value.find((item) => item.id === examinations[index].examination_id);
+  return selectedExamination && selectedExamination.price_type === 'flexible';
+};
+
+const validateNumber = (value) => /^[+]?\d+([.]\d+)?$/.test(value) || 'Enter a valid number';
+
+const validateNonNegative = (value) => (parseFloat(value) >= 0) || 'Value must be non-negative';
+
+const getAvailableExaminations = (currentIndex) => {
+  return examination_list.value.filter((item) => {
+    return !selectedExaminationIds.value.has(item.id) || item.id === examinations[currentIndex].examination_id;
+  });
+};
+
+const validateUniqueExaminationId = (currentIndex) => (value) => {
+  const isDuplicate = selectedExaminationIds.value.has(value);
+  return !isDuplicate || 'Examination already selected';
+};
+
+const updateExUnitPrice = (index) => {
+  const selectedExamination = examination_list.value.find((item) => item.id === examinations[index].examination_id);
+  if (selectedExamination) {
+    examinations[index].ex_unit_price = isFlexiblePrice(index) ? '' : selectedExamination.price;
+  } else {
+    examinations[index].ex_unit_price = '';
+  }
+
+  // Update selected examination ids
+  selectedExaminationIds.value.clear();
+  examinations.forEach((exam) => {
+    selectedExaminationIds.value.add(exam.examination_id);
+  });
+};
+
+watch(() => examinations.map((exam) => exam.examination_id), (newValues, oldValues) => {
+  newValues.forEach((newValue, index) => {
+    if (newValue !== oldValues[index]) {
+      updateExUnitPrice(index);
+    }
+  });
+});
 </script>
