@@ -95,7 +95,7 @@
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
-                               v-model="handleSubmit.subtotal"
+                               v-model="getTotalUnitPrice"
                                color="blue-grey-lighten-2"
                                label="Subtotal"
                              ></v-text-field>
@@ -109,7 +109,7 @@
                            </v-col>
                            <v-col cols="1">
 
-                             <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{handleSubmit.discount}}</v-btn>
+                             <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{ discountRef }}</v-btn>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
@@ -189,14 +189,17 @@
                 </v-card-title>
                 <v-card-text>
                   <v-select
-                    v-model="handleSubmit.discount"
+                    v-model="discountRef"
                   :items="discount_list"
                   item-title="discount"
+                    item-value="discount"
                   >
-
                   </v-select>
                 </v-card-text>
                 <v-card-actions>
+                  <v-btn color="primary" variant="text" @click="submitDiscount">
+                    Submit
+                  </v-btn>
                   <v-btn
                     color="primary"
                     variant="text"
@@ -215,7 +218,7 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref, reactive, watch} from 'vue'
+import {computed, onMounted, ref, reactive, watch,watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
@@ -230,12 +233,12 @@ const referral_doctor = ref([]);
 const examination_list = ref([]);
 const discount_list = ref([]);
 const dialog=ref(false);
+const discountRef = ref('');
 const handleSubmit=ref({
   doctor_id:'',
   ref_doctor_id:'',
   subtotal:'',
   total_discount:'',
-  discount:'',
   total_paid_amount:'',
   received_amount:'',
   due_amount:'',
@@ -334,8 +337,11 @@ const getAvailableExaminations = (currentIndex) => {
 };
 
 const validateUniqueExaminationId = (currentIndex) => (value) => {
-  const isDuplicate = selectedExaminationIds.value.has(value);
-  return !isDuplicate || 'Examination already selected';
+  const isDuplicateInOtherFields = examinations
+    .filter((_, index) => index !== currentIndex) // Exclude the current field
+    .some((exam) => exam.examination_id === value);
+
+  return !isDuplicateInOtherFields || 'Examination already selected in another field';
 };
 
 const updateExUnitPrice = (index) => {
@@ -360,4 +366,37 @@ watch(() => examinations.map((exam) => exam.examination_id), (newValues, oldValu
     }
   });
 });
+
+
+
+const getTotalUnitPrice = computed(() => {
+  const sum = examinations.reduce((sum, exam) => {
+    return sum + parseFloat(exam.ex_unit_price || 0);
+  }, 0);
+  handleSubmit.subtotal = sum.toFixed(2); // Update subtotal in handleSubmit
+  return sum.toFixed(2);
+});
+
+
+
+
+
+watchEffect(() => {
+  console.log('Discount Watcher Triggered');
+  const discountPercentage = parseFloat(discountRef.value) || 0;
+  console.log('Discount Percentage:', discountPercentage);
+
+  const discountedAmount = (discountPercentage / 100) * parseFloat(getTotalUnitPrice.value || 0);
+  console.log('Discounted Amount:', discountedAmount);
+
+  handleSubmit.total_discount = discountedAmount.toFixed(2);
+  handleSubmit.total_paid_amount = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(discountedAmount || 0)).toFixed(2);
+
+  console.log('Total Discount:', handleSubmit.total_discount);
+  console.log('Total Paid Amount:', handleSubmit.total_paid_amount);
+});
+const submitDiscount = () => {
+  console.log('Selected Discount:', discountRef.value);
+  dialog.value = false;
+};
 </script>
