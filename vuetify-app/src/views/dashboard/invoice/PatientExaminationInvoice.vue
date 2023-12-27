@@ -102,7 +102,7 @@
                            </v-col>
                            <v-col cols="3">
                              <v-text-field
-                               v-model="handleSubmit.total_discount"
+                               v-model="totalDiscount"
                                color="blue-grey-lighten-2"
                                label="Discount"
                              ></v-text-field>
@@ -113,7 +113,7 @@
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
-                               v-model="handleSubmit.total_paid_amount"
+                               v-model="totalPaidAmount"
                                color="blue-grey-lighten-2"
                                label="Total Paid"
                              ></v-text-field>
@@ -130,7 +130,8 @@
                            <v-col cols="4">
                              <v-text-field
                                type="number"
-                               v-model="handleSubmit.received_amount"
+                               v-model="totalReceived"
+                               :max="totalPaidAmount.value"
                                color="blue-grey-lighten-2"
                                label="Total Received"
                              ></v-text-field>
@@ -273,6 +274,7 @@ const fetchPatientDetails = async () => {
   try {
     const response = await axiosInstance.get(`/admin/patients/patients/${patientId.value}`); // get patient details
     patient_details.value = response.data.patient_details;
+    fetchExaminationListData();
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -378,25 +380,32 @@ const getTotalUnitPrice = computed(() => {
 });
 
 
-
-
+const totalDiscount = ref(handleSubmit.total_discount);
+const totalPaidAmount = ref(handleSubmit.total_paid_amount);
+const totalReceived = computed(() => parseFloat(totalPaidAmount.value) + parseFloat(handleSubmit.due_amount || 0));
 
 watchEffect(() => {
-  console.log('Discount Watcher Triggered');
   const discountPercentage = parseFloat(discountRef.value) || 0;
-  console.log('Discount Percentage:', discountPercentage);
-
   const discountedAmount = (discountPercentage / 100) * parseFloat(getTotalUnitPrice.value || 0);
-  console.log('Discounted Amount:', discountedAmount);
 
-  handleSubmit.total_discount = discountedAmount.toFixed(2);
-  handleSubmit.total_paid_amount = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(discountedAmount || 0)).toFixed(2);
+  totalDiscount.value = discountedAmount.toFixed(2);
+  totalPaidAmount.value = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(discountedAmount || 0)).toFixed(2);
 
-  console.log('Total Discount:', handleSubmit.total_discount);
-  console.log('Total Paid Amount:', handleSubmit.total_paid_amount);
+  // Recalculate totalReceived when totalPaidAmount changes
+  totalReceived.value = parseFloat(totalPaidAmount.value);
+
+  // Calculate due amount based on the difference between total amount and received amount
+  handleSubmit.due_amount = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(totalReceived.value || 0)).toFixed(2);
+
+  // Log data values for debugging
+  console.log('getTotalUnitPrice:', getTotalUnitPrice.value);
+  console.log('discountedAmount:', discountedAmount);
+  console.log('totalPaidAmount:', totalPaidAmount.value);
+  console.log('totalReceived:', totalReceived.value);
+  console.log('due_amount:', handleSubmit.due_amount);
 });
+
 const submitDiscount = () => {
-  console.log('Selected Discount:', discountRef.value);
   dialog.value = false;
 };
 </script>
