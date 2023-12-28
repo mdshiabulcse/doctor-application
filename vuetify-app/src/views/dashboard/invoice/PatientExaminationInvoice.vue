@@ -38,12 +38,10 @@
                  <v-col cols="8">
                    <v-card class="mx-auto">
                      <v-container>
-                       <form >
                          <v-row>
                            <v-col cols="6">
                              <v-autocomplete
                                v-model="handleSubmit.doctor_id"
-                               :counter="10"
                                :items="special_doctor"
                                color="blue-grey-lighten-2"
                                item-value="id"
@@ -54,7 +52,6 @@
                            <v-col cols="6">
                              <v-autocomplete
                                v-model="handleSubmit.ref_doctor_id"
-                               :counter="7"
                                :items="referral_doctor"
                                color="blue-grey-lighten-2"
                                item-value="id"
@@ -98,6 +95,7 @@
                                v-model="getTotalUnitPrice"
                                color="blue-grey-lighten-2"
                                label="Subtotal"
+                               readonly
                              ></v-text-field>
                            </v-col>
                            <v-col cols="3">
@@ -105,35 +103,40 @@
                                v-model="totalDiscount"
                                color="blue-grey-lighten-2"
                                label="Discount"
+                               readonly
                              ></v-text-field>
                            </v-col>
-                           <v-col cols="1">
+                           <v-col cols="2">
 
                              <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{ discountRef }}</v-btn>
                            </v-col>
-                           <v-col cols="4">
+                           <v-col cols="3">
                              <v-text-field
                                v-model="totalPaidAmount"
                                color="blue-grey-lighten-2"
                                label="Total Paid"
+                               readonly
                              ></v-text-field>
                            </v-col>
                            <v-col cols="4">
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
-                               v-model="handleSubmit.due_amount"
+                               v-model="dueAmount"
                                color="blue-grey-lighten-2"
                                label="Due Amount"
+                               readonly
                              ></v-text-field>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
                                type="number"
-                               v-model="totalReceived"
-                               :max="totalPaidAmount.value"
+                               v-model="receivedAmount"
+                               :max="totalPaidAmount"
                                color="blue-grey-lighten-2"
                                label="Total Received"
+                               :rules="[validateReceivedAmount, validateNonNegative]"
+                               hint="Received amount cannot be greater than total paid amount"
                              ></v-text-field>
                            </v-col>
 
@@ -141,12 +144,12 @@
                              <v-btn
                                class="me-4"
                                type="submit"
+                               @click="submitForm"
                              >
                                submit
                              </v-btn>
                            </v-col>
                          </v-row>
-                       </form>
                      </v-container>
                    </v-card>
                  </v-col>
@@ -369,8 +372,6 @@ watch(() => examinations.map((exam) => exam.examination_id), (newValues, oldValu
   });
 });
 
-
-
 const getTotalUnitPrice = computed(() => {
   const sum = examinations.reduce((sum, exam) => {
     return sum + parseFloat(exam.ex_unit_price || 0);
@@ -380,32 +381,75 @@ const getTotalUnitPrice = computed(() => {
 });
 
 
-const totalDiscount = ref(handleSubmit.total_discount);
-const totalPaidAmount = ref(handleSubmit.total_paid_amount);
-const totalReceived = computed(() => parseFloat(totalPaidAmount.value) + parseFloat(handleSubmit.due_amount || 0));
 
-watchEffect(() => {
+
+const totalDiscount = ref(0);
+const totalPaidAmount = ref(0);
+const receivedAmount = ref(0);
+const dueAmount = ref(0);
+
+const updateValues = () => {
   const discountPercentage = parseFloat(discountRef.value) || 0;
   const discountedAmount = (discountPercentage / 100) * parseFloat(getTotalUnitPrice.value || 0);
 
   totalDiscount.value = discountedAmount.toFixed(2);
   totalPaidAmount.value = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(discountedAmount || 0)).toFixed(2);
 
-  // Recalculate totalReceived when totalPaidAmount changes
-  totalReceived.value = parseFloat(totalPaidAmount.value);
+  // Ensure received amount is not greater than paid amount
+  receivedAmount.value = Math.min(parseFloat(totalPaidAmount.value), parseFloat(receivedAmount.value));
 
   // Calculate due amount based on the difference between total amount and received amount
-  handleSubmit.due_amount = (parseFloat(getTotalUnitPrice.value || 0) - parseFloat(totalReceived.value || 0)).toFixed(2);
+  dueAmount.value = (parseFloat(totalPaidAmount.value || 0) - parseFloat(receivedAmount.value || 0)).toFixed(2);
 
   // Log data values for debugging
   console.log('getTotalUnitPrice:', getTotalUnitPrice.value);
   console.log('discountedAmount:', discountedAmount);
   console.log('totalPaidAmount:', totalPaidAmount.value);
-  console.log('totalReceived:', totalReceived.value);
-  console.log('due_amount:', handleSubmit.due_amount);
-});
+  console.log('receivedAmount:', receivedAmount.value);
+  console.log('dueAmount:', dueAmount.value);
+};
 
+
+watchEffect(
+  updateValues
+);
+const validateReceivedAmount = (value) => {
+  return parseFloat(value) <= parseFloat(totalPaidAmount.value) || "Received amount cannot be greater than total paid amount";
+};
 const submitDiscount = () => {
   dialog.value = false;
+};
+
+
+const submitForm = async () => {
+  try {
+    // Prepare the data to be sent to the Laravel API
+    const formData = {
+      doctor_id: handleSubmit.value.doctor_id,
+      ref_doctor_id: handleSubmit.value.ref_doctor_id,
+      subtotal: handleSubmit.subtotal,
+      total_discount: totalDiscount.value,
+      total_paid_amount: totalPaidAmount.value,
+      received_amount: receivedAmount.value,
+      due_amount: dueAmount.value,
+      examinations: examinations.map(exam => ({
+        examination_id: exam.examination_id,
+        ex_unit_price: exam.ex_unit_price,
+      })),
+      // Add other form fields as needed
+    };
+    console.log('Form Data:', formData);
+    // Make an HTTP POST request to the Laravel API endpoint
+    const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
+
+
+    // Handle the response from the API
+    console.log('API Response:', response.data);
+
+    // You can also handle success or error messages and update your UI accordingly
+  } catch (error) {
+    // Handle any errors that occur during the request
+    console.error('Error submitting form:', error);
+  }
 };
 </script>
