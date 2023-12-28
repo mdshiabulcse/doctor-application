@@ -41,7 +41,7 @@ class ExaminationInvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->successApiResponse($request->all());
     }
 
     /**
