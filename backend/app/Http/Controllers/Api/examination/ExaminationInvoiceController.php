@@ -47,14 +47,6 @@ class ExaminationInvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //Invoice unique id created here
-//        $currentDate = date('ymd');
-//        $primaryIdCount = Invoice::where('inv_create', $currentDate)->count();
-//        $primaryIdCount++;
-//        $INV = 'INV'. $currentDate . substr('0000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
-//        $response = $INV;
-//        return $this->successApiResponse($request->all());
-
 
         DB::beginTransaction();
         try {
