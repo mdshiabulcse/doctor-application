@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\AuthController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Api\print\PrintController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,4 +30,9 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return send_ms('User Unauthenticated',false, 401);
 })->name('login');
+
+Route::resource('print-data',\App\Http\Controllers\Api\User\UserController::class);
+Route::group(['prefix'=> 'print'],function (){
+    Route::get('ex-invoice-print',[PrintController::class, 'exInvoicePrint']);
+});
 

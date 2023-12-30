@@ -24,10 +24,7 @@
               <v-container>
                 <v-row align="center" justify="center">
                   <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-pencil-plus-outline" color="primary">edit</v-btn>
-                  </v-col>
-                  <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-medical-bag" color="warning" @click="patientExamination">Examination</v-btn>
+                    <v-btn prepend-icon="mdi-printer" color="info" @click="exInvoicePrint">Print Invoice</v-btn>
                   </v-col>
                 </v-row>
               </v-container>
@@ -223,6 +220,7 @@ import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
 import {ElMessageBox} from 'element-plus'
 import {useAuth} from "@/store/auth";
+import {localUrl} from "@/services/globalUrlConfig";
 
 const breadcrumbs = computed(() => [
   {
@@ -309,8 +307,8 @@ const fetchDiscountListData = async () => { //discount list
   }
 };
 
-const patientExamination = () => {
-  router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
+const exInvoicePrint = () => {
+  window.open(localUrl.value +'/print/ex-invoice-print', '_blank');
 };
 
 const addExamination = () => {
