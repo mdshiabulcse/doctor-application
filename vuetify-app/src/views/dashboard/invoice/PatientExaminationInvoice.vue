@@ -226,6 +226,7 @@ import {computed, onMounted, ref, reactive, watch,watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 
 const notify = useNotification();
@@ -438,17 +439,29 @@ const submitForm = async () => {
       })),
       // Add other form fields as needed
     };
-    console.log('Form Data:', formData);
+
     // Make an HTTP POST request to the Laravel API endpoint
-    const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
 
+    const confirmResult = await ElMessageBox.confirm(
+      'Do you want to submit the form?',
+      'Confirmation',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true,
+      }
+    );
 
-    // Handle the response from the API
-    console.log('API Response:', response.data);
-
-    // You can also handle success or error messages and update your UI accordingly
+    // If the user clicks "OK," proceed with form submission
+    if (confirmResult === 'confirm') {
+      const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
+      console.log('API Response:', response.data);
+      notify.Success('Form submission Successfully!');
+       }
+    
   } catch (error) {
-    // Handle any errors that occur during the request
+    notify.Warning('Form submission canceled');
     console.error('Error submitting form:', error);
   }
 };
