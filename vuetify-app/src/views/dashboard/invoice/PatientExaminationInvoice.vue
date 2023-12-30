@@ -35,7 +35,7 @@
           </v-col>
          <v-col cols="12">
                <v-row>
-                 <v-col cols="8">
+                 <v-col cols="9">
                    <v-card class="mx-auto">
                      <v-container>
                          <v-row>
@@ -83,12 +83,12 @@
                                 ></v-text-field>
                               </v-col>
                               <v-col v-if="index !== 0" cols="1">
-                                <v-btn @click="removeExamination(index)" icon="mdi-minus" size="small" color="error"></v-btn>
+                                <v-btn @click="removeExamination(index)" size="x-small" icon="mdi-minus"  color="error"></v-btn>
                               </v-col>
                             </v-row>
                           </v-col>
                            <v-col cols="1">
-                             <v-btn @click="addExamination" icon="mdi-plus" size="small" color="primary"></v-btn>
+                             <v-btn @click="addExamination" icon="mdi-plus" size="x-small" color="primary"></v-btn>
                            </v-col>
                            <v-col cols="4">
                              <v-text-field
@@ -107,7 +107,6 @@
                              ></v-text-field>
                            </v-col>
                            <v-col cols="2">
-
                              <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{ discountRef }}</v-btn>
                            </v-col>
                            <v-col cols="3">
@@ -139,7 +138,6 @@
                                hint="Received amount cannot be greater than total paid amount"
                              ></v-text-field>
                            </v-col>
-
                            <v-col cols="12">
                              <v-btn
                                class="me-4"
@@ -153,22 +151,19 @@
                      </v-container>
                    </v-card>
                  </v-col>
-                 <v-col cols="4">
+                 <v-col cols="3">
                    <v-card
                      class="mx-auto"
                      :title="patient_details.patient_id "
-                     prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
                      rel="noopener"
                      color="info"
                    >
                        <v-card-text class="">
                          <v-row >
                            <div class="flex-1-1-100">
-                             <span class="ma-2 pa-2  mb-1 ">Patient Name:</span>
                              <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
                            </div>
                            <div class="flex-1-1-100">
-                             <span class="ma-2 pa-2 mb-1 ">Patient Phone:</span>
                              <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
                            </div>
                          </v-row>
@@ -226,8 +221,20 @@ import {computed, onMounted, ref, reactive, watch,watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
 
+const breadcrumbs = computed(() => [
+  {
+    title: 'Home',
+    disabled: false,
+    href: '/',
+  },
+  {
+    title: 'Patients Details',
+    disabled: false,
+    href: '#',
+  },
+]);
 
 const notify = useNotification();
 const patient_details = ref([]);
@@ -251,18 +258,7 @@ const handleSubmit=ref({
   });
 const examinations = reactive([]);
 const selectedExaminationIds = ref(new Set());
-const breadcrumbs = computed(() => [
-  {
-    title: 'Home',
-    disabled: false,
-    href: '/',
-  },
-  {
-    title: 'Patients Details',
-    disabled: false,
-    href: '#',
-  },
-]);
+
 
 
 onMounted(() => {
@@ -428,11 +424,13 @@ const submitForm = async () => {
     const formData = {
       doctor_id: handleSubmit.value.doctor_id,
       ref_doctor_id: handleSubmit.value.ref_doctor_id,
+      invoice_total_amount: getTotalUnitPrice.value,
       subtotal: handleSubmit.subtotal,
       total_discount: totalDiscount.value,
       total_paid_amount: totalPaidAmount.value,
       received_amount: receivedAmount.value,
       due_amount: dueAmount.value,
+      discount_selected: discountRef.value,
       examinations: examinations.map(exam => ({
         examination_id: exam.examination_id,
         ex_unit_price: exam.ex_unit_price,
@@ -458,11 +456,15 @@ const submitForm = async () => {
       const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
       console.log('API Response:', response.data);
       notify.Success('Form submission Successfully!');
+      notify.Success(response.data);
        }
 
   } catch (error) {
-    notify.Warning('Form submission canceled');
-    console.error('Error submitting form:', error);
+    ElMessage({
+      type: 'warning',
+      message: 'Form Submission canceled',
+    });
+    notify.Error(error);
   }
 };
 </script>
