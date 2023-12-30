@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_id',60);
             $table->string('invoice_type',50)->comment('Pathology,Consultation');
+            $table->string('patient_id',50);
             $table->integer('dr_id')->nullable();
             $table->integer('ref_dr_id')->nullable();
             $table->decimal('invoice_total_amount',9,2)->comment('Invoice Total Amount');

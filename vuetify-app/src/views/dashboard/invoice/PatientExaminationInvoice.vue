@@ -221,7 +221,8 @@ import {computed, onMounted, ref, reactive, watch,watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
-import {ElMessage, ElMessageBox} from 'element-plus'
+import {ElMessageBox} from 'element-plus'
+import {useAuth} from "@/store/auth";
 
 const breadcrumbs = computed(() => [
   {
@@ -246,6 +247,8 @@ const examination_list = ref([]);
 const discount_list = ref([]);
 const dialog=ref(false);
 const discountRef = ref('');
+const userData = useAuth();
+const user_id = userData.user.data.id;
 const handleSubmit=ref({
   doctor_id:'',
   ref_doctor_id:'',
@@ -398,12 +401,6 @@ const updateValues = () => {
   // Calculate due amount based on the difference between total amount and received amount
   dueAmount.value = (parseFloat(totalPaidAmount.value || 0) - parseFloat(receivedAmount.value || 0)).toFixed(2);
 
-  // Log data values for debugging
-  console.log('getTotalUnitPrice:', getTotalUnitPrice.value);
-  console.log('discountedAmount:', discountedAmount);
-  console.log('totalPaidAmount:', totalPaidAmount.value);
-  console.log('receivedAmount:', receivedAmount.value);
-  console.log('dueAmount:', dueAmount.value);
 };
 
 
@@ -431,6 +428,8 @@ const submitForm = async () => {
       received_amount: receivedAmount.value,
       due_amount: dueAmount.value,
       discount_selected: discountRef.value,
+      user_id: user_id,
+      patient_id: patientId.value,
       examinations: examinations.map(exam => ({
         examination_id: exam.examination_id,
         ex_unit_price: exam.ex_unit_price,
@@ -455,16 +454,11 @@ const submitForm = async () => {
     if (confirmResult === 'confirm') {
       const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
       console.log('API Response:', response.data);
-      notify.Success('Form submission Successfully!');
-      notify.Success(response.data);
+      notify.Success(response.data.message);
        }
 
   } catch (error) {
-    ElMessage({
-      type: 'warning',
-      message: 'Form Submission canceled',
-    });
-    notify.Error(error);
+    notify.Error(error.errors);
   }
 };
 </script>
