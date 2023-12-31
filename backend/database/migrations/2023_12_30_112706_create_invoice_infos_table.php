@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_id',60);
             $table->string('invoice_type',60)->comment('Pathology,Consultation');
+            $table->string('patient_id',60);
             $table->integer('invoice_item_id')->comment('Invoice Item Id');
             $table->decimal('invoice_item_amount',9,2)->comment('Invoice Item Unit Price');
             $table->tinyInteger('discount')->comment('Invoice Item Discount %');

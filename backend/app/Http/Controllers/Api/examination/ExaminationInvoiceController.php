@@ -50,6 +50,14 @@ class ExaminationInvoiceController extends Controller
 
         DB::beginTransaction();
         try {
+
+            // Check if received_amount is 0
+            if ($request->received_amount == 0) {
+                // Handle validation error, for example:
+                DB::rollBack();
+                $response['errors'] = 'Please provide a correct Received amount. Your amount is 0.';
+                return $this->failureApiResponse($response);
+            }
             //user browser history check here
             $browserName = Agent::browser();
             $browserVersion = Agent::version($browserName);
@@ -80,14 +88,35 @@ class ExaminationInvoiceController extends Controller
             $ExInvoice->status = $request->due_amount == 0 ? 'Paid':'Due';
             $ExInvoice->inv_create = Carbon::now();
             $ExInvoice->user_id = $request->user_id;
-            $ExInvoice->create_user_device_info = $IP;
+            $ExInvoice->create_user_device_info = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
             $ExInvoice->save();
 
             //Invoice Information create
             foreach ($request->examinations as $exItems){
+
+                if ($ExInvoice->invoice_total_amount == 0 && ($exItems['examination_id'] === null || $exItems['ex_unit_price'] === null)) {
+                    // Handle validation error, for example:
+                    DB::rollBack();
+                    $response['errors'] = 'Please select an examination and provide a unit price when the invoice total amount is 0.';
+                    return $this->failureApiResponse($response);
+                }
+
+                $existingInvoiceInfo = InvoiceInfo::where('patient_id', $request->patient_id)
+                    ->where('invoice_item_id', $exItems['examination_id'])
+                    ->whereIn('status', ['Paid', 'Due'])
+                    ->whereDate('inv_create', Carbon::now()->toDateString()) // Check for the same creation date
+                    ->first();
+
+                if ($existingInvoiceInfo) {
+                    // Handle validation error, for example:
+                    DB::rollBack();
+                    $response['errors'] = 'Invoice info with status Paid or Due already exists for patient, examination, and the same creation date.';
+                    return $this->failureApiResponse($response);
+                }
                     $exInvoiceInfo=new InvoiceInfo();
                     $exInvoiceInfo->invoice_id = $ExInvoice->invoice_id;
                     $exInvoiceInfo->invoice_type = $ExInvoice->invoice_type;
+                    $exInvoiceInfo->patient_id = $request->patient_id;;
                     $exInvoiceInfo->invoice_item_id =$exItems['examination_id'];
                     $exInvoiceInfo->invoice_item_amount = $exItems['ex_unit_price'];
                     $exInvoiceInfo->discount = $request->discount_selected ?? 0;
@@ -101,10 +130,12 @@ class ExaminationInvoiceController extends Controller
             $exInvoiceLog->invoice_id= $ExInvoice->invoice_id;
             $exInvoiceLog->invoice_type= $ExInvoice->invoice_type;
             $exInvoiceLog->invoice_create_details = 'Invoice Examination Created';
-            $exInvoiceLog->user_device_info=$IP;
+            $exInvoiceLog->user_device_info= 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
             $exInvoiceLog->user_id=$request->user_id;
             $exInvoiceLog->save();
 
+            // Return the created InvoiceInfo
+            $response['invoice_id'] = $ExInvoice->invoice_id;
             DB::commit();
         }catch (\Exception $e){
             DB::rollBack();

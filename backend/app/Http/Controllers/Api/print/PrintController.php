@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\print;
 
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\invoice\Invoice;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 
@@ -85,8 +86,10 @@ class PrintController extends Controller
         //
     }
 
-    public function exInvoicePrint()
+    public function exInvoicePrint($inv_id)
     {
-        return $this->successApiResponse('Done');
+        $response['invData'] = Invoice::where('invoice_id',$inv_id)->first();
+        $response['invInfoData ']= Invoice::where('invoice_id',$inv_id)->first();
+        return $this->successApiResponse($response);
     }
 }

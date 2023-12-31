@@ -33,6 +33,6 @@ Route::get('/login', function () {
 
 Route::resource('print-data',\App\Http\Controllers\Api\User\UserController::class);
 Route::group(['prefix'=> 'print'],function (){
-    Route::get('ex-invoice-print',[PrintController::class, 'exInvoicePrint']);
+    Route::get('ex-invoice-print/{inv_id}',[PrintController::class, 'exInvoicePrint']);
 });
 
