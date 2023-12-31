@@ -71,6 +71,41 @@ class ExaminationInvoiceController extends Controller
             $primaryIdCount++;
             $INV = 'INV'. $currentDate . substr('0000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
 
+            //Invoice Information create
+            foreach ($request->examinations as $exItems){
+
+                if ($request->invoice_total_amount == 0 && ($exItems['examination_id'] === null || $exItems['ex_unit_price'] === null)) {
+                    // Handle validation error, for example:
+                    DB::rollBack();
+                    $response['errors'] = 'Please select an examination and provide a unit price when the invoice total amount is 0.';
+                    return $this->failureApiResponse($response);
+                }
+
+                $existingInvoiceInfo = InvoiceInfo::where('patient_id', $request->patient_id)
+                    ->where('invoice_item_id', $exItems['examination_id'])
+                    ->whereIn('status', ['Paid', 'Due'])
+                    ->whereDate('inv_create', Carbon::now()->toDateString()) // Check for the same creation date
+                    ->first();
+
+                if ($existingInvoiceInfo) {
+                    // Handle validation error, for example:
+                    DB::rollBack();
+                    $response['errors'] = 'Invoice info with status Paid or Due already exists for patient, examination, and the same creation date.';
+                    return $this->failureApiResponse($response);
+                }
+                    $exInvoiceInfo=new InvoiceInfo();
+                    $exInvoiceInfo->invoice_id = $INV;
+                    $exInvoiceInfo->invoice_type = 'Pathology';
+                    $exInvoiceInfo->patient_id = $request->patient_id;;
+                    $exInvoiceInfo->invoice_item_id =$exItems['examination_id'];
+                    $exInvoiceInfo->invoice_item_amount = $exItems['ex_unit_price'];
+                    $exInvoiceInfo->discount = $request->discount_selected ?? 0;
+                    $exInvoiceInfo->user_id = $request->user_id;
+                    $exInvoiceInfo->inv_create = Carbon::now();
+                    $exInvoiceInfo->status = $request->due_amount == 0 ? 'Paid':'Due';
+                    $exInvoiceInfo->save();
+            }
+
             //Invoice create
             $ExInvoice=new Invoice();
             $ExInvoice->invoice_id = $INV;
@@ -91,40 +126,6 @@ class ExaminationInvoiceController extends Controller
             $ExInvoice->create_user_device_info = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
             $ExInvoice->save();
 
-            //Invoice Information create
-            foreach ($request->examinations as $exItems){
-
-                if ($ExInvoice->invoice_total_amount == 0 && ($exItems['examination_id'] === null || $exItems['ex_unit_price'] === null)) {
-                    // Handle validation error, for example:
-                    DB::rollBack();
-                    $response['errors'] = 'Please select an examination and provide a unit price when the invoice total amount is 0.';
-                    return $this->failureApiResponse($response);
-                }
-
-                $existingInvoiceInfo = InvoiceInfo::where('patient_id', $request->patient_id)
-                    ->where('invoice_item_id', $exItems['examination_id'])
-                    ->whereIn('status', ['Paid', 'Due'])
-                    ->whereDate('inv_create', Carbon::now()->toDateString()) // Check for the same creation date
-                    ->first();
-
-                if ($existingInvoiceInfo) {
-                    // Handle validation error, for example:
-                    DB::rollBack();
-                    $response['errors'] = 'Invoice info with status Paid or Due already exists for patient, examination, and the same creation date.';
-                    return $this->failureApiResponse($response);
-                }
-                    $exInvoiceInfo=new InvoiceInfo();
-                    $exInvoiceInfo->invoice_id = $ExInvoice->invoice_id;
-                    $exInvoiceInfo->invoice_type = $ExInvoice->invoice_type;
-                    $exInvoiceInfo->patient_id = $request->patient_id;;
-                    $exInvoiceInfo->invoice_item_id =$exItems['examination_id'];
-                    $exInvoiceInfo->invoice_item_amount = $exItems['ex_unit_price'];
-                    $exInvoiceInfo->discount = $request->discount_selected ?? 0;
-                    $exInvoiceInfo->user_id = $request->user_id;
-                    $exInvoiceInfo->inv_create = Carbon::now();
-                    $exInvoiceInfo->status = $request->due_amount == 0 ? 'Paid':'Due';
-                    $exInvoiceInfo->save();
-            }
             //Invoice create Log
             $exInvoiceLog=new InvoiceLog();
             $exInvoiceLog->invoice_id= $ExInvoice->invoice_id;
