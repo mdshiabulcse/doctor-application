@@ -23,152 +23,161 @@
             <v-card>
               <v-container>
                 <v-row align="center" justify="center">
-                  <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-printer" color="info" @click="exInvoicePrint">Print Invoice</v-btn>
+                  <v-col cols="auto" >
+                    <v-btn  prepend-icon="mdi-file-document-edit-outline" color="info" >  Edit Patinet</v-btn>
+                  </v-col>
+                  <v-col cols="auto" v-if="invoice_id">
+                    <v-btn   prepend-icon="mdi-printer" color="warning" @click="exInvoicePrint">  Print Invoice</v-btn>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card>
           </v-col>
-         <v-col cols="12">
-               <v-row>
-                 <v-col cols="9">
-                   <v-card class="mx-auto">
-                     <v-container>
-                         <v-row>
-                           <v-col cols="6">
-                             <v-autocomplete
-                               v-model="handleSubmit.doctor_id"
-                               :items="special_doctor"
-                               color="blue-grey-lighten-2"
-                               item-value="id"
-                               item-title="doctor_name"
-                               label="Examination Doctor"
-                             ></v-autocomplete>
-                           </v-col>
-                           <v-col cols="6">
-                             <v-autocomplete
-                               v-model="handleSubmit.ref_doctor_id"
-                               :items="referral_doctor"
-                               color="blue-grey-lighten-2"
-                               item-value="id"
-                               item-title="doctor_name"
-                               label="Refer Doctor"
-                             ></v-autocomplete>
-                           </v-col>
+          <v-col cols="12">
+            <v-row>
+              <v-col cols="9">
+                <v-card class="mx-auto">
+                  <v-container>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-autocomplete
+                          v-model="handleSubmit.doctor_id"
+                          :items="special_doctor"
+                          color="blue-grey-lighten-2"
+                          item-value="id"
+                          item-title="doctor_name"
+                          label="Examination Doctor"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-autocomplete
+                          v-model="handleSubmit.ref_doctor_id"
+                          :items="referral_doctor"
+                          color="blue-grey-lighten-2"
+                          item-value="id"
+                          item-title="doctor_name"
+                          label="Refer Doctor"
+                        ></v-autocomplete>
+                      </v-col>
 
-                          <v-col cols="11">
-                            <v-row v-for="(examination, index) in examinations" :key="index">
-                              <v-col cols="7">
-                                <v-autocomplete
-                                  v-model="examination.examination_id"
-                                  :items="getAvailableExaminations(index)"
-                                  color="blue-grey-lighten-2"
-                                  item-value="id"
-                                  item-title="ex_name"
-                                  label="Examination"
-                                  @change="updateExUnitPrice(index)"
-                                  :rules="[validateUniqueExaminationId(index)]"
-                                ></v-autocomplete>
-                              </v-col>
-                              <v-col cols="4">
-                                <v-text-field
-                                  v-model="examination.ex_unit_price"
-                                  label="Unit Price"
-                                  :readonly="!isFlexiblePrice(index)"
-                                  :rules="[validateNumber, validateNonNegative]"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col v-if="index !== 0" cols="1">
-                                <v-btn @click="removeExamination(index)" size="x-small" icon="mdi-minus"  color="error"></v-btn>
-                              </v-col>
-                            </v-row>
+                      <v-col cols="11">
+                        <v-row v-for="(examination, index) in examinations" :key="index">
+                          <v-col cols="7">
+                            <v-autocomplete
+                              v-model="examination.examination_id"
+                              :items="getAvailableExaminations(index)"
+                              color="blue-grey-lighten-2"
+                              item-value="id"
+                              item-title="ex_name"
+                              label="Examination"
+                              @change="updateExUnitPrice(index)"
+                              :rules="[validateUniqueExaminationId(index)]"
+                            ></v-autocomplete>
                           </v-col>
-                           <v-col cols="1">
-                             <v-btn @click="addExamination" icon="mdi-plus" size="x-small" color="primary"></v-btn>
-                           </v-col>
-                           <v-col cols="4">
-                             <v-text-field
-                               v-model="getTotalUnitPrice"
-                               color="blue-grey-lighten-2"
-                               label="Subtotal"
-                               readonly
-                             ></v-text-field>
-                           </v-col>
-                           <v-col cols="3">
-                             <v-text-field
-                               v-model="totalDiscount"
-                               color="blue-grey-lighten-2"
-                               label="Discount"
-                               readonly
-                             ></v-text-field>
-                           </v-col>
-                           <v-col cols="2">
-                             <v-btn  @click="dialog = true"  append-icon="mdi-sale" size="small" color="primary">{{ discountRef }}</v-btn>
-                           </v-col>
-                           <v-col cols="3">
-                             <v-text-field
-                               v-model="totalPaidAmount"
-                               color="blue-grey-lighten-2"
-                               label="Total Paid"
-                               readonly
-                             ></v-text-field>
-                           </v-col>
-                           <v-col cols="4">
-                           </v-col>
-                           <v-col cols="4">
-                             <v-text-field
-                               v-model="dueAmount"
-                               color="blue-grey-lighten-2"
-                               label="Due Amount"
-                               readonly
-                             ></v-text-field>
-                           </v-col>
-                           <v-col cols="4">
-                             <v-text-field
-                               type="number"
-                               v-model="receivedAmount"
-                               :max="totalPaidAmount"
-                               color="blue-grey-lighten-2"
-                               label="Total Received"
-                               :rules="[validateReceivedAmount, validateNonNegative]"
-                               hint="Received amount cannot be greater than total paid amount"
-                             ></v-text-field>
-                           </v-col>
-                           <v-col cols="12">
-                             <v-btn
-                               class="me-4"
-                               type="submit"
-                               @click="submitForm"
-                             >
-                               submit
-                             </v-btn>
-                           </v-col>
-                         </v-row>
-                     </v-container>
-                   </v-card>
-                 </v-col>
-                 <v-col cols="3">
-                   <v-card
-                     class="mx-auto"
-                     :title="patient_details.patient_id "
-                     rel="noopener"
-                     color="info"
-                   >
-                       <v-card-text class="">
-                         <v-row >
-                           <div class="flex-1-1-100">
-                             <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
-                           </div>
-                           <div class="flex-1-1-100">
-                             <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
-                           </div>
-                         </v-row>
-                       </v-card-text>
-                     </v-card>
-                 </v-col>
-               </v-row>
-         </v-col>
+                          <v-col cols="4">
+                            <v-text-field
+                              v-model="examination.ex_unit_price"
+                              label="Unit Price"
+                              :readonly="!isFlexiblePrice(index)"
+                              :rules="[validateNumber, validateNonNegative]"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col v-if="index !== 0" cols="1">
+                            <v-btn @click="removeExamination(index)" size="x-small" icon="mdi-minus"
+                                   color="error"></v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="1">
+                        <v-btn @click="addExamination" icon="mdi-plus" size="x-small" color="primary"></v-btn>
+                      </v-col>
+                      <v-col cols="4">
+                        <v-text-field
+                          v-model="getTotalUnitPrice"
+                          color="blue-grey-lighten-2"
+                          label="Subtotal"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="3">
+                        <v-text-field
+                          v-model="totalDiscount"
+                          color="blue-grey-lighten-2"
+                          label="Discount"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="2">
+                        <v-btn @click="dialog = true" append-icon="mdi-sale" size="small" color="primary">{{
+                            discountRef
+                          }}
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="3">
+                        <v-text-field
+                          v-model="totalPaidAmount"
+                          color="blue-grey-lighten-2"
+                          label="Total Paid"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="4">
+                      </v-col>
+                      <v-col cols="4">
+                        <v-text-field
+                          v-model="dueAmount"
+                          color="blue-grey-lighten-2"
+                          label="Due Amount"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="4">
+                        <v-text-field
+                          type="number"
+                          v-model="receivedAmount"
+                          :max="totalPaidAmount"
+                          color="blue-grey-lighten-2"
+                          label="Total Received"
+                          :rules="[validateReceivedAmount, validateNonNegative]"
+                          hint="Received amount cannot be greater than total paid amount"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-btn
+                          size="large"
+                          color="primary"
+                          prepend-icon="mdi-file-document-edit-outline"
+                          type="submit"
+                          @click="submitForm"
+                        >
+                          Submit
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-col>
+              <v-col cols="3">
+                <v-card
+                  class="mx-auto"
+                  :title="patient_details.patient_id "
+                  rel="noopener"
+                  color="info"
+                >
+                  <v-card-text class="">
+                    <v-row>
+                      <div class="flex-1-1-100">
+                        <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
+                      </div>
+                      <div class="flex-1-1-100">
+                        <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
+                      </div>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
         </v-col>
         <div>
           <v-row
@@ -186,8 +195,8 @@
                 <v-card-text>
                   <v-select
                     v-model="discountRef"
-                  :items="discount_list"
-                  item-title="discount"
+                    :items="discount_list"
+                    item-title="discount"
                     item-value="discount"
                   >
                   </v-select>
@@ -214,7 +223,7 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref, reactive, watch,watchEffect} from 'vue'
+import {computed, onMounted, ref, reactive, watch, watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
@@ -243,23 +252,23 @@ const special_doctor = ref([]);
 const referral_doctor = ref([]);
 const examination_list = ref([]);
 const discount_list = ref([]);
-const dialog=ref(false);
+const dialog = ref(false);
 const discountRef = ref('');
+const invoice_id = ref('');
 const userData = useAuth();
 const user_id = userData.user.data.id;
-const handleSubmit=ref({
-  doctor_id:'',
-  ref_doctor_id:'',
-  subtotal:'',
-  total_discount:'',
-  total_paid_amount:'',
-  received_amount:'',
-  due_amount:'',
+const handleSubmit = ref({
+  doctor_id: '',
+  ref_doctor_id: '',
+  subtotal: '',
+  total_discount: '',
+  total_paid_amount: '',
+  received_amount: '',
+  due_amount: '',
 
-  });
+});
 const examinations = reactive([]);
 const selectedExaminationIds = ref(new Set());
-
 
 
 onMounted(() => {
@@ -308,7 +317,7 @@ const fetchDiscountListData = async () => { //discount list
 };
 
 const exInvoicePrint = () => {
-  window.open(localUrl.value +'/print/ex-invoice-print', '_blank');
+  window.open(localUrl.value + '/print/ex-invoice-print/'+invoice_id.value, '_blank');
 };
 
 const addExamination = () => {
@@ -377,8 +386,6 @@ const getTotalUnitPrice = computed(() => {
   handleSubmit.subtotal = sum.toFixed(2); // Update subtotal in handleSubmit
   return sum.toFixed(2);
 });
-
-
 
 
 const totalDiscount = ref(0);
@@ -451,12 +458,13 @@ const submitForm = async () => {
     // If the user clicks "OK," proceed with form submission
     if (confirmResult === 'confirm') {
       const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
+      invoice_id.value = response.data.invoice_id;
       console.log('API Response:', response.data);
       notify.Success(response.data.message);
-       }
+    }
 
   } catch (error) {
-    notify.Error(error.errors);
+    notify.Error(error.response.data.errors);
   }
 };
 </script>
