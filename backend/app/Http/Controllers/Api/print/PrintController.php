@@ -88,8 +88,9 @@ class PrintController extends Controller
 
     public function exInvoicePrint($inv_id)
     {
-        $response['invData'] = Invoice::where('invoice_id',$inv_id)->first();
-        $response['invInfoData ']= Invoice::where('invoice_id',$inv_id)->first();
-        return $this->successApiResponse($response);
+        $data['invData'] = Invoice::where('invoice_id',$inv_id)->first();
+        $data['invInfoData ']= Invoice::where('invoice_id',$inv_id)->first();
+//        return $this->successApiResponse($response);
+        return view('print.exInvoicePrint',$data);
     }
 }
