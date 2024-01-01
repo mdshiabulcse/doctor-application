@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\print;
 
 use App\Http\Controllers\Controller;
 use App\Models\dashboard\invoice\Invoice;
+use App\Models\dashboard\invoice\InvoiceInfo;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 
@@ -88,9 +89,9 @@ class PrintController extends Controller
 
     public function exInvoicePrint($inv_id)
     {
-        $data['invData'] = Invoice::where('invoice_id',$inv_id)->first();
-        $data['invInfoData ']= Invoice::where('invoice_id',$inv_id)->first();
-//        return $this->successApiResponse($response);
-        return view('print.exInvoicePrint',$data);
+        $invData = Invoice::where('invoice_id',$inv_id)->first();
+        $invInfoDatas= InvoiceInfo::where('invoice_id',$inv_id)->with('exam_data')->get();
+//        return $this->successApiResponse($data);
+        return view('print.exInvoicePrint',compact('invData', 'invInfoDatas'));
     }
 }
