@@ -39,14 +39,25 @@
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon
+              title="Patient Examination"
+              size="small"
+              class="me-2"
+              color="primary"
+              icon=" mdi-calendar-clock"
+              @click="patientAppointment(item)"
+            >
+            </v-icon>
+            <v-icon
+              title="Patient Examination"
               size="small"
               class="me-2"
               color="green-darken-2"
               icon="mdi-file-document-edit-outline"
-              @click="pathologyInvoice(item)"
+              @click="patientExamination(item)"
             >
             </v-icon>
             <v-icon
+              title="Patient Details"
               size="small"
               class="me-2"
               color="blue-darken-2"
@@ -120,16 +131,18 @@ const fetchData = async () => {
 };
 
 
-const pathologyInvoice = (item) => {
-  console.log(item)
-};
 const patientCreate = () => {
   router.push({ path: '/patient-create' });
 };
 const patientDetails = (item) => {
   router.push({ path: `/patient-details/${item.selectable.patient_id}` });
 };
-
+const patientExamination = (item) => {
+  router.push({ path: `/patient-examination-invoice/${item.selectable.patient_id}` });
+};
+const patientAppointment = (item) => {
+  router.push({ path: `/patient-appointment/${item.selectable.patient_id}` });
+};
 
 
 </script>
