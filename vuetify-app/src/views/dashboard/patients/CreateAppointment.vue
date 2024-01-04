@@ -35,7 +35,31 @@
                           label="Examination Doctor"
                         ></v-autocomplete>
                       </v-col>
-
+                      <v-container>
+                        <h2 class="mb-4">Booking System</h2>
+                          <v-row>
+                            <v-col v-for="(slot, index) in timeSlots" :key="index" cols="12" sm="6" md="4" lg="3">
+                              <v-card :color="slot.isBooked ? 'error' : 'primary'" class="mb-4" height="150">
+                                <v-card-title v-if="slot.isBooked">
+                                  Booked Slot
+                                </v-card-title>
+                                <v-card-title v-else>
+                                  Available Slot
+                                </v-card-title>
+                                <v-card-subtitle>
+                                  {{ slot.isBooked ? 'Start Time: ' + slot.startTime + ' - End Time: ' + slot.endTime : 'Serial Number: ' + slot.serialNumber }}
+                                </v-card-subtitle>
+                                <v-card-text v-if="slot.isBooked">
+                                  <div>Slot Number: {{ slot.slotNumber }}</div>
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-btn v-if="!slot.isBooked" @click="bookSlot(slot)">Book Slot</v-btn>
+                                  <span v-else>Booked</span>
+                                </v-card-actions>
+                              </v-card>
+                            </v-col>
+                          </v-row>
+                      </v-container>
                       <v-col cols="12">
                         <v-btn
                           size="large"
@@ -122,4 +146,58 @@ onMounted(() => {
   patientId.value = useRoute().params.patientId;
   fetchPatientDetails();
 });
+
+const timeSlots = ref([]);
+
+onMounted(() => {
+  generateTimeSlots();
+});
+
+const generateTimeSlots = () => {
+  const timeSlotArrays = [
+    { start: '09:00', end: '11:00', slotNumber: 6 },
+    { start: '12:00', end: '14:00', slotNumber: 7 },
+    { start: '15:00', end: '17:00', slotNumber: 9 },
+    // Add more arrays as needed
+  ];
+
+  for (const timeSlot of timeSlotArrays) {
+    const start = new Date(`2022-01-01 ${timeSlot.start}`);
+    const end = new Date(`2022-01-01 ${timeSlot.end}`);
+    let current = new Date(start);
+
+    while (current <= end) {
+      const formattedTime = current.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const nextTime = new Date(current.getTime() + 60 * 60000);
+      const formattedNextTime = nextTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      timeSlots.value.push({
+        id: timeSlot.slotNumber,
+        time: formattedTime,
+        serialNumber: timeSlot.slotNumber,
+        isBooked: false,
+        slotNumber: timeSlot.slotNumber,
+        startTime: formattedTime,
+        endTime: formattedNextTime,
+      });
+
+      current = nextTime;
+    }
+  }
+};
+
+const bookSlot = (selectedSlot) => {
+  // Simulate a booking process
+  selectedSlot.isBooked = true;
+  showAlert(selectedSlot);
+};
+
+const showAlert = (selectedSlot) => {
+  alert(`Slot booked: Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}, Serial Number - ${selectedSlot.serialNumber}`);
+};
 </script>
+<style scoped>
+.v-card {
+  text-align: center;
+}
+</style>
