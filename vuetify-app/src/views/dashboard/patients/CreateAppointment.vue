@@ -37,28 +37,23 @@
                       </v-col>
                       <v-container>
                         <h2 class="mb-4">Booking System</h2>
-                          <v-row>
-                            <v-col v-for="(slot, index) in timeSlots" :key="index" cols="12" sm="6" md="4" lg="3">
-                              <v-card :color="slot.isBooked ? 'error' : 'primary'" class="mb-4" height="150">
-                                <v-card-title v-if="slot.isBooked">
-                                  Booked Slot
-                                </v-card-title>
-                                <v-card-title v-else>
-                                  Available Slot
-                                </v-card-title>
-                                <v-card-subtitle>
-                                  {{ slot.isBooked ? 'Start Time: ' + slot.startTime + ' - End Time: ' + slot.endTime : 'Serial Number: ' + slot.serialNumber }}
-                                </v-card-subtitle>
-                                <v-card-text v-if="slot.isBooked">
-                                  <div>Slot Number: {{ slot.slotNumber }}</div>
-                                </v-card-text>
-                                <v-card-actions>
-                                  <v-btn v-if="!slot.isBooked" @click="bookSlot(slot)">Book Slot</v-btn>
-                                  <span v-else>Booked</span>
-                                </v-card-actions>
+                        <v-row>
+                          <v-col v-for="(slot, index) in timeSlots" :key="index" cols="12" sm="6" md="4" lg="3">
+                              <v-card
+                                class="mx-auto mb-4"
+                                :color="getCardColor(slot)"  height="100"
+                                :title="slot.serialNumber"
+                              >
+                                <template v-slot:prepend>
+                                  <v-icon icon="mdi-account" color="warning"></v-icon>
+                                </template>
+                                <template v-slot:append>
+                                  <v-btn @click="bookSlot(slot)" icon="mdi-calendar" color="warning" size="small"></v-btn>
+                                </template>
+                                <v-card-text>{{ slot.startTime + '-' + slot.endTime  }}</v-card-text>
                               </v-card>
-                            </v-col>
-                          </v-row>
+                          </v-col>
+                        </v-row>
                       </v-container>
                       <v-col cols="12">
                         <v-btn
@@ -148,6 +143,8 @@ onMounted(() => {
 });
 
 const timeSlots = ref([]);
+let serialNumberCounter = 1;
+const selectedSlot = ref(null);
 
 onMounted(() => {
   generateTimeSlots();
@@ -155,9 +152,10 @@ onMounted(() => {
 
 const generateTimeSlots = () => {
   const timeSlotArrays = [
-    { start: '09:00', end: '11:00', slotNumber: 6 },
-    { start: '12:00', end: '14:00', slotNumber: 7 },
-    { start: '15:00', end: '17:00', slotNumber: 9 },
+    { start: '09:00', end: '11:00', minute: 10 },
+    { start: '12:00', end: '14:00', minute: 15 },
+    { start: '15:00', end: '17:00', minute: 5 },
+    { start: '18:00', end: '20:00', minute: 20 },
     // Add more arrays as needed
   ];
 
@@ -166,15 +164,15 @@ const generateTimeSlots = () => {
     const end = new Date(`2022-01-01 ${timeSlot.end}`);
     let current = new Date(start);
 
-    while (current <= end) {
+    while (current < end) {
       const formattedTime = current.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const nextTime = new Date(current.getTime() + 60 * 60000);
+      const nextTime = new Date(current.getTime() + timeSlot.minute * 60000);
       const formattedNextTime = nextTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       timeSlots.value.push({
-        id: timeSlot.slotNumber,
+        id: serialNumberCounter,
         time: formattedTime,
-        serialNumber: timeSlot.slotNumber,
+        serialNumber: serialNumberCounter,
         isBooked: false,
         slotNumber: timeSlot.slotNumber,
         startTime: formattedTime,
@@ -182,18 +180,30 @@ const generateTimeSlots = () => {
       });
 
       current = nextTime;
+      serialNumberCounter++;
     }
   }
 };
 
-const bookSlot = (selectedSlot) => {
-  // Simulate a booking process
-  selectedSlot.isBooked = true;
-  showAlert(selectedSlot);
+const bookSlot = (clickedSlot) => {
+  if (!clickedSlot.isBooked && clickedSlot !== selectedSlot.value) {
+    if (selectedSlot.value) {
+      selectedSlot.value.isBooked = false;
+    }
+
+    clickedSlot.isBooked = true;
+    showAlert(clickedSlot);
+    selectedSlot.value = clickedSlot;
+  }
 };
 
 const showAlert = (selectedSlot) => {
+  console.log(`Slot booked: Serial Number - ${selectedSlot.serialNumber}, Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}`);
   alert(`Slot booked: Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}, Serial Number - ${selectedSlot.serialNumber}`);
+};
+
+const getCardColor = (slot) => {
+  return slot.isBooked ? 'error' : 'primary';
 };
 </script>
 <style scoped>

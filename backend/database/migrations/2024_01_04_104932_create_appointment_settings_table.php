@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->time('start_time');
             $table->time('end_time');
-            $table->integer('slot');
+            $table->integer('slot_time');
             $table->tinyInteger('user_id');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
