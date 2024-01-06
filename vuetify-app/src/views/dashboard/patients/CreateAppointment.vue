@@ -33,10 +33,25 @@
                           item-value="id"
                           item-title="doctor_name"
                           label="Examination Doctor"
+                          @change="onDoctorChange"
                         ></v-autocomplete>
                       </v-col>
+                      <v-col
+                        cols="6"
+                      >
+                            <v-text-field
+                              v-model="handleSubmit.appointment_date"
+                              type="date"
+                              label="Appointment Date"
+                              hint="MM/DD/YYYY format"
+                              prepend-icon="mdi-calendar"
+                              :min="new Date().toISOString().substr(0, 10)"
+                              required
+                              @click="onDateChange"
+                            ></v-text-field>
+                      </v-col>
                       <v-container>
-                        <h2 class="mb-4">Booking System</h2>
+                        <h2 class="mb-4">Booking Slots</h2>
                         <v-row>
                           <v-col v-for="(slot, index) in timeSlots" :key="index" cols="12" sm="6" md="4" lg="3">
                               <v-card
@@ -61,6 +76,7 @@
                           color="primary"
                           prepend-icon="mdi-file-document-edit-outline"
                           type="submit"
+                          @click="submitForm"
 
                         >
                           Submit
@@ -102,6 +118,7 @@ import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
 import {useAuth} from "@/store/auth";
+import {ElMessageBox} from "element-plus";
 
 
 const breadcrumbs = computed(() => [
@@ -122,11 +139,13 @@ const patient_details = ref([]);
 const patientId = ref('');
 const router = useRouter();
 const special_doctor = ref([]);
+const appointment_data = ref([]);
 const timeSlotArrays = ref([]);
 const userData = useAuth();
 const user_id = userData.user.data.id;
 const handleSubmit = ref({
   doctor_id: '',
+  appointment_date: new Date().toISOString().substr(0, 10),
 });
 
 const fetchPatientDetails = async () => {
@@ -137,6 +156,48 @@ const fetchPatientDetails = async () => {
     console.error('Error fetching data:', error);
   }
 };
+const fetchDoctorData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/invoice/doctor-data`); // get doctor details
+    special_doctor.value = response.data.special_doctor;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const appointmentData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/appointment/appointment-booking-patient/${handleSubmit.value.doctor_id}?appointment_date=`+ handleSubmit.value.appointment_date); // get doctor details
+    appointment_data.value = response.data.appointment_data;
+
+    timeSlots.value.forEach(slot => {
+      const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
+      slot.isBooked = isBooked;
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+const onDoctorChange = async () => {
+  await fetchDoctorData();
+  await appointmentData();
+};
+
+const onDateChange = async () => {
+  await appointmentData();
+};
+
+onMounted(() => {
+  patientId.value = useRoute().params.patientId;
+  fetchPatientDetails();
+  fetchDoctorData();
+  appointmentData();
+});
+
+
+
+
+
 const appointmentSetting = async () => {
   try {
     const response = await axiosInstance.get(`/admin/appointment/appointment-setting`); // get patient details
@@ -147,24 +208,20 @@ const appointmentSetting = async () => {
   }
 };
 
-onMounted(() => {
-  patientId.value = useRoute().params.patientId;
-  fetchPatientDetails();
-  appointmentSetting();
-});
-
 const timeSlots = ref([]);
 let serialNumberCounter = 1;
 const selectedSlot = ref(null);
 
 onMounted(() => {
   generateTimeSlots();
+  appointmentSetting();
 });
 
 const generateTimeSlots = () => {
   for (const timeSlot of timeSlotArrays.value) {
-    const start = new Date(`2022-01-01 ${timeSlot.start_time}`);
-    const end = new Date(`2022-01-01 ${timeSlot.end_time}`);
+    const currentDate = new Date(); // Get the current date
+    const start = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), timeSlot.start_time.split(':')[0], timeSlot.start_time.split(':')[1]);
+    const end = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), timeSlot.end_time.split(':')[0], timeSlot.end_time.split(':')[1]);
     let current = new Date(start);
 
     while (current < end) {
@@ -207,6 +264,42 @@ const showAlert = (selectedSlot) => {
 
 const getCardColor = (slot) => {
   return slot.isBooked ? 'error' : 'primary';
+};
+
+
+const submitForm = async () => {
+  try {
+
+    // Proceed with form submission
+    const formData = {
+      doctor_id: handleSubmit.value.doctor_id,
+      appointment_date: handleSubmit.value.appointment_date,
+      slot: selectedSlot.value, // Include the selected slot information
+      user_id: user_id,
+      patient_id: patientId.value,
+      serial_number: selectedSlot.value.serialNumber,
+    };
+    const confirmResult = await ElMessageBox.confirm(
+      'Do you want to submit the form?',
+      'Confirmation',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true,
+      }
+    );
+
+    // If the user clicks "OK," proceed with form submission
+    if (confirmResult === 'confirm') {
+      const response = await axiosInstance.post('/admin/appointment/appointment-data',formData);
+
+      notify.Success(response.data.message);
+    }
+
+  } catch (error) {
+    notify.Error(error.response.data.errors);
+  }
 };
 </script>
 <style scoped>
