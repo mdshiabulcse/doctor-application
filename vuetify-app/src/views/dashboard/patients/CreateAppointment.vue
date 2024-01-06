@@ -122,6 +122,7 @@ const patient_details = ref([]);
 const patientId = ref('');
 const router = useRouter();
 const special_doctor = ref([]);
+const timeSlotArrays = ref([]);
 const userData = useAuth();
 const user_id = userData.user.data.id;
 const handleSubmit = ref({
@@ -136,10 +137,20 @@ const fetchPatientDetails = async () => {
     console.error('Error fetching data:', error);
   }
 };
+const appointmentSetting = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/appointment/appointment-setting`); // get patient details
+    timeSlotArrays.value = response.data.appointment_settings;
+    generateTimeSlots();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
 onMounted(() => {
   patientId.value = useRoute().params.patientId;
   fetchPatientDetails();
+  appointmentSetting();
 });
 
 const timeSlots = ref([]);
@@ -151,17 +162,9 @@ onMounted(() => {
 });
 
 const generateTimeSlots = () => {
-  const timeSlotArrays = [
-    { start: '09:00', end: '11:00', minute: 10 },
-    { start: '12:00', end: '14:00', minute: 15 },
-    { start: '15:00', end: '17:00', minute: 5 },
-    { start: '18:00', end: '20:00', minute: 20 },
-    // Add more arrays as needed
-  ];
-
-  for (const timeSlot of timeSlotArrays) {
-    const start = new Date(`2022-01-01 ${timeSlot.start}`);
-    const end = new Date(`2022-01-01 ${timeSlot.end}`);
+  for (const timeSlot of timeSlotArrays.value) {
+    const start = new Date(`2022-01-01 ${timeSlot.start_time}`);
+    const end = new Date(`2022-01-01 ${timeSlot.end_time}`);
     let current = new Date(start);
 
     while (current < end) {
@@ -174,7 +177,7 @@ const generateTimeSlots = () => {
         time: formattedTime,
         serialNumber: serialNumberCounter,
         isBooked: false,
-        slotNumber: timeSlot.slotNumber,
+        slotNumber: timeSlot.slotNumber, // Replace with the correct property if needed
         startTime: formattedTime,
         endTime: formattedNextTime,
       });
