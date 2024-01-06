@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\administrative\AdministrativeController;
 use App\Http\Controllers\Api\patients\PatientsController;
 use App\Http\Controllers\Api\examination\ExaminationInvoiceController;
+use App\Http\Controllers\Api\appointment\AppointmentController;
 
 
 
@@ -38,6 +39,9 @@ Route::group(['prefix' => 'administrative'], function (){
 Route::group(['prefix' => 'patients'], function (){
     Route::resource('patients',PatientsController::class);
     Route::get('patient-sources',[PatientsController::class,'patientSources']);
+});
+Route::group(['prefix' => 'appointment'], function (){
+    Route::get('appointment-setting',[AppointmentController::class,'appointmentSetting']);
 });
 Route::group(['prefix' => 'invoice'], function (){
     Route::resource('examination-invoice',ExaminationInvoiceController::class);
