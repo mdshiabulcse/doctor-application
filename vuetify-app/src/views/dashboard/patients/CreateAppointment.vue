@@ -47,26 +47,27 @@
                               prepend-icon="mdi-calendar"
                               :min="new Date().toISOString().substr(0, 10)"
                               required
-                              @click="onDateChange"
+                              @change="onDateChange"
                             ></v-text-field>
                       </v-col>
                       <v-container>
                         <h2 class="mb-4">Booking Slots</h2>
                         <v-row>
                           <v-col v-for="(slot, index) in timeSlots" :key="index" cols="12" sm="6" md="4" lg="3">
-                              <v-card
-                                class="mx-auto mb-4"
-                                :color="getCardColor(slot)"  height="100"
-                                :title="slot.serialNumber"
-                              >
-                                <template v-slot:prepend>
-                                  <v-icon icon="mdi-account" color="warning"></v-icon>
-                                </template>
-                                <template v-slot:append>
-                                  <v-btn @click="bookSlot(slot)" icon="mdi-calendar" color="warning" size="small"></v-btn>
-                                </template>
-                                <v-card-text>{{ slot.startTime + '-' + slot.endTime  }}</v-card-text>
-                              </v-card>
+                            <v-card
+                              class="mx-auto mb-4"
+                              :color="getCardColor(slot)"
+                              height="100"
+                              :title="slot.serialNumber"
+                            >
+                              <template v-slot:prepend>
+                                <v-icon icon="mdi-account" color="warning"></v-icon>
+                              </template>
+                              <template v-slot:append>
+                                <v-btn @click="bookSlot(slot)" icon="mdi-calendar" color="warning" size="small"></v-btn>
+                              </template>
+                              <v-card-text>{{ slot.startTime + '-' + slot.endTime  }}</v-card-text>
+                            </v-card>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -113,7 +114,7 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref,watch} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
@@ -164,28 +165,7 @@ const fetchDoctorData = async () => {
     console.error('Error fetching data:', error);
   }
 };
-const appointmentData = async () => {
-  try {
-    const response = await axiosInstance.get(`/admin/appointment/appointment-booking-patient/${handleSubmit.value.doctor_id}?appointment_date=`+ handleSubmit.value.appointment_date); // get doctor details
-    appointment_data.value = response.data.appointment_data;
 
-    timeSlots.value.forEach(slot => {
-      const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
-      slot.isBooked = isBooked;
-    });
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
-
-const onDoctorChange = async () => {
-  await fetchDoctorData();
-  await appointmentData();
-};
-
-const onDateChange = async () => {
-  await appointmentData();
-};
 
 onMounted(() => {
   patientId.value = useRoute().params.patientId;
@@ -194,13 +174,9 @@ onMounted(() => {
   appointmentData();
 });
 
-
-
-
-
 const appointmentSetting = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/appointment/appointment-setting`); // get patient details
+    const response = await axiosInstance.get(`/admin/appointment/appointment-setting`);
     timeSlotArrays.value = response.data.appointment_settings;
     generateTimeSlots();
   } catch (error) {
@@ -219,7 +195,7 @@ onMounted(() => {
 
 const generateTimeSlots = () => {
   for (const timeSlot of timeSlotArrays.value) {
-    const currentDate = new Date(); // Get the current date
+    const currentDate = new Date();
     const start = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), timeSlot.start_time.split(':')[0], timeSlot.start_time.split(':')[1]);
     const end = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), timeSlot.end_time.split(':')[0], timeSlot.end_time.split(':')[1]);
     let current = new Date(start);
@@ -234,9 +210,10 @@ const generateTimeSlots = () => {
         time: formattedTime,
         serialNumber: serialNumberCounter,
         isBooked: false,
-        slotNumber: timeSlot.slotNumber, // Replace with the correct property if needed
+        slotNumber: timeSlot.slotNumber,
         startTime: formattedTime,
         endTime: formattedNextTime,
+        appointmentCount: 0, // Initialize appointmentCount to 0
       });
 
       current = nextTime;
@@ -249,12 +226,19 @@ const bookSlot = (clickedSlot) => {
   if (!clickedSlot.isBooked && clickedSlot !== selectedSlot.value) {
     if (selectedSlot.value) {
       selectedSlot.value.isBooked = false;
+      selectedSlot.value.appointmentCount = 0; // Reset appointmentCount for previously selected slot
     }
 
-    clickedSlot.isBooked = true;
+    clickedSlot.appointmentCount += 1; // Increment appointmentCount for the clicked slot
+    clickedSlot.isBooked = clickedSlot.appointmentCount > 0; // Update isBooked based on appointmentCount
+
     showAlert(clickedSlot);
     selectedSlot.value = clickedSlot;
   }
+};
+
+const getCardColor = (slot) => {
+  return slot.isBooked ? 'error' : 'primary';
 };
 
 const showAlert = (selectedSlot) => {
@@ -262,19 +246,14 @@ const showAlert = (selectedSlot) => {
   alert(`Slot booked: Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}, Serial Number - ${selectedSlot.serialNumber}`);
 };
 
-const getCardColor = (slot) => {
-  return slot.isBooked ? 'error' : 'primary';
-};
 
 
 const submitForm = async () => {
   try {
-
-    // Proceed with form submission
     const formData = {
       doctor_id: handleSubmit.value.doctor_id,
       appointment_date: handleSubmit.value.appointment_date,
-      slot: selectedSlot.value, // Include the selected slot information
+      slot: selectedSlot.value,
       user_id: user_id,
       patient_id: patientId.value,
       serial_number: selectedSlot.value.serialNumber,
@@ -290,17 +269,76 @@ const submitForm = async () => {
       }
     );
 
-    // If the user clicks "OK," proceed with form submission
     if (confirmResult === 'confirm') {
-      const response = await axiosInstance.post('/admin/appointment/appointment-data',formData);
-
+      const response = await axiosInstance.post('/admin/appointment/appointment-data', formData);
       notify.Success(response.data.message);
     }
-
   } catch (error) {
     notify.Error(error.response.data.errors);
   }
 };
+
+const onDoctorChange = async () => {
+  try {
+    await fetchDoctorData();
+    if (handleSubmit.value.doctor_id && handleSubmit.value.appointment_date) {
+      await appointmentData();
+    }
+  } catch (error) {
+    console.error('Error in onDoctorChange:', error);
+  }
+};
+
+const onDateChange = async () => {
+  try {
+    if (handleSubmit.value.doctor_id && handleSubmit.value.appointment_date) {
+      await appointmentData();
+    }
+  } catch (error) {
+    console.error('Error in onDateChange:', error);
+  }
+};
+
+const appointmentData = async () => {
+  try {
+    // Add a guard clause to check if doctor_id is empty
+    if (!handleSubmit.value.doctor_id || !handleSubmit.value.appointment_date) {
+      return;
+    }
+
+    const response = await axiosInstance.get(`/admin/appointment/appointment-booking-patient/${handleSubmit.value.doctor_id}?appointment_date=${handleSubmit.value.appointment_date}`);
+    appointment_data.value = response.data.appointment_data;
+
+    timeSlots.value.forEach(slot => {
+      const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
+      slot.isBooked = isBooked;
+    });
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+watch(
+  [() => handleSubmit.value.doctor_id, () => handleSubmit.value.appointment_date],
+  async ([newDoctorId, newAppointmentDate]) => {
+    try {
+      // Add a guard clause to check if doctor_id is empty
+      if (!newDoctorId || !newAppointmentDate) {
+        return;
+      }
+      const response = await axiosInstance.get(`/admin/appointment/appointment-booking-patient/${newDoctorId}?appointment_date=${newAppointmentDate}`);
+      appointment_data.value = response.data.appointment_data;
+
+      timeSlots.value.forEach(slot => {
+        const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
+        slot.isBooked = isBooked;
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+);
 </script>
 <style scoped>
 .v-card {
