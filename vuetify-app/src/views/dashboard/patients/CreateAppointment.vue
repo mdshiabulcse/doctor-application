@@ -171,6 +171,8 @@ onMounted(() => {
   patientId.value = useRoute().params.patientId;
   fetchPatientDetails();
   fetchDoctorData();
+  appointmentSetting();
+  generateTimeSlots();
   appointmentData();
 });
 
@@ -187,11 +189,6 @@ const appointmentSetting = async () => {
 const timeSlots = ref([]);
 let serialNumberCounter = 1;
 const selectedSlot = ref(null);
-
-onMounted(() => {
-  generateTimeSlots();
-  appointmentSetting();
-});
 
 const generateTimeSlots = () => {
   for (const timeSlot of timeSlotArrays.value) {
@@ -226,7 +223,6 @@ const bookSlot = (clickedSlot) => {
   if (!clickedSlot.isBooked && clickedSlot !== selectedSlot.value) {
     if (selectedSlot.value) {
       selectedSlot.value.isBooked = false;
-      selectedSlot.value.appointmentCount = 0; // Reset appointmentCount for previously selected slot
     }
 
     clickedSlot.appointmentCount += 1; // Increment appointmentCount for the clicked slot
@@ -301,7 +297,6 @@ const onDateChange = async () => {
 
 const appointmentData = async () => {
   try {
-    // Add a guard clause to check if doctor_id is empty
     if (!handleSubmit.value.doctor_id || !handleSubmit.value.appointment_date) {
       return;
     }
@@ -310,10 +305,9 @@ const appointmentData = async () => {
     appointment_data.value = response.data.appointment_data;
 
     timeSlots.value.forEach(slot => {
-      const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
+      const isBooked = appointment_data.value.some(appointment => appointment.appointment_sl === slot.serialNumber);
       slot.isBooked = isBooked;
     });
-
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -323,15 +317,15 @@ watch(
   [() => handleSubmit.value.doctor_id, () => handleSubmit.value.appointment_date],
   async ([newDoctorId, newAppointmentDate]) => {
     try {
-      // Add a guard clause to check if doctor_id is empty
       if (!newDoctorId || !newAppointmentDate) {
         return;
       }
+
       const response = await axiosInstance.get(`/admin/appointment/appointment-booking-patient/${newDoctorId}?appointment_date=${newAppointmentDate}`);
       appointment_data.value = response.data.appointment_data;
 
       timeSlots.value.forEach(slot => {
-        const isBooked = appointment_data.value.some(appointment => appointment.slotNumber === slot.slotNumber);
+        const isBooked = appointment_data.value.some(appointment => appointment.appointment_sl === slot.serialNumber);
         slot.isBooked = isBooked;
       });
     } catch (error) {

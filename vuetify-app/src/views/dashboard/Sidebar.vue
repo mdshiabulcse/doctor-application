@@ -8,6 +8,9 @@
     <router-link :to="{name:'patient.info'}">
       <v-list-item prepend-icon="mdi-account-injury-outline" title="Patients" value="Patient Info"></v-list-item>
     </router-link>
+    <router-link :to="{name:'appointment.data'}">
+      <v-list-item prepend-icon="mdi-calendar-check-outline" title="Appointment" value="Appointment"></v-list-item>
+    </router-link>
 
     <!-- Parent Menu 1 -->
 
