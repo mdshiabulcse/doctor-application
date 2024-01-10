@@ -19,9 +19,10 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $data['appointment_data']=PatientAppointment::with(['patient_info','doctor_info'])->get();
+        return $this->successApiResponse($data);
     }
 
     /**
@@ -58,6 +59,7 @@ class AppointmentController extends Controller
             $appoinment->patient_id = $request->patient_id;
             $appoinment->doctor_id = $request->doctor_id;
             $appoinment->appointment_sl = $request->serial_number;
+            $appoinment->appointment_time = $request->slot_time_start;
             $appoinment->appointment_date = $request->appointment_date;
             $appoinment->create_date = Carbon::now();
             $appoinment->status = 'Pending';
