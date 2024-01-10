@@ -75,17 +75,12 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue';
 import axiosInstance from "@/services/axiosService";
-// import {useNotification} from "@/store/notification";
-// import {useAuth} from "@/store/auth";
 import { useRouter } from 'vue-router';
 
 
 const search = ref('');
 const desserts = ref([]);
-// const notify = useNotification();
-// const userData = useAuth();
-// const user_id = userData.user.data.id;
-// const dialogEdit = ref(false);
+
 
 const loading = ref(false);
 const router = useRouter();

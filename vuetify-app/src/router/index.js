@@ -7,7 +7,7 @@ import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
 import {DoctorList,UserInfo,PatientSourceInfo} from "@/views/dashboard/Index";
 import {PatientData,PatientCreate,PatientDetails,PatientAppointment, AppointmentData} from "@/views/dashboard/patients/Index";
-import {PatientExaminationInvoice } from "@/views/dashboard/invoice/Index";
+import {PatientExaminationInvoice,PatientConsultationInvoice } from "@/views/dashboard/invoice/Index";
 
 const routes = [
   {
@@ -52,6 +52,9 @@ const routes = [
       // -----------Invoice  Info Start-----------
       {
         path: '/patient-examination-invoice/:patientId', name: 'patient.examination', component: PatientExaminationInvoice, meta:{title:"Patient Examination Invoice", requiresAuth:true},
+      },
+      {
+        path: '/patient-consultation-invoice/:id/:patientId', name: 'patient.consultation', component: PatientConsultationInvoice, meta:{title:"Patient Consultation Invoice", requiresAuth:true},
       },
       // -----------Invoice  Info End-----------
 

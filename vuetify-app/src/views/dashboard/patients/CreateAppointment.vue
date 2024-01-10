@@ -18,6 +18,7 @@
             prepend-icon="mdi-36px mdi-light mdi-calendar-check"
             rel="noopener"
             color="warning"
+            :loading="loading"
           ></v-card>
           <v-col cols="12">
             <v-row>
@@ -142,8 +143,10 @@ const router = useRouter();
 const special_doctor = ref([]);
 const appointment_data = ref([]);
 const timeSlotArrays = ref([]);
+const loading = ref(true);
 const userData = useAuth();
 const user_id = userData.user.data.id;
+
 const handleSubmit = ref({
   doctor_id: '',
   appointment_date: new Date().toISOString().substr(0, 10),
@@ -180,6 +183,7 @@ const appointmentSetting = async () => {
   try {
     const response = await axiosInstance.get(`/admin/appointment/appointment-setting`);
     timeSlotArrays.value = response.data.appointment_settings;
+    loading.value = false;
     generateTimeSlots();
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -253,6 +257,7 @@ const submitForm = async () => {
       user_id: user_id,
       patient_id: patientId.value,
       serial_number: selectedSlot.value.serialNumber,
+      slot_time_start: selectedSlot.value.time,
     };
     const confirmResult = await ElMessageBox.confirm(
       'Do you want to submit the form?',
