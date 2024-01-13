@@ -86,8 +86,10 @@ class AppointmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
+        $response['appointment_details']=PatientAppointment::whereId($id)->with(['patient_info','doctor_info'])->first();
+        return $this->successApiResponse($response);
 
     }
 
@@ -136,4 +138,6 @@ class AppointmentController extends Controller
         $data['appointment_data']=PatientAppointment::where(['doctor_id'=>$id,'appointment_date'=>$request->appointment_date])->get();
         return $this->successApiResponse($data);
     }
+
+
 }
