@@ -94,4 +94,11 @@ class PrintController extends Controller
 //        return $this->successApiResponse($invData);
         return view('print.exInvoicePrint',compact('invData', 'invInfoDatas'));
     }
+    public function consultationInvoicePrint($inv_id)
+    {
+        $invData = Invoice::where('invoice_id',$inv_id)->with('patient_info')->first();
+        $invInfoDatas= InvoiceInfo::where('invoice_id',$inv_id)->with('exam_data')->get();
+//        return $this->successApiResponse($invData);
+        return view('print.consultationInvoicePrint',compact('invData', 'invInfoDatas'));
+    }
 }

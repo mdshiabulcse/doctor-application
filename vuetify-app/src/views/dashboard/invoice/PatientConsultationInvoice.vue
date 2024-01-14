@@ -218,6 +218,9 @@ const user_id = userData.user.data.id;
 const handleSubmit = ref({
   doctor_id: '',
   ref_doctor_id: '',
+  invoice_item_id: 1,
+  invoice_type: 'Consultation',
+  invoice_total_amount:'',
   subtotal: '',
   total_discount: '',
   total_paid_amount: '',
@@ -274,6 +277,7 @@ const fetchDiscountListData = async () => { //discount list
 const totalDiscount = ref(0);
 const totalPaidAmount = ref(0);
 const receivedAmount = ref(0);
+const dueAmount = ref(0);
 
 
 
@@ -303,7 +307,7 @@ const discountRefresh = () => {
   dialog.value = false;
 };
 const exInvoicePrint = () => {
-  window.open(localUrl.value + '/print/ex-invoice-print/'+invoice_id.value, '_blank');
+  window.open(localUrl.value + '/print/consultation-invoice-print/'+invoice_id.value, '_blank');
 };
 
 
@@ -313,19 +317,22 @@ const submitForm = async () => {
     const formData = {
       doctor_id: handleSubmit.value.doctor_id,
       ref_doctor_id: handleSubmit.value.ref_doctor_id,
+      invoice_item_id: handleSubmit.value.invoice_item_id,
+      invoice_type: handleSubmit.value.invoice_type,
+      invoice_total_amount: handleSubmit.value.subtotal,
       subtotal: handleSubmit.value.subtotal,
       total_discount: totalDiscount.value,
       total_paid_amount: totalPaidAmount.value,
       received_amount: receivedAmount.value,
       discount_selected: discountRef.value,
+      due_amount: dueAmount.value,
+      appointment_id: AppointmentId.value,
       user_id: user_id,
       patient_id: patientId.value,
 
       // Add other form fields as needed
     };
 
-    console.log('form data log',formData)
-    console.log('form data log',formData)
     // Make an HTTP POST request to the Laravel API endpoint
 
     const confirmResult = await ElMessageBox.confirm(
@@ -341,7 +348,7 @@ const submitForm = async () => {
 
     // If the user clicks "OK," proceed with form submission
     if (confirmResult === 'confirm') {
-      const response = await axiosInstance.post('/admin/invoice/examination-invoice', formData);
+      const response = await axiosInstance.post('/admin/invoice/consultation-invoice', formData);
       invoice_id.value = response.data.invoice_id;
       console.log('API Response:', response.data);
       notify.Success(response.data.message);
