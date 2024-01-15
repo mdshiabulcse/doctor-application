@@ -23,12 +23,32 @@
           <v-col cols="12">
             <v-card>
               <v-container>
-                <v-row align="center" justify="center">
-                  <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-file-document-edit-outline" color="info"> Edit Patinet</v-btn>
+                <v-row >
+                  <v-col cols="3">
+                    <v-autocomplete
+                      v-model="handleSubmit.doctor_id"
+                      :items="special_doctor"
+                      color="blue-grey-lighten-2"
+                      item-value="id"
+                      item-title="doctor_name"
+                      label="Appointment Doctor"
+                      @change="onDoctorChange"
+                    ></v-autocomplete>
                   </v-col>
-                  <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-printer" color="warning"> Print Invoice</v-btn>
+                  <v-col cols="3">
+                    <v-text-field
+                      v-model="handleSubmit.appointment_date"
+                      type="date"
+                      label="Appointment Date"
+                      hint="MM/DD/YYYY format"
+                      prepend-icon="mdi-calendar"
+                      required
+                      @change="onDateChange"
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-btn prepend-icon="mdi-printer" color="primary"> Print</v-btn>
                   </v-col>
                 </v-row>
               </v-container>
@@ -71,6 +91,7 @@ import axiosInstance from "@/services/axiosService";
 import {useRoute, useRouter} from "vue-router";
 
 const router = useRouter();
+const special_doctor = ref([]);
 const breadcrumbs = computed(() => [
   {
     title: 'Home',
@@ -97,20 +118,56 @@ const headers = computed(() => [
 const search = ref('');
 const appointment_data = ref([]);
 const loading = ref(true);
+const handleSubmit = ref({
+  doctor_id: '',
+  appointment_date: new Date().toISOString().substr(0, 10),
+});
 
 onMounted(() => {
   appointmentData();
+  fetchDoctorData();
 });
-const appointmentData = async () => {
+
+
+const fetchDoctorData = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/appointment/appointment-data`); // get doctor details
-    appointment_data.value = response.data.appointment_data;
-    loading.value=false;
+    const response = await axiosInstance.get(`/admin/invoice/doctor-data`); // get doctor details
+    special_doctor.value = response.data.special_doctor;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+const onDoctorChange = async () => {
+  try {
+    await fetchDoctorData();
+    if (handleSubmit.value.doctor_id && handleSubmit.value.appointment_date) {
+      await appointmentData();
+    }
+  } catch (error) {
+    console.error('Error in onDoctorChange:', error);
+  }
+};
 
+const onDateChange = async () => {
+  try {
+    if (handleSubmit.value.doctor_id && handleSubmit.value.appointment_date) {
+      await appointmentData();
+    }
+  } catch (error) {
+    console.error('Error in onDateChange:', error);
+  }
+};
+
+const appointmentData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/appointment/appointment-data?doctor_id=${handleSubmit.value.doctor_id}&appointment_date=${handleSubmit.value.appointment_date}`); // get doctor details
+    appointment_data.value = response.data.appointment_data;
+    loading.value=false;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 const appointmentInvoice = (item) => {
   console.log('item',item.selectable)
   router.push({ path: `/patient-consultation-invoice/${item.selectable.id}/${item.selectable.patient_id}` });
