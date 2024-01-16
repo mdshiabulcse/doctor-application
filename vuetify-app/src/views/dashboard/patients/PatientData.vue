@@ -10,63 +10,79 @@
           </v-breadcrumbs>
         </v-sheet>
       </v-col>
-      <v-col cols="12">
-        <v-sheet class="d-flex align-end flex-column ">
-          <div class="ma-2 pa-2 mt-auto">
-            <v-btn
-              append-icon="mdi-plus"
-              color="primary"
-              @click="patientCreate()"
-            >
-              Create
-            </v-btn>
-          </div>
-        </v-sheet>
-        <v-data-table
-          :headers="headers"
-          :items="desserts"
-          :search="search"
-          class="elevation-1"
-          item-value="id"
-          :loading="loading"
-        >
-          <template v-slot:top>
-            <v-text-field
-              v-model="search"
-              label="Search"
-              class="pa-0"
-            ></v-text-field>
-          </template>
-          <template v-slot:item.actions="{ item }">
-            <v-icon
-              title="Patient Examination"
-              size="small"
-              class="me-2"
-              color="primary"
-              icon=" mdi-calendar-clock"
-              @click="patientAppointment(item)"
-            >
-            </v-icon>
-            <v-icon
-              title="Patient Examination"
-              size="small"
-              class="me-2"
-              color="green-darken-2"
-              icon="mdi-file-document-edit-outline"
-              @click="patientExamination(item)"
-            >
-            </v-icon>
-            <v-icon
-              title="Patient Details"
-              size="small"
-              class="me-2"
-              color="blue-darken-2"
-              icon="mdi-eye-outline"
-              @click="patientDetails(item)"
-            >
-            </v-icon>
-          </template>
-        </v-data-table>
+      <v-col>
+        <v-card
+          class="mx-auto my-2"
+          title="Patient Data"
+          prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
+          rel="noopener"
+          color="warning"
+
+        ></v-card>
+        <v-col cols="12">
+          <v-card>
+            <v-container>
+              <v-row >
+                <v-col cols="2">
+                  <v-btn
+                    append-icon="mdi-plus"
+                    color="primary"
+                    @click="patientCreate()"
+                  >
+                    Create
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :search="search"
+            class="elevation-1"
+            item-value="id"
+            :loading="loading"
+          >
+            <template v-slot:top>
+              <v-text-field
+                v-model="search"
+                label="Search"
+                class="pa-0"
+              ></v-text-field>
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon
+                title="Patient Examination"
+                size="small"
+                class="me-2"
+                color="primary"
+                icon=" mdi-calendar-clock"
+                @click="patientAppointment(item)"
+              >
+              </v-icon>
+              <v-icon
+                title="Patient Examination"
+                size="small"
+                class="me-2"
+                color="green-darken-2"
+                icon="mdi-file-document-edit-outline"
+                @click="patientExamination(item)"
+              >
+              </v-icon>
+              <v-icon
+                title="Patient Details"
+                size="small"
+                class="me-2"
+                color="blue-darken-2"
+                icon="mdi-eye-outline"
+                @click="patientDetails(item)"
+              >
+              </v-icon>
+            </template>
+          </v-data-table>
+        </v-col>
       </v-col>
     </v-row>
   </v-container>

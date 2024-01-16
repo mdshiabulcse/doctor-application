@@ -22,10 +22,14 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $data['appointment_data'] = PatientAppointment::query()
-            ->when($request['appointment_date'], function ($query) use ($request) {
-                $query->where('create_date', $request->appointment_date);
+            ->when($request['appointment_date'] && $request['doctor_id'], function ($query) use ($request) {
+                $query->where('appointment_date', $request->appointment_date)
+                    ->where('doctor_id', $request->doctor_id);
             })
-            ->when($request['doctor_id'], function ($query) use ($request) {
+            ->when($request['appointment_date'] && !$request['doctor_id'], function ($query) use ($request) {
+                $query->where('appointment_date', $request->appointment_date);
+            })
+            ->when(!$request['appointment_date'] && $request['doctor_id'], function ($query) use ($request) {
                 $query->where('doctor_id', $request->doctor_id);
             })
             ->with(['patient_info', 'doctor_info'])
