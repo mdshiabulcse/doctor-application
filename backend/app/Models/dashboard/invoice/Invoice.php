@@ -2,6 +2,7 @@
 
 namespace App\Models\dashboard\invoice;
 
+use App\Models\dashboard\DoctorInfo;
 use App\Models\dashboard\patient\PatientInfo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,5 +16,8 @@ class Invoice extends Model
     }
     public function user_info(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function doctor_info(){
+        return $this->belongsTo(DoctorInfo::class, 'dr_id');
     }
 }
