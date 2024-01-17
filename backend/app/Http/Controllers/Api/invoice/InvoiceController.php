@@ -3,18 +3,35 @@
 namespace App\Http\Controllers\Api\invoice;
 
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\invoice\Invoice;
+use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    use ApiStatusTrait;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $data['invoice_data'] = Invoice::query()
+            ->when($request['create_date'] && $request['doctor_id'], function ($query) use ($request) {
+                $query->where('inv_create', $request->create_date)
+                    ->where('doctor_id', $request->doctor_id);
+            })
+            ->when($request['create_date'] && !$request['doctor_id'], function ($query) use ($request) {
+                $query->where('inv_create', $request->create_date);
+            })
+            ->when(!$request['create_date'] && $request['doctor_id'], function ($query) use ($request) {
+                $query->where('doctor_id', $request->doctor_id);
+            })
+            ->with(['patient_info', 'doctor_info'])
+            ->get();
+
+        return $this->successApiResponse($data);
     }
 
     /**
