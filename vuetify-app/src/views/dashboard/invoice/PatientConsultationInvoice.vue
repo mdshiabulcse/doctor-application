@@ -307,7 +307,7 @@ const discountRefresh = () => {
   dialog.value = false;
 };
 const InvoicePrint = () => {
-  window.open(localUrl.value + '/print/consultation-invoice-print/'+invoice_id.value, '_blank');
+  window.open(localUrl.value + '/print/invoice-print/'+invoice_id.value, '_blank');
 };
 
 

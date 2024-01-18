@@ -26,13 +26,13 @@
                 <v-row >
                   <v-col cols="3">
                     <v-autocomplete
-                      v-model="handleSubmit.doctor_id"
-                      :items="special_doctor"
+                      v-model="handleSubmit.user_id"
+                      :items="user_info"
                       color="blue-grey-lighten-2"
                       item-value="id"
-                      item-title="doctor_name"
-                      label="Doctor"
-                      @change="onDoctorChange"
+                      item-title="name"
+                      label="User"
+                      @change="onUserChange"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="3">
@@ -55,6 +55,12 @@
             </v-card>
           </v-col>
           <v-col cols="12">
+            <v-card
+              class="mx-auto my-2"
+              title="Consultation"
+              rel="noopener"
+              color="primary"
+            ></v-card>
             <v-table>
               <thead>
               <tr>
@@ -95,7 +101,76 @@
               </thead>
               <tbody>
               <tr
-                v-for="item in invoice_data"
+                v-for="item in consultation_invoice_data"
+                :key="item.name"
+              >
+                <td>{{ item.invoice_id }}</td>
+                <td>{{ item.patient_id }}</td>
+                <td>{{ item.patient_info.patient_name }}</td>
+                <td>{{ item.doctor_info.doctor_name }}</td>
+                <td>{{ item.invoice_total_amount }}</td>
+                <td>{{ item.paid_amount }}</td>
+                <td>{{ item.total_discount_amount }}</td>
+                <td>{{ item.received_amount }}</td>
+                <td>{{ item.due_amount }}</td>
+                <td>{{ item.status }}</td>
+                <td>
+                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"  @click="PrintInvoice(item)">
+                  </v-btn>
+                </td>
+              </tr>
+              </tbody>
+            </v-table>
+
+          </v-col>
+          <v-col cols="12">
+            <v-card
+              class="mx-auto my-2"
+              title="Pathology"
+              rel="noopener"
+              color="primary"
+            ></v-card>
+            <v-table>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  INV
+                </th>
+                <th class="text-left">
+                  PID
+                </th>
+                <th class="text-left">
+                  Name
+                </th>
+                <th class="text-left">
+                  Doctor
+                </th>
+                <th class="text-left">
+                  Total
+                </th>
+                <th class="text-left">
+                  Paid
+                </th>
+                <th class="text-left">
+                  Discount
+                </th>
+                <th class="text-left">
+                  Received
+                </th>
+                <th class="text-left">
+                  Due
+                </th>
+                <th class="text-left">
+                  Status
+                </th>
+                <th class="text-left">
+                  Actions
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                v-for="item in pathology_invoice_data"
                 :key="item.name"
               >
                 <td>{{ item.invoice_id }}</td>
@@ -129,48 +204,49 @@ import { useRouter } from "vue-router";
 import {localUrl} from "@/services/globalUrlConfig";
 
 const router = useRouter();
-const special_doctor = ref([]);
+const user_info = ref([]);
 const breadcrumbs = [
   { title: 'Home', disabled: false, href: '/' },
   { title: 'Invoice List', disabled: false, href: '#' },
 ];
 
 const search = ref('');
-const invoice_data = ref([]);
+const consultation_invoice_data = ref([]);
+const pathology_invoice_data = ref([]);
 const loading = ref(true);
 const handleSubmit = ref({
-  doctor_id: '',
+  user_id: '',
   create_date: new Date().toISOString().substr(0, 10),
 });
 
 onMounted(() => {
   PatientInvoiceData();
-  fetchDoctorData();
+  fetchUserData();
 });
 
-const fetchDoctorData = async () => {
+const fetchUserData = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/invoice/doctor-data`);
-    special_doctor.value = response.data.special_doctor;
+    const response = await axiosInstance.get(`/admin/invoice/user-data`);
+    user_info.value = response.data.user_info;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
 
-const onDoctorChange = async () => {
+const onUserChange = async () => {
   try {
-    await fetchDoctorData();
-    if (handleSubmit.value.doctor_id && handleSubmit.value.create_date) {
+    await fetchUserData();
+    if (handleSubmit.value.user_id && handleSubmit.value.create_date) {
       await PatientInvoiceData();
     }
   } catch (error) {
-    console.error('Error in onDoctorChange:', error);
+    console.error('Error in onUserChange:', error);
   }
 };
 
 const onDateChange = async () => {
   try {
-    if (handleSubmit.value.doctor_id || handleSubmit.value.create_date) {
+    if (handleSubmit.value.user_id || handleSubmit.value.create_date) {
       await PatientInvoiceData();
     }
   } catch (error) {
@@ -183,14 +259,15 @@ const PatientInvoiceData = async () => {
     loading.value=true
     let apiUrl = `/admin/invoice/invoice?create_date=${handleSubmit.value.create_date}`;
 
-    if (handleSubmit.value.doctor_id) {
+    if (handleSubmit.value.user_id) {
       loading.value=true
-      apiUrl += `&doctor_id=${handleSubmit.value.doctor_id}`;
+      apiUrl += `&user_id=${handleSubmit.value.user_id}`;
 
     }
 
     const response = await axiosInstance.get(apiUrl);
-    invoice_data.value = response.data.invoice_data;
+    consultation_invoice_data.value = response.data.consultation_invoice_data;
+    pathology_invoice_data.value = response.data.pathology_invoice_data;
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -198,7 +275,7 @@ const PatientInvoiceData = async () => {
 };
 
 const PrintInvoice = (item) => {
-  window.open(localUrl.value + '/print/consultation-invoice-print/'+item.invoice_id, '_blank');
+  window.open(localUrl.value + '/print/invoice-print/'+item.invoice_id, '_blank');
 };
 
 watchEffect(() => {

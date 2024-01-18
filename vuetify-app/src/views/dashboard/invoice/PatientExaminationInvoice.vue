@@ -317,7 +317,7 @@ const fetchDiscountListData = async () => { //discount list
 };
 
 const exInvoicePrint = () => {
-  window.open(localUrl.value + '/print/ex-invoice-print/'+invoice_id.value, '_blank');
+  window.open(localUrl.value + '/print/invoice-print/'+invoice_id.value, '_blank');
 };
 
 const addExamination = () => {
