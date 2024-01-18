@@ -55,31 +55,67 @@
             </v-card>
           </v-col>
           <v-col cols="12">
-            <v-sheet class="d-flex align-end flex-column ">
+            <v-table>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  INV
+                </th>
+                <th class="text-left">
+                  PID
+                </th>
+                <th class="text-left">
+                  Name
+                </th>
+                <th class="text-left">
+                  Doctor
+                </th>
+                <th class="text-left">
+                  Total
+                </th>
+                <th class="text-left">
+                  Paid
+                </th>
+                <th class="text-left">
+                  Discount
+                </th>
+                <th class="text-left">
+                  Received
+                </th>
+                <th class="text-left">
+                  Due
+                </th>
+                <th class="text-left">
+                  Status
+                </th>
+                <th class="text-left">
+                  Actions
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                v-for="item in invoice_data"
+                :key="item.name"
+              >
+                <td>{{ item.invoice_id }}</td>
+                <td>{{ item.patient_id }}</td>
+                <td>{{ item.patient_info.patient_name }}</td>
+                <td>{{ item.doctor_info.doctor_name }}</td>
+                <td>{{ item.invoice_total_amount }}</td>
+                <td>{{ item.paid_amount }}</td>
+                <td>{{ item.total_discount_amount }}</td>
+                <td>{{ item.received_amount }}</td>
+                <td>{{ item.due_amount }}</td>
+                <td>{{ item.status }}</td>
+                <td>
+                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"  @click="PrintInvoice(item)">
+                  </v-btn>
+                </td>
+              </tr>
+              </tbody>
+            </v-table>
 
-            </v-sheet>
-            <v-data-table
-              :headers="headers"
-              :items="invoice_data"
-              :search="search"
-              class="elevation-1"
-              item-value="id"
-              :loading="loading"
-            >
-              <template v-slot:top>
-                <v-text-field
-                  v-model="search"
-                  label="Search"
-                  class="pa-0"
-                ></v-text-field>
-              </template>
-              <template v-if="handleSubmit.appointment_date === new Date().toISOString().substr(0, 10)" v-slot:item.actions="{ item }">
-                <v-btn class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning"  @click="appointmentInvoice(item)">
-                </v-btn>
-                <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"  @click="appointmentInvoice(item)">
-                </v-btn>
-              </template>
-            </v-data-table>
           </v-col>
         </v-col>
       </v-row>
@@ -90,6 +126,7 @@
 import { onMounted, ref, watchEffect } from 'vue'
 import axiosInstance from "@/services/axiosService";
 import { useRouter } from "vue-router";
+import {localUrl} from "@/services/globalUrlConfig";
 
 const router = useRouter();
 const special_doctor = ref([]);
@@ -97,19 +134,7 @@ const breadcrumbs = [
   { title: 'Home', disabled: false, href: '/' },
   { title: 'Invoice List', disabled: false, href: '#' },
 ];
-const headers = [
-  { id: 'id', title: 'INV ID', align: 'end', key: 'invoice_id' },
-  { id: 'id', title: 'PID', align: 'start', key: 'patient_id' },
-  { id: 'id', title: 'Name', align: 'end', key: 'patient_info.patient_name' },
-  { id: 'id', title: 'Doctor', align: 'end', key: 'doctor_info.doctor_name' },
-  { id: 'id', title: 'Total', align: 'end', key: 'invoice_total_amount' },
-  { id: 'id', title: 'Paid', align: 'end', key: 'paid_amount' },
-  { id: 'id', title: 'Discount', align: 'end', key: 'total_discount_amount' },
-  { id: 'id', title: 'Received', align: 'end', key: 'received_amount' },
-  { id: 'id', title: 'Due', align: 'end', key: 'due_amount' },
-  { id: 'id', title: 'Status', align: 'end', key: 'status' },
-  { id: 'id', title: 'Actions', key: 'actions', sortable: false },
-];
+
 const search = ref('');
 const invoice_data = ref([]);
 const loading = ref(true);
@@ -172,9 +197,8 @@ const PatientInvoiceData = async () => {
   }
 };
 
-const appointmentInvoice = (item) => {
-  console.log('item', item.selectable);
-  router.push({ path: `/patient-consultation-invoice/${item.selectable.id}/${item.selectable.patient_id}` });
+const PrintInvoice = (item) => {
+  window.open(localUrl.value + '/print/consultation-invoice-print/'+item.invoice_id, '_blank');
 };
 
 watchEffect(() => {

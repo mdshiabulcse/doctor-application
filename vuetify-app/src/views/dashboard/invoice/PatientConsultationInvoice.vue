@@ -28,7 +28,7 @@
                     <v-btn  prepend-icon="mdi-file-document-edit-outline" color="info" >  Edit Patinet</v-btn>
                   </v-col>
                   <v-col cols="auto" v-if="invoice_id">
-                    <v-btn   prepend-icon="mdi-printer" color="warning" @click="exInvoicePrint">  Print Invoice</v-btn>
+                    <v-btn   prepend-icon="mdi-printer" color="warning" @click="InvoicePrint">  Print Invoice</v-btn>
                   </v-col>
                 </v-row>
               </v-container>
@@ -306,7 +306,7 @@ const discountRefresh = () => {
   discountRef.value=0;
   dialog.value = false;
 };
-const exInvoicePrint = () => {
+const InvoicePrint = () => {
   window.open(localUrl.value + '/print/consultation-invoice-print/'+invoice_id.value, '_blank');
 };
 
