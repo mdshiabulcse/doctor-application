@@ -119,6 +119,17 @@
                   </v-btn>
                 </td>
               </tr>
+              <tr v-if="consultation_sum_data">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="font-weight-bold">Consultation Total:</td>
+                <td class="font-weight-bold">{{consultation_sum_data.total_amount}}</td>
+                <td class="font-weight-bold">{{consultation_sum_data.total_paid_amount}}</td>
+                <td class="font-weight-bold">{{consultation_sum_data.discount_amount_total}}</td>
+                <td class="font-weight-bold">{{consultation_sum_data.total_received_amount}}</td>
+                <td class="font-weight-bold">{{consultation_sum_data.total_due_amount}}</td>
+              </tr>
               </tbody>
             </v-table>
 
@@ -188,6 +199,50 @@
                   </v-btn>
                 </td>
               </tr>
+              <tr v-if="pathology_sum_data">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="font-weight-bold">Pathology Total:</td>
+                <td class="font-weight-bold">{{pathology_sum_data.total_amount}}</td>
+                <td class="font-weight-bold">{{pathology_sum_data.total_paid_amount}}</td>
+                <td class="font-weight-bold">{{pathology_sum_data.discount_amount_total}}</td>
+                <td class="font-weight-bold">{{pathology_sum_data.total_received_amount}}</td>
+                <td class="font-weight-bold">{{pathology_sum_data.total_due_amount}}</td>
+              </tr>
+              </tbody>
+            </v-table>
+
+          </v-col>
+          <v-col cols="12">
+            <v-card
+              class="mx-auto my-2"
+              title="Invoice Summary"
+              rel="noopener"
+              color="primary"
+            ></v-card>
+            <v-table>
+              <tbody>
+              <tr>
+                <td>Total Amount</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Total Paid Amount</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Total Discount Amount</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Total Received Amount</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Total Due Amount</td>
+                <td></td>
+              </tr>
               </tbody>
             </v-table>
 
@@ -212,7 +267,9 @@ const breadcrumbs = [
 
 const search = ref('');
 const consultation_invoice_data = ref([]);
+const consultation_sum_data = ref();
 const pathology_invoice_data = ref([]);
+const pathology_sum_data = ref();
 const loading = ref(true);
 const handleSubmit = ref({
   user_id: '',
@@ -267,7 +324,10 @@ const PatientInvoiceData = async () => {
 
     const response = await axiosInstance.get(apiUrl);
     consultation_invoice_data.value = response.data.consultation_invoice_data;
+    consultation_sum_data.value = response.data.consultation_sum_data;
     pathology_invoice_data.value = response.data.pathology_invoice_data;
+    pathology_sum_data.value = response.data.pathology_sum_data;
+    console.log('pathology',pathology_sum_data.value.total_amount)
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
