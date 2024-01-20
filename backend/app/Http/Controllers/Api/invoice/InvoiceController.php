@@ -45,7 +45,7 @@ class InvoiceController extends Controller
                 DB::raw('SUM(received_amount) as total_received_amount'),
                 DB::raw('SUM(due_amount) as total_due_amount'),
             )
-            ->get();
+            ->first();
 
         $data['pathology_invoice_data'] = Invoice::query()
             ->when($request->has('create_date'), function ($query) use ($request) {
@@ -73,7 +73,7 @@ class InvoiceController extends Controller
                 DB::raw('SUM(received_amount) as total_received_amount'),
                 DB::raw('SUM(due_amount) as total_due_amount'),
             )
-            ->get();
+            ->first();
         return $this->successApiResponse($data);
     }
 
