@@ -74,6 +74,15 @@ class InvoiceController extends Controller
                 DB::raw('SUM(due_amount) as total_due_amount'),
             )
             ->first();
+
+        $data['summary_total'] = [
+            'total_amount' => $data['pathology_sum_data']['total_amount'] + $data['consultation_sum_data']['total_amount'],
+            'total_paid_amount' => $data['pathology_sum_data']['total_paid_amount'] + $data['consultation_sum_data']['total_paid_amount'],
+            'discount_amount_total' => $data['pathology_sum_data']['discount_amount_total'] + $data['consultation_sum_data']['discount_amount_total'],
+            'total_received_amount' => $data['pathology_sum_data']['total_received_amount'] + $data['consultation_sum_data']['total_received_amount'],
+            'total_due_amount' => $data['pathology_sum_data']['total_due_amount'] + $data['consultation_sum_data']['total_due_amount'],
+        ];
+
         return $this->successApiResponse($data);
     }
 
