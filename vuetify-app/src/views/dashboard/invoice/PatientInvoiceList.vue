@@ -214,7 +214,7 @@
             </v-table>
 
           </v-col>
-          <v-col cols="12">
+          <v-col cols="6">
             <v-card
               class="mx-auto my-2"
               title="Invoice Summary"
@@ -222,26 +222,30 @@
               color="primary"
             ></v-card>
             <v-table>
-              <tbody>
-              <tr>
-                <td>Total Amount</td>
-                <td></td>
+              <tbody v-if="summary_total">
+              <tr >
+                <td cols="6">Total Amount:</td>
+                <td cols="6">{{formatAmount(summary_total.total_amount)}}</td>
               </tr>
               <tr>
-                <td>Total Paid Amount</td>
-                <td></td>
+                <td>Total Discount Amount:</td>
+                <td>{{formatAmount(summary_total.discount_amount_total)}}</td>
               </tr>
               <tr>
-                <td>Total Discount Amount</td>
-                <td></td>
+                <td>Total Paid Amount:</td>
+                <td>{{formatAmount(summary_total.total_paid_amount)}}</td>
               </tr>
               <tr>
-                <td>Total Received Amount</td>
-                <td></td>
+                <td>Total Due Amount:</td>
+                <td>{{formatAmount(summary_total.total_due_amount)}}</td>
               </tr>
               <tr>
-                <td>Total Due Amount</td>
-                <td></td>
+                <td>Total Received Amount:</td>
+                <td>{{formatAmount(summary_total.total_received_amount)}}</td>
+              </tr>
+              <tr>
+                <td class="text-warning">Total Balance:</td>
+                <td ><v-chip color="warning">{{formatAmount(summary_total.total_received_amount)}} </v-chip></td>
               </tr>
               </tbody>
             </v-table>
@@ -264,12 +268,13 @@ const breadcrumbs = [
   { title: 'Home', disabled: false, href: '/' },
   { title: 'Invoice List', disabled: false, href: '#' },
 ];
-
+const formatAmount = (amount) => parseFloat(amount).toFixed(2);
 const search = ref('');
 const consultation_invoice_data = ref([]);
 const consultation_sum_data = ref();
 const pathology_invoice_data = ref([]);
 const pathology_sum_data = ref();
+const summary_total = ref();
 const loading = ref(true);
 const handleSubmit = ref({
   user_id: '',
@@ -327,7 +332,8 @@ const PatientInvoiceData = async () => {
     consultation_sum_data.value = response.data.consultation_sum_data;
     pathology_invoice_data.value = response.data.pathology_invoice_data;
     pathology_sum_data.value = response.data.pathology_sum_data;
-    console.log('pathology',pathology_sum_data.value.total_amount)
+    summary_total.value = response.data.summary_total;
+    console.log('pathology',summary_total.value)
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
