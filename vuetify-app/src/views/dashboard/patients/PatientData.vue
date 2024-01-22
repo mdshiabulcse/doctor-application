@@ -22,7 +22,7 @@
         <v-col cols="12">
           <v-card>
             <v-container>
-              <v-row >
+              <v-row class="d-flex flex-row-reverse">
                 <v-col cols="2">
                   <v-btn
                     append-icon="mdi-plus"
@@ -31,6 +31,18 @@
                   >
                     Create
                   </v-btn>
+                </v-col>
+                <v-col cols="6">
+                    <v-text-field
+                      v-model="data_search"
+                      :loading="loading"
+                      density="compact"
+                      variant="solo"
+                      label="Search"
+                      append-inner-icon="mdi-magnify"
+                      single-line
+                      hide-details
+                    ></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -89,18 +101,19 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted,watch} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import { useRouter } from 'vue-router';
 
 
 const search = ref('');
+const data_search = ref('');
 const desserts = ref([]);
 
 
 const loading = ref(false);
 const router = useRouter();
-
+const date=ref(new Date().toISOString().substr(0, 10))
 
 const breadcrumbs = computed(() => [
   {
@@ -123,21 +136,24 @@ const headers = computed(() => [
 
 ]);
 
-
 onMounted(() => {
-  fetchData(); // Fetch data when the component is mounted
+  fetchData();
+});
+
+watch(data_search, () => {
+  fetchData();
 });
 
 const fetchData = async () => {
   try {
     loading.value = true;
-    const response = await axiosInstance('/admin/patients/patients'); // Replace with your API endpointa
+    const response = await axiosInstance(`/admin/patients/patients?date=${date.value}&search=${data_search.value}`);
     desserts.value = response.data.patient_info;
-    loading.value = true;
+    console.log('data search',data_search.value)
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
-    loading.value = false; // Set loading to false after the request is complete
+    loading.value = false;
   }
 };
 
