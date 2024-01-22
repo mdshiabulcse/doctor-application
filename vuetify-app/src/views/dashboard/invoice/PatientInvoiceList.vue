@@ -48,7 +48,7 @@
                     </v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-btn prepend-icon="mdi-printer" color="primary"> Print</v-btn>
+                    <v-btn prepend-icon="mdi-printer" color="primary" @click="PrintInvoiceList"> Print</v-btn>
                   </v-col>
                 </v-row>
               </v-container>
@@ -269,7 +269,6 @@ const breadcrumbs = [
   { title: 'Invoice List', disabled: false, href: '#' },
 ];
 const formatAmount = (amount) => parseFloat(amount).toFixed(2);
-const search = ref('');
 const consultation_invoice_data = ref([]);
 const consultation_sum_data = ref();
 const pathology_invoice_data = ref([]);
@@ -342,6 +341,9 @@ const PatientInvoiceData = async () => {
 
 const PrintInvoice = (item) => {
   window.open(localUrl.value + '/print/invoice-print/'+item.invoice_id, '_blank');
+};
+const PrintInvoiceList = () => {
+  window.open(localUrl.value + `/print/invoice-print-list?create_date=${handleSubmit.value.create_date}&user_id=${handleSubmit.value.user_id}`, '_blank');
 };
 
 watchEffect(() => {

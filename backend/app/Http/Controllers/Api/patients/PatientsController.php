@@ -23,9 +23,24 @@ class PatientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data['patient_info']=PatientInfo::all();
+
+        $data['patient_info'] = PatientInfo::query()
+            ->when(!empty($request['search']), function ($query) use ($request) {
+                $searchTerm = $request->input('search');
+                $query->where(function ($innerQuery) use ($searchTerm) {
+                    $innerQuery->where('patient_id', 'like', "%$searchTerm%")
+                        ->orWhere('patient_name', 'like', "%$searchTerm%")
+                        ->orWhere('patient_phone', 'like', "%$searchTerm%")
+                        ->orWhere('patient_email', 'like', "%$searchTerm%");
+                })->take(10);
+            })
+            ->when(empty($request['search']), function ($query) use ($request) {
+                $query->where('create_date', $request['date']);
+            })
+            ->get();
+
         return $this->successApiResponse($data);
     }
 

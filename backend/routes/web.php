@@ -34,6 +34,7 @@ Route::get('/login', function () {
 Route::resource('print-data',\App\Http\Controllers\Api\User\UserController::class);
 Route::group(['prefix'=> 'print'],function (){
     Route::get('invoice-print/{inv_id}',[PrintController::class, 'InvoicePrint']);
+    Route::get('invoice-print-list',[PrintController::class, 'InvoicePrintList']);
     Route::get('consultation-invoice-print/{inv_id}',[PrintController::class, 'consultationInvoicePrint']);
 });
 
