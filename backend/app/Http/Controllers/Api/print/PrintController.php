@@ -104,11 +104,12 @@ class PrintController extends Controller
 
     public function InvoicePrintList(Request $request)
     {
+
         $data['consultation_invoice_data'] = Invoice::query()
             ->when($request->has('create_date'), function ($query) use ($request) {
                 $query->where('inv_create', $request->create_date);
             })
-            ->when($request->has('user_id'), function ($query) use ($request) {
+            ->when($request->filled('user_id'), function ($query) use ($request) {
                 $query->where('user_id', $request->user_id);
             })
             ->where('invoice_type', 'Consultation')
@@ -119,7 +120,7 @@ class PrintController extends Controller
             ->when($request->has('create_date'), function ($query) use ($request) {
                 $query->where('inv_create', $request->create_date);
             })
-            ->when($request->has('user_id'), function ($query) use ($request) {
+            ->when($request->filled('user_id'), function ($query) use ($request) {
                 $query->where('user_id', $request->user_id);
             })
             ->where('invoice_type', 'Consultation')
@@ -136,7 +137,7 @@ class PrintController extends Controller
             ->when($request->has('create_date'), function ($query) use ($request) {
                 $query->where('inv_create', $request->create_date);
             })
-            ->when($request->has('user_id'), function ($query) use ($request) {
+            ->when($request->filled('user_id'), function ($query) use ($request) {
                 $query->where('user_id', $request->user_id);
             })
             ->where('invoice_type', 'Pathology')
@@ -147,7 +148,7 @@ class PrintController extends Controller
             ->when($request->has('create_date'), function ($query) use ($request) {
                 $query->where('inv_create', $request->create_date);
             })
-            ->when($request->has('user_id'), function ($query) use ($request) {
+            ->when($request->filled('user_id'), function ($query) use ($request) {
                 $query->where('user_id', $request->user_id);
             })
             ->where('invoice_type', 'Pathology')
@@ -168,6 +169,9 @@ class PrintController extends Controller
             'total_due_amount' => $data['pathology_sum_data']['total_due_amount'] + $data['consultation_sum_data']['total_due_amount'],
         ];
 
-        return $this->successApiResponse($data);
+        $data['pageTitle']='Invoice Information';
+        return view('print.invoice-list-print',$data);
+//        return $this->successApiResponse($data);
+
     }
 }
