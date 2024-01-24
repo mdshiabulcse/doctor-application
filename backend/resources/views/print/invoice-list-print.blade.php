@@ -23,7 +23,7 @@
             }
 
             @page {
-                size: B5;
+                size: A4;
             }
         }
     </style>
@@ -51,21 +51,21 @@
         <hr>
         </thead>
     </table>
-    <table class="table">
+    <table class="table table-bordered">
         <tbody>
         <h4>Consultation</h4>
         <tr>
-            <th scope="col">SL</th>
-            <th scope="col">INVID</th>
-            <th scope="col">PID</th>
-            <th scope="col">PatientName</th>
-            <th scope="col">Doctor</th>
-            <th scope="col">Total</th>
-            <th scope="col">Paid</th>
-            <th scope="col">Discount</th>
-            <th scope="col">Received</th>
-            <th scope="col">Due</th>
-            <th scope="col">Status</th>
+            <th width="5%">SL</th>
+            <th width="10%">INVID</th>
+            <th width="10%">PID</th>
+            <th width="15%">PatientName</th>
+            <th width="20%">Doctor</th>
+            <th width="5%">Total</th>
+            <th width="5%">Paid</th>
+            <th width="5%">Discount</th>
+            <th width="5%">Received</th>
+            <th width="5%">Due</th>
+            <th width="5%">Status</th>
         </tr>
         @foreach($consultation_invoice_data as $con_inv_data)
             <tr>
@@ -97,21 +97,21 @@
         </tr>
         </tbody>
     </table>
-    <table class="table">
+    <table class="table table-bordered">
         <tbody>
         <h4>Pathology</h4>
         <tr>
-            <th scope="col">SL</th>
-            <th scope="col">INVID</th>
-            <th scope="col">PID</th>
-            <th scope="col">PatientName</th>
-            <th scope="col">Doctor</th>
-            <th scope="col">Total</th>
-            <th scope="col">Paid</th>
-            <th scope="col">Discount</th>
-            <th scope="col">Received</th>
-            <th scope="col">Due</th>
-            <th scope="col">Status</th>
+            <th width="5%">SL</th>
+            <th width="10%">INVID</th>
+            <th width="10%">PID</th>
+            <th width="15%">PatientName</th>
+            <th width="20%">Doctor</th>
+            <th width="5%">Total</th>
+            <th width="5%">Paid</th>
+            <th width="5%">Discount</th>
+            <th width="5%">Received</th>
+            <th width="5%">Due</th>
+            <th width="5%">Status</th>
         </tr>
         @foreach($pathology_invoice_data as $path_inv_data)
             <tr>
@@ -143,7 +143,7 @@
         </tr>
         </tbody>
     </table>
-    <table class="table col-6">
+    <table class="table table-bordered col-6">
         <tbody>
         <h4>Summary</h4>
         <div class="row">
