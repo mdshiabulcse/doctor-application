@@ -261,6 +261,7 @@ import { onMounted, ref, watchEffect } from 'vue'
 import axiosInstance from "@/services/axiosService";
 import { useRouter } from "vue-router";
 import {localUrl} from "@/services/globalUrlConfig";
+import moment from 'moment-timezone';
 
 const router = useRouter();
 const user_info = ref([]);
@@ -277,7 +278,8 @@ const summary_total = ref();
 const loading = ref(true);
 const handleSubmit = ref({
   user_id: '',
-  create_date: new Date().toISOString().substr(0, 10),
+  // create_date: new Date().toISOString().substr(0, 10),
+  create_date: moment().format('YYYY-MM-DD'),
 });
 
 onMounted(() => {

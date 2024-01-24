@@ -17,6 +17,7 @@
     "chart.js": "^4.3.0",
     "core-js": "^3.29.0",
     "element-plus": "^2.3.8",
+    "moment-timezone": "^0.5.44",
     "pinia": "^2.0.0",
     "pinia-plugin-persistedstate": "^3.1.0",
     "roboto-fontface": "*",
