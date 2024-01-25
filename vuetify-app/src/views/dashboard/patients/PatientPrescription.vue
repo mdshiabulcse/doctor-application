@@ -2,15 +2,6 @@
   <v-container>
     <v-row no-gutters>
       <v-col cols="12">
-        <v-sheet>
-          <v-breadcrumbs :items="breadcrumbs">
-            <template v-slot:prepend>
-              <v-icon size="small" icon="$vuetify"></v-icon>
-            </template>
-          </v-breadcrumbs>
-        </v-sheet>
-      </v-col>
-      <v-col cols="7">
         <v-card
           class="mx-auto my-2"
           title="Patient Create"
@@ -18,6 +9,8 @@
           rel="noopener"
           color="warning"
         ></v-card>
+      </v-col>
+      <v-col cols="7">
         <v-card>
           <v-card-text>
             <form @submit.prevent="submit">
