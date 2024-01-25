@@ -40,16 +40,16 @@
                       <v-col
                         cols="6"
                       >
-                            <v-text-field
-                              v-model="handleSubmit.appointment_date"
-                              type="date"
-                              label="Appointment Date"
-                              hint="MM/DD/YYYY format"
-                              prepend-icon="mdi-calendar"
-                              :min="new Date().toISOString().substr(0, 10)"
-                              required
-                              @change="onDateChange"
-                            ></v-text-field>
+                        <v-text-field
+                          v-model="handleSubmit.appointment_date"
+                          type="date"
+                          label="Appointment Date"
+                          hint="MM/DD/YYYY format"
+                          prepend-icon="mdi-calendar"
+                          :min="moment().format('YYYY-MM-DD')"
+                          required
+                          @change="onDateChange"
+                        ></v-text-field>
                       </v-col>
                       <v-container>
                         <h2 class="mb-4">Booking Slots</h2>
@@ -67,7 +67,7 @@
                               <template v-slot:append>
                                 <v-btn @click="bookSlot(slot)" icon="mdi-calendar" color="warning" size="small"></v-btn>
                               </template>
-                              <v-card-text>{{ slot.startTime + '-' + slot.endTime  }}</v-card-text>
+                              <v-card-text>{{ slot.startTime + '-' + slot.endTime }}</v-card-text>
                             </v-card>
                           </v-col>
                         </v-row>
@@ -115,12 +115,13 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref,watch} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute, useRouter} from "vue-router";
 import {useAuth} from "@/store/auth";
 import {ElMessageBox} from "element-plus";
+import moment from "moment-timezone";
 
 
 const breadcrumbs = computed(() => [
@@ -149,7 +150,7 @@ const user_id = userData.user.data.id;
 
 const handleSubmit = ref({
   doctor_id: '',
-  appointment_date: new Date().toISOString().substr(0, 10),
+  appointment_date: moment().format('YYYY-MM-DD'),
 });
 
 const fetchPatientDetails = async () => {
@@ -202,9 +203,9 @@ const generateTimeSlots = () => {
     let current = new Date(start);
 
     while (current < end) {
-      const formattedTime = current.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const formattedTime = current.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       const nextTime = new Date(current.getTime() + timeSlot.minute * 60000);
-      const formattedNextTime = nextTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const formattedNextTime = nextTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
       timeSlots.value.push({
         id: serialNumberCounter,
@@ -245,7 +246,6 @@ const showAlert = (selectedSlot) => {
   console.log(`Slot booked: Serial Number - ${selectedSlot.serialNumber}, Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}`);
   alert(`Slot booked: Start Time - ${selectedSlot.startTime}, End Time - ${selectedSlot.endTime}, Serial Number - ${selectedSlot.serialNumber}`);
 };
-
 
 
 const submitForm = async () => {

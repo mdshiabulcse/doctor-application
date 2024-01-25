@@ -23,7 +23,7 @@
           <v-col cols="12">
             <v-card>
               <v-container>
-                <v-row >
+                <v-row>
                   <v-col cols="3">
                     <v-autocomplete
                       v-model="handleSubmit.user_id"
@@ -115,7 +115,8 @@
                 <td>{{ item.due_amount }}</td>
                 <td>{{ item.status }}</td>
                 <td>
-                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"  @click="PrintInvoice(item)">
+                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"
+                         @click="PrintInvoice(item)">
                   </v-btn>
                 </td>
               </tr>
@@ -124,11 +125,11 @@
                 <td></td>
                 <td></td>
                 <td class="font-weight-bold">Consultation Total:</td>
-                <td class="font-weight-bold">{{consultation_sum_data.total_amount}}</td>
-                <td class="font-weight-bold">{{consultation_sum_data.total_paid_amount}}</td>
-                <td class="font-weight-bold">{{consultation_sum_data.discount_amount_total}}</td>
-                <td class="font-weight-bold">{{consultation_sum_data.total_received_amount}}</td>
-                <td class="font-weight-bold">{{consultation_sum_data.total_due_amount}}</td>
+                <td class="font-weight-bold">{{ consultation_sum_data.total_amount }}</td>
+                <td class="font-weight-bold">{{ consultation_sum_data.total_paid_amount }}</td>
+                <td class="font-weight-bold">{{ consultation_sum_data.discount_amount_total }}</td>
+                <td class="font-weight-bold">{{ consultation_sum_data.total_received_amount }}</td>
+                <td class="font-weight-bold">{{ consultation_sum_data.total_due_amount }}</td>
               </tr>
               </tbody>
             </v-table>
@@ -195,7 +196,8 @@
                 <td>{{ item.due_amount }}</td>
                 <td>{{ item.status }}</td>
                 <td>
-                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"  @click="PrintInvoice(item)">
+                  <v-btn class="me-2" icon="mdi-printer" title="Consultation Invoice" color="warning"
+                         @click="PrintInvoice(item)">
                   </v-btn>
                 </td>
               </tr>
@@ -204,11 +206,11 @@
                 <td></td>
                 <td></td>
                 <td class="font-weight-bold">Pathology Total:</td>
-                <td class="font-weight-bold">{{pathology_sum_data.total_amount}}</td>
-                <td class="font-weight-bold">{{pathology_sum_data.total_paid_amount}}</td>
-                <td class="font-weight-bold">{{pathology_sum_data.discount_amount_total}}</td>
-                <td class="font-weight-bold">{{pathology_sum_data.total_received_amount}}</td>
-                <td class="font-weight-bold">{{pathology_sum_data.total_due_amount}}</td>
+                <td class="font-weight-bold">{{ pathology_sum_data.total_amount }}</td>
+                <td class="font-weight-bold">{{ pathology_sum_data.total_paid_amount }}</td>
+                <td class="font-weight-bold">{{ pathology_sum_data.discount_amount_total }}</td>
+                <td class="font-weight-bold">{{ pathology_sum_data.total_received_amount }}</td>
+                <td class="font-weight-bold">{{ pathology_sum_data.total_due_amount }}</td>
               </tr>
               </tbody>
             </v-table>
@@ -223,29 +225,31 @@
             ></v-card>
             <v-table>
               <tbody v-if="summary_total">
-              <tr >
+              <tr>
                 <td cols="6">Total Amount:</td>
-                <td cols="6">{{formatAmount(summary_total.total_amount)}}</td>
+                <td cols="6">{{ formatAmount(summary_total.total_amount) }}</td>
               </tr>
               <tr>
                 <td>Total Discount Amount:</td>
-                <td>{{formatAmount(summary_total.discount_amount_total)}}</td>
+                <td>{{ formatAmount(summary_total.discount_amount_total) }}</td>
               </tr>
               <tr>
                 <td>Total Paid Amount:</td>
-                <td>{{formatAmount(summary_total.total_paid_amount)}}</td>
+                <td>{{ formatAmount(summary_total.total_paid_amount) }}</td>
               </tr>
               <tr>
                 <td>Total Due Amount:</td>
-                <td>{{formatAmount(summary_total.total_due_amount)}}</td>
+                <td>{{ formatAmount(summary_total.total_due_amount) }}</td>
               </tr>
               <tr>
                 <td>Total Received Amount:</td>
-                <td>{{formatAmount(summary_total.total_received_amount)}}</td>
+                <td>{{ formatAmount(summary_total.total_received_amount) }}</td>
               </tr>
               <tr>
                 <td class="text-warning">Total Balance:</td>
-                <td ><v-chip color="warning">{{formatAmount(summary_total.total_received_amount)}} </v-chip></td>
+                <td>
+                  <v-chip color="warning">{{ formatAmount(summary_total.total_received_amount) }}</v-chip>
+                </td>
               </tr>
               </tbody>
             </v-table>
@@ -257,17 +261,17 @@
   </v-container>
 </template>
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue'
+import {onMounted, ref, watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 import {localUrl} from "@/services/globalUrlConfig";
 import moment from 'moment-timezone';
 
 const router = useRouter();
 const user_info = ref([]);
 const breadcrumbs = [
-  { title: 'Home', disabled: false, href: '/' },
-  { title: 'Invoice List', disabled: false, href: '#' },
+  {title: 'Home', disabled: false, href: '/'},
+  {title: 'Invoice List', disabled: false, href: '#'},
 ];
 const formatAmount = (amount) => parseFloat(amount).toFixed(2);
 const consultation_invoice_data = ref([]);
@@ -319,11 +323,11 @@ const onDateChange = async () => {
 
 const PatientInvoiceData = async () => {
   try {
-    loading.value=true
+    loading.value = true
     let apiUrl = `/admin/invoice/invoice?create_date=${handleSubmit.value.create_date}`;
 
     if (handleSubmit.value.user_id) {
-      loading.value=true
+      loading.value = true
       apiUrl += `&user_id=${handleSubmit.value.user_id}`;
 
     }
@@ -334,7 +338,7 @@ const PatientInvoiceData = async () => {
     pathology_invoice_data.value = response.data.pathology_invoice_data;
     pathology_sum_data.value = response.data.pathology_sum_data;
     summary_total.value = response.data.summary_total;
-    console.log('pathology',summary_total.value)
+    console.log('pathology', summary_total.value)
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -342,7 +346,7 @@ const PatientInvoiceData = async () => {
 };
 
 const PrintInvoice = (item) => {
-  window.open(localUrl.value + '/print/invoice-print/'+item.invoice_id, '_blank');
+  window.open(localUrl.value + '/print/invoice-print/' + item.invoice_id, '_blank');
 };
 const PrintInvoiceList = () => {
   window.open(localUrl.value + `/print/invoice-print-list?create_date=${handleSubmit.value.create_date}&user_id=${handleSubmit.value.user_id}`, '_blank');

@@ -90,6 +90,7 @@
 import { onMounted, ref, watchEffect } from 'vue'
 import axiosInstance from "@/services/axiosService";
 import { useRouter } from "vue-router";
+import moment from "moment-timezone";
 
 const router = useRouter();
 const special_doctor = ref([]);
@@ -112,7 +113,7 @@ const appointment_data = ref([]);
 const loading = ref(true);
 const handleSubmit = ref({
   doctor_id: '',
-  appointment_date: new Date().toISOString().substr(0, 10),
+  appointment_date: moment().format('YYYY-MM-DD'),
 });
 
 onMounted(() => {
