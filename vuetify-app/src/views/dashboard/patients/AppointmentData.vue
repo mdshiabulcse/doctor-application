@@ -73,10 +73,10 @@
                   class="pa-0"
                 ></v-text-field>
               </template>
-              <template v-if="handleSubmit.appointment_date === new Date().toISOString().substr(0, 10)" v-slot:item.actions="{ item }">
+              <template v-if="handleSubmit.appointment_date === moment().format('YYYY-MM-DD')" v-slot:item.actions="{ item }">
                 <v-btn class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning"  @click="appointmentInvoice(item)">
                 </v-btn>
-                <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"  @click="appointmentInvoice(item)">
+                <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"  @click="appointmentPrescription(item)">
                 </v-btn>
               </template>
             </v-data-table>
@@ -171,8 +171,11 @@ const appointmentData = async () => {
 };
 
 const appointmentInvoice = (item) => {
-  console.log('item', item.selectable);
   router.push({ path: `/patient-consultation-invoice/${item.selectable.id}/${item.selectable.patient_id}` });
+};
+const appointmentPrescription = (item) => {
+  console.log('item', item.selectable);
+  router.push({ path: `/patient-prescription/${item.selectable.id}/${item.selectable.patient_id}` });
 };
 
 watchEffect(() => {

@@ -6,7 +6,7 @@ import UserLogin from "@/views/auth/Login.vue";
 import DefaultPage from "@/layouts/default/Default.vue";
 import {useAuth} from "@/store/auth.js";
 import {DoctorList,UserInfo,PatientSourceInfo} from "@/views/dashboard/Index";
-import {PatientData,PatientCreate,PatientDetails,PatientAppointment, AppointmentData} from "@/views/dashboard/patients/Index";
+import {PatientData,PatientCreate,PatientDetails,PatientAppointment, AppointmentData,PatientPrescription} from "@/views/dashboard/patients/Index";
 import {PatientExaminationInvoice,PatientConsultationInvoice,PatientInvoiceList} from "@/views/dashboard/invoice/Index";
 
 const routes = [
@@ -47,6 +47,9 @@ const routes = [
       },
       {
         path: '/patient-appointment-data', name: 'appointment.data', component: AppointmentData, meta:{title:"Patient Appointment Data", requiresAuth:true},
+      },
+      {
+        path: '/patient-prescription/:app_id/:pid', name: 'patient.prescription ', component: PatientPrescription, meta:{title:"Patient Precription", requiresAuth:true},
       },
       // -----------Patients  Info End-----------
       // -----------Invoice  Info Start-----------
