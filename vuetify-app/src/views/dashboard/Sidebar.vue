@@ -1,6 +1,4 @@
 <template>
-
-
   <v-list dense>
     <router-link :to="{name:'user.dashboard'}">
       <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>

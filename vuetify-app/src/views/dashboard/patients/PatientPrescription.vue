@@ -1,128 +1,239 @@
 <template>
-  <v-container>
-    <v-row no-gutters>
-      <v-col cols="12">
-        <v-card
-          class="mx-auto my-2"
-          title="Patient Create"
-          prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
-          rel="noopener"
-          color="warning"
-        ></v-card>
-      </v-col>
-      <v-col cols="7">
-        <v-card>
-          <v-card-text>
-            <form @submit.prevent="submit">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.name"
-                    required
-                    minlength="2"
-                    label="Name"
-                    :rules="nameRules"
-                  ></v-text-field>
-                </v-col>
+     <v-row>
+       <v-col>
+         <v-col cols="12">
+           <v-card>
+             <v-container>
+               <v-row >
+                 <v-col cols="3">
+                   <v-autocomplete
 
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.phone"
-                    required
-                    pattern="\d{11,}"
-                    label="Phone Number"
-                    :rules="phoneRules"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.email"
-                    label="E-mail"
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12" sm="7">
-                  <v-text-field
-                    label="Date Of Birth"
-                    v-model="submitForm.selectedDob"
-                    clearable
-                    type="date"
-                    :max="new Date().toISOString().substr(0, 10)"
-                    min="1920-01-01"
-                    @input="calculateAgeFromDate"
-                    :rules="dobRules"
-                    required
-                  >
-                  </v-text-field>
-                </v-col>
-                <span>Or</span>
-                <v-col cols="12" sm="4">
-                  <v-text-field
-                    label="Patient Age"
-                    v-model="submitForm.selectedAge"
-                    clearable
-                    @input="calculateDateFromAge"
-                    :rules="ageRules"
-                    required
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-radio-group
-                    inline
-                    v-model="submitForm.gender"
-                    required
-                    :rules="genderRules"
-                  >
-                    <template v-slot:label>
-                      <div>Select <strong>Gender</strong></div>
-                    </template>
-                    <v-radio
-                      label="Male"
-                      value="Male"
-                    ></v-radio>
-                    <v-radio
-                      label="Female"
-                      value="Female"
-                    ></v-radio>
-                    <v-radio
-                      label="Other"
-                      value="Other"
-                    ></v-radio>
-                  </v-radio-group>
-                </v-col>
-                <v-col cols="12">
-                  <v-autocomplete
-                    label="Patient Source"
-                    v-model="submitForm.source_name"
-                    :items="patient_sources"
-                    color="blue-grey-lighten-2"
-                    item-value="id"
-                    item-title="source_name"
-                  >
-                  </v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    prepend-icon="mdi-check-circle"
-                    class="me-4"
-                    type="submit"
-                    color="primary"
-                  >
-                    submit
-                  </v-btn>
-                  <v-btn prepend-icon="mdi-trash-can-outline" @click="handleReset">
-                    clear
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </form>
-          </v-card-text>
-        </v-card>
-      </v-col>
+                     :items="special_doctor"
+                     color="blue-grey-lighten-2"
+                     item-value="id"
+                     item-title="doctor_name"
+                     label="Appointment Doctor"
+                     @change="onDoctorChange"
+                   ></v-autocomplete>
+                 </v-col>
+                 <v-col cols="3">
+                   <v-text-field
+                     type="date"
+                     label="Appointment Date"
+                     hint="MM/DD/YYYY format"
+                     prepend-icon="mdi-calendar"
+                     required
+                     @change="onDateChange"
+                   >
+                   </v-text-field>
+                 </v-col>
+                 <v-col cols="2">
+                   <v-btn prepend-icon="mdi-printer" color="primary"> Save</v-btn>
+                 </v-col>
+               </v-row>
+             </v-container>
+           </v-card>
+         </v-col>
+           <v-row>
+                  <v-col cols="3">
+                    <v-card class="pa-2 ma-2">
+                      <v-card-text>
+                        <form @submit.prevent="submit">
+                          <v-row>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.name"
+                                required
+                                minlength="2"
+                                label="Name"
+                                :rules="nameRules"
+                              ></v-text-field>
+                            </v-col>
 
-    </v-row>
-  </v-container>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.phone"
+                                required
+                                pattern="\d{11,}"
+                                label="Phone Number"
+                                :rules="phoneRules"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.email"
+                                label="E-mail"
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="7">
+                              <v-text-field
+                                label="Date Of Birth"
+                                v-model="submitForm.selectedDob"
+                                clearable
+                                type="date"
+                                :max="new Date().toISOString().substr(0, 10)"
+                                min="1920-01-01"
+                                @input="calculateAgeFromDate"
+                                :rules="dobRules"
+                                required
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <span>Or</span>
+                            <v-col cols="12" sm="4">
+                              <v-text-field
+                                label="Patient Age"
+                                v-model="submitForm.selectedAge"
+                                clearable
+                                @input="calculateDateFromAge"
+                                :rules="ageRules"
+                                required
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-radio-group
+                                inline
+                                v-model="submitForm.gender"
+                                required
+                                :rules="genderRules"
+                              >
+                                <template v-slot:label>
+                                  <div>Select <strong>Gender</strong></div>
+                                </template>
+                                <v-radio
+                                  label="Male"
+                                  value="Male"
+                                ></v-radio>
+                                <v-radio
+                                  label="Female"
+                                  value="Female"
+                                ></v-radio>
+                                <v-radio
+                                  label="Other"
+                                  value="Other"
+                                ></v-radio>
+                              </v-radio-group>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-autocomplete
+                                label="Patient Source"
+                                v-model="submitForm.source_name"
+                                :items="patient_sources"
+                                color="blue-grey-lighten-2"
+                                item-value="id"
+                                item-title="source_name"
+                              >
+                              </v-autocomplete>
+                            </v-col>
+                            <v-col cols="12">
+                            </v-col>
+                          </v-row>
+                        </form>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col>
+                    <v-card class="pa-2 ma-2">
+                      <v-card-text>
+                        <form @submit.prevent="submit">
+                          <v-row>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.name"
+                                required
+                                minlength="2"
+                                label="Name"
+                                :rules="nameRules"
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.phone"
+                                required
+                                pattern="\d{11,}"
+                                label="Phone Number"
+                                :rules="phoneRules"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="submitForm.email"
+                                label="E-mail"
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="7">
+                              <v-text-field
+                                label="Date Of Birth"
+                                v-model="submitForm.selectedDob"
+                                clearable
+                                type="date"
+                                :max="new Date().toISOString().substr(0, 10)"
+                                min="1920-01-01"
+                                @input="calculateAgeFromDate"
+                                :rules="dobRules"
+                                required
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <span>Or</span>
+                            <v-col cols="12" sm="4">
+                              <v-text-field
+                                label="Patient Age"
+                                v-model="submitForm.selectedAge"
+                                clearable
+                                @input="calculateDateFromAge"
+                                :rules="ageRules"
+                                required
+                              >
+                              </v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-radio-group
+                                inline
+                                v-model="submitForm.gender"
+                                required
+                                :rules="genderRules"
+                              >
+                                <template v-slot:label>
+                                  <div>Select <strong>Gender</strong></div>
+                                </template>
+                                <v-radio
+                                  label="Male"
+                                  value="Male"
+                                ></v-radio>
+                                <v-radio
+                                  label="Female"
+                                  value="Female"
+                                ></v-radio>
+                                <v-radio
+                                  label="Other"
+                                  value="Other"
+                                ></v-radio>
+                              </v-radio-group>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-autocomplete
+                                label="Patient Source"
+                                v-model="submitForm.source_name"
+                                :items="patient_sources"
+                                color="blue-grey-lighten-2"
+                                item-value="id"
+                                item-title="source_name"
+                              >
+                              </v-autocomplete>
+                            </v-col>
+                          </v-row>
+                        </form>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+           </v-row>
+       </v-col>
+     </v-row>
 </template>
 <script setup>
 import {computed, onMounted, ref} from 'vue'

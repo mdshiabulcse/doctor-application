@@ -1,6 +1,7 @@
 <template>
   <v-layout class="rounded rounded-md">
     <v-navigation-drawer
+      :width="220"
       color="#EEEEEE"
       v-model="drawer"
       :rail="rail"
