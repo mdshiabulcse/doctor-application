@@ -49,7 +49,7 @@ const routes = [
         path: '/patient-appointment-data', name: 'appointment.data', component: AppointmentData, meta:{title:"Patient Appointment Data", requiresAuth:true},
       },
       {
-        path: '/patient-prescription/:app_id/:pid', name: 'patient.prescription ', component: PatientPrescription, meta:{title:"Patient Precription", requiresAuth:true},
+        path: '/patient-prescription/:app_id/:pid/:prescriptionId', name: 'patient.prescription ', component: PatientPrescription, meta:{title:"Patient Precription", requiresAuth:true},
       },
       // -----------Patients  Info End-----------
       // -----------Invoice  Info Start-----------

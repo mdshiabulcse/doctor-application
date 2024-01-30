@@ -175,7 +175,7 @@ const appointmentInvoice = (item) => {
 };
 const appointmentPrescription = (item) => {
   console.log('item', item.selectable);
-  router.push({ path: `/patient-prescription/${item.selectable.id}/${item.selectable.patient_id}` });
+  router.push({ path: `/patient-prescription/${item.selectable.id}/${item.selectable.patient_id}/null` });
 };
 
 watchEffect(() => {
