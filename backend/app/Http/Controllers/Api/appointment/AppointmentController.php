@@ -153,4 +153,9 @@ class AppointmentController extends Controller
     }
 
 
+    public function patientAppointmentInfo($id)
+    {
+        $data['appointment_info']=PatientAppointment::whereId($id)->with(['patient_info','doctor_info'])->first();
+        return $this->successApiResponse($data);
+    }
 }

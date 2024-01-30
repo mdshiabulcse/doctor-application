@@ -46,6 +46,7 @@ Route::group(['prefix' => 'appointment'], function (){
     Route::get('appointment-setting',[AppointmentController::class,'appointmentSetting']);
     Route::get('appointment-booking-patient/{id}',[AppointmentController::class,'appointmentBookingPatient']);
     Route::resource('appointment-data',AppointmentController::class);
+    Route::get('patient-appointment-info/{id}',[AppointmentController::class,'patientAppointmentInfo']);
 });
 Route::group(['prefix' => 'invoice'], function (){
     Route::resource('examination-invoice',ExaminationInvoiceController::class);
