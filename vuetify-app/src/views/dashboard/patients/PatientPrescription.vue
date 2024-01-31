@@ -42,9 +42,6 @@
                                     <div class="text-overline mb-1">
                                       <span>Doctor: {{appointment_info.doctor_info.doctor_name}}</span>
                                     </div>
-<!--                                    <div class="text-overline mb-1">-->
-<!--                                      <span>Refer Doctor:</span>-->
-<!--                                    </div>-->
                                   </div>
                                 </v-card-item>
                               </v-card>
@@ -99,8 +96,11 @@
                             <v-col cols="3">
                               <v-autocomplete
                                 v-model="submitForm.medicine_name"
+                                :items="medicine_data"
                                 required
                                 label="Medicine"
+                                item-value="id"
+                                item-title="medicine_name"
                               ></v-autocomplete>
                             </v-col>
                             <v-col cols="2">
@@ -139,6 +139,7 @@ import {useRoute} from "vue-router";
 const notify = useNotification();
 const userData = useAuth();
 const appointment_info = ref([]);
+const medicine_data = ref([]);
 const user_id = userData.user.data.id;
 const app_id = useRoute().params.app_id;
 const prescription_id = useRoute().params.prescriptionId;
@@ -160,12 +161,21 @@ const submitForm=ref({
 
 onMounted(() => {
   fetchAppointmentInfo (); // Fetch data when the component is mounted
+  fetchMedicineData ();
 });
 
 const fetchAppointmentInfo = async () => {
   try {
     const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`); // Replace with your API endpointa
     appointment_info.value = response.data.appointment_info;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const fetchMedicineData = async () => {
+  try {
+    const response = await axiosInstance(`/admin/prescription/medicine-data`); // Replace with your API endpointa
+    medicine_data.value = response.data.medicine_data;
   } catch (error) {
     console.error('Error fetching data:', error);
   }

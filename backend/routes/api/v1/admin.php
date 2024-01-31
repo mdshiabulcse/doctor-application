@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\invoice\ExaminationInvoiceController;
 use App\Http\Controllers\Api\appointment\AppointmentController;
 use App\Http\Controllers\Api\invoice\InvoiceController;
 use App\Http\Controllers\Api\invoice\ConsultationInvoiceController;
+use App\Http\Controllers\Api\prescription\PrescriptionController;
 
 
 
@@ -56,6 +57,9 @@ Route::group(['prefix' => 'invoice'], function (){
     Route::resource('invoice',InvoiceController::class);
     Route::get('user-data',[InvoiceController::class,'user_info']);
     Route::resource('consultation-invoice',ConsultationInvoiceController::class);
+});
+Route::group(['prefix' => 'prescription'], function (){
+    Route::get('medicine-data',[PrescriptionController::class,'getMedicineInPrescription']);
 });
 
 
