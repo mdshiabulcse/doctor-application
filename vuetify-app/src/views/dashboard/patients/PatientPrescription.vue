@@ -84,44 +84,46 @@
                   <v-col>
                     <v-card class="pa-2 ma-2">
                       <v-card-text>
-
-                          <v-row>
-                            <v-col cols="2">
-                              <v-autocomplete
-                                v-model="submitForm.medicine_type"
-                                required
-                                label="Type"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="3">
-                              <v-autocomplete
-                                v-model="submitForm.medicine_name"
-                                :items="medicine_data"
-                                required
-                                label="Medicine"
-                                item-value="id"
-                                item-title="medicine_name"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="2">
-                              <v-text-field
-                                v-model="submitForm.duration"
-                                required
-                                label="Duration"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                              <v-autocomplete
-                                v-model="submitForm.medicine_instruction"
-                                required
-                                label="Instruction"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="2">
-                              <v-btn icon="mdi-plus" color="warning"></v-btn>
-                            </v-col>
-                          </v-row>
-
+                        <v-row v-for="(medicine, index) in submitForm.medicines" :key="index">
+                          <v-col cols="2">
+                            <v-autocomplete
+                              v-model="medicine.type"
+                              required
+                              label="Type"
+                              :items="medicine_type"
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="3">
+                            <v-autocomplete
+                              v-model="medicine.medicine_name"
+                              :items="medicine_data"
+                              required
+                              label="Medicine"
+                              item-value="id"
+                              item-title="medicine_name"
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="2">
+                            <v-text-field
+                              v-model="medicine.duration"
+                              required
+                              label="Duration"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="3">
+                            <v-text-field
+                              v-model="medicine.medicine_instruction"
+                              required
+                              label="Instruction"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col v-if="submitForm.medicines.length > 1" cols="1">
+                            <v-btn icon="mdi-minus" color="error" density="compact" @click="removeMedicine(index)"></v-btn>
+                          </v-col>
+                          <v-col cols="1">
+                            <v-btn  icon="mdi-plus" color="warning"  density="compact" @click="addMedicine"></v-btn>
+                          </v-col>
+                        </v-row>
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -130,11 +132,11 @@
      </v-row>
 </template>
 <script setup>
-import { onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue';
 import axiosInstance from "@/services/axiosService";
-import {useNotification} from "@/store/notification";
-import {useAuth} from "@/store/auth";
-import {useRoute} from "vue-router";
+import { useNotification } from "@/store/notification";
+import { useAuth } from "@/store/auth";
+import { useRoute } from "vue-router";
 
 const notify = useNotification();
 const userData = useAuth();
@@ -143,54 +145,62 @@ const medicine_data = ref([]);
 const user_id = userData.user.data.id;
 const app_id = useRoute().params.app_id;
 const prescription_id = useRoute().params.prescriptionId;
+const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
 
-
-const submitForm=ref({
-  symptoms:'',
-  examination_data:'',
-  advice_note:'',
-  followup_date:'',
-  medicine_type:'',
-  medicine_name:'',
-  duration:'',
-  medicine_instruction:'',
+const submitForm = ref({
+  symptoms: '',
+  examination_data: '',
+  advice_note: '',
+  followup_date: '',
   user_id: user_id,
-
+  medicines: [{
+    type: '',
+    medicine_name: '',
+    duration: '',
+    medicine_instruction: '',
+  }],
 });
 
-
 onMounted(() => {
-  fetchAppointmentInfo (); // Fetch data when the component is mounted
-  fetchMedicineData ();
+  fetchAppointmentInfo();
+  fetchMedicineData();
 });
 
 const fetchAppointmentInfo = async () => {
   try {
-    const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`); // Replace with your API endpointa
+    const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`);
     appointment_info.value = response.data.appointment_info;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+
 const fetchMedicineData = async () => {
   try {
-    const response = await axiosInstance(`/admin/prescription/medicine-data`); // Replace with your API endpointa
+    const response = await axiosInstance(`/admin/prescription/medicine-data`);
     medicine_data.value = response.data.medicine_data;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
 
+const addMedicine = () => {
+  submitForm.value.medicines.push({
+    type: '',
+    medicine_name: '',
+    duration: '',
+    medicine_instruction: '',
+  });
+};
 
-
-
+const removeMedicine = (index) => {
+  submitForm.value.medicines.splice(index, 1);
+};
 
 const submit = async () => {
-
-  console.log('submit data',submitForm.value)
+  console.log('submit data', submitForm.value);
   // Validate form fields
   // const isFormValid = await validateForm();
-
 
   // if (isFormValid) {
   //   // Proceed with API submission
@@ -208,9 +218,6 @@ const submit = async () => {
   //   console.error('Form validation failed. Please check the fields.');
   // }
 };
-
-
-
 
 
 </script>
