@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('prescription_id');
             $table->string('patient_id');
-            $table->integer('medicine_id');
-            $table->string('duration');
+            $table->integer('medicine_id')->nullable();
+            $table->string('duration')->nullable();
             $table->longText('medicine_instruction')->nullable();
             $table->integer('status')->default(1)->comment('1=Active,0=Inactive');
             $table->timestamps();
