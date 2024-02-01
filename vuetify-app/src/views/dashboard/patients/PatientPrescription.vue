@@ -95,7 +95,7 @@
                           </v-col>
                           <v-col cols="3">
                             <v-autocomplete
-                              v-model="medicine.medicine_name"
+                              v-model="medicine.medicine_id"
                               :items="medicine_data"
                               required
                               label="Medicine"
@@ -146,23 +146,25 @@ const user_id = userData.user.data.id;
 const app_id = useRoute().params.app_id;
 const prescription_id = useRoute().params.prescriptionId;
 const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
-
 const submitForm = ref({
+  prescription_id:prescription_id,
+  app_id:app_id,
+  user_id: user_id,
+
   symptoms: '',
   examination_data: '',
   advice_note: '',
   followup_date: '',
-  user_id: user_id,
   medicines: [{
     type: '',
-    medicine_name: '',
+    medicine_id: '',
     duration: '',
     medicine_instruction: '',
   }],
 });
 
-onMounted(() => {
-  fetchAppointmentInfo();
+onMounted(async () => {
+  await fetchAppointmentInfo(); // Wait for the appointment info to be fetched
   fetchMedicineData();
 });
 
@@ -187,7 +189,7 @@ const fetchMedicineData = async () => {
 const addMedicine = () => {
   submitForm.value.medicines.push({
     type: '',
-    medicine_name: '',
+    medicine_id: '',
     duration: '',
     medicine_instruction: '',
   });
@@ -198,25 +200,17 @@ const removeMedicine = (index) => {
 };
 
 const submit = async () => {
-  console.log('submit data', submitForm.value);
-  // Validate form fields
-  // const isFormValid = await validateForm();
+    try {
+      const response = await axiosInstance.post('/admin/prescription/prescription?patient_id='+ appointment_info.value.patient_id , submitForm.value);
+      if (response.data.message) {
+        notify.Success(response.data.message);
+      } else {
+        notify.Error(response.data.errors);
+      }
+    } catch (error) {
+      notify.Error(error.response.data.errors);
+    }
 
-  // if (isFormValid) {
-  //   // Proceed with API submission
-  //   try {
-  //     const response = await axiosInstance.post('/admin/patients/patients?user_id=' + user_id, submitForm.value);
-  //     if (response.data.message) {
-  //       notify.Success(response.data.message);
-  //     } else {
-  //       notify.Error(response.data.errors);
-  //     }
-  //   } catch (error) {
-  //     notify.Error(error.response.data.errors);
-  //   }
-  // } else {
-  //   console.error('Form validation failed. Please check the fields.');
-  // }
 };
 
 

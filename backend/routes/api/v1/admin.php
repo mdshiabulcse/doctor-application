@@ -60,6 +60,7 @@ Route::group(['prefix' => 'invoice'], function (){
 });
 Route::group(['prefix' => 'prescription'], function (){
     Route::get('medicine-data',[PrescriptionController::class,'getMedicineInPrescription']);
+    Route::resource('prescription',PrescriptionController::class);
 });
 
 
