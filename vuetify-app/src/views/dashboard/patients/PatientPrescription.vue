@@ -2,7 +2,9 @@
      <v-row>
        <v-col>
          <v-col cols="12">
-           <v-card>
+           <v-card
+             :loading="loading"
+           >
              <v-container>
                <v-row >
                  <v-col cols="4">
@@ -136,8 +138,9 @@ import { onMounted, ref } from 'vue';
 import axiosInstance from "@/services/axiosService";
 import { useNotification } from "@/store/notification";
 import { useAuth } from "@/store/auth";
-import { useRoute } from "vue-router";
-
+import {useRoute, useRouter} from "vue-router";
+const router = useRouter();
+const loading = ref(true);
 const notify = useNotification();
 const userData = useAuth();
 const appointment_info = ref([]);
@@ -172,6 +175,7 @@ const fetchAppointmentInfo = async () => {
   try {
     const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`);
     appointment_info.value = response.data.appointment_info;
+    loading.value=false;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -203,7 +207,12 @@ const submit = async () => {
     try {
       const response = await axiosInstance.post('/admin/prescription/prescription?patient_id='+ appointment_info.value.patient_id , submitForm.value);
       if (response.data.message) {
+        loading.value=true;
+        const prescriptionId = response.data.prescription_id;
+        router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
         notify.Success(response.data.message);
+        loading.value=false;
+
       } else {
         notify.Error(response.data.errors);
       }

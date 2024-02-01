@@ -77,7 +77,7 @@ class PrescriptionController extends Controller
             }
 
 
-
+            $response['prescription_id'] = $prescriptionData->id;
             DB::commit();
         }catch (Exception $e){
             DB::rollBack();
