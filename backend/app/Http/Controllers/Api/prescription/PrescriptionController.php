@@ -44,6 +44,7 @@ class PrescriptionController extends Controller
      */
     public function store(Request $request)
     {
+        return $this->successApiResponse($request->all());
         DB::beginTransaction();
         try {
             //user browser history check here
@@ -56,6 +57,7 @@ class PrescriptionController extends Controller
             //Prescription data save
             $prescriptionData = new PatientPrescription();
             $prescriptionData->patient_id = $request['patient_id'];
+            $prescriptionData->doctor_id = $request['doctor_id'];
             $prescriptionData->symptoms = $request['symptoms'];
             $prescriptionData->advice_note = $request['advice_note'];
             $prescriptionData->followup_date = $request['followup_date'];
@@ -96,7 +98,8 @@ class PrescriptionController extends Controller
      */
     public function show($id)
     {
-        //
+        $data['prescription_data']=PatientPrescription::whereId($id)->with()->get();
+        return $this->successApiResponse($data);
     }
 
     /**
