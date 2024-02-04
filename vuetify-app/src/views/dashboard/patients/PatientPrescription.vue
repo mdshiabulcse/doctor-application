@@ -33,19 +33,19 @@
                                 color="primary"
                                 variant="flat"
                               >
-<!--                                <v-card-item>-->
-<!--                                  <div v-if="appointment_info.patient_info">-->
-<!--                                    <div class="text-overline mb-1">-->
-<!--                                      <span >Name: {{appointment_info.patient_info.patient_name}}</span>-->
-<!--                                    </div>-->
-<!--                                    <div class="text-overline mb-1">-->
-<!--                                      <span>ID: {{appointment_info.patient_id}}</span>-->
-<!--                                    </div>-->
-<!--                                    <div class="text-overline mb-1">-->
-<!--                                      <span>Doctor: {{appointment_info.doctor_info.doctor_name}}</span>-->
-<!--                                    </div>-->
-<!--                                  </div>-->
-<!--                                </v-card-item>-->
+                                <v-card-item>
+                                  <div v-if="appointment_info">
+                                    <div class="text-overline mb-1">
+                                      <span >Name: {{appointment_info.patient_info.patient_name}}</span>
+                                    </div>
+                                    <div class="text-overline mb-1">
+                                      <span>ID: {{appointment_info.patient_id}}</span>
+                                    </div>
+                                    <div class="text-overline mb-1">
+                                      <span>Doctor: {{appointment_info.doctor_info.doctor_name}}</span>
+                                    </div>
+                                  </div>
+                                </v-card-item>
                               </v-card>
                             </v-col>
                             <v-col cols="12">
@@ -142,11 +142,11 @@ import {useRoute, useRouter} from "vue-router";
 const router = useRouter();
 const loading = ref(true);
 const notify = useNotification();
-const userData = useAuth();
 const appointment_info = ref();
 const prescription_data = ref([]);
+const prescription_medicine_data = ref([]);
 const medicine_data = ref([]);
-const user_id = userData.user.data.id;
+const user_id = useAuth().user.data.id;
 const app_id = useRoute().params.app_id;
 const prescription_id = useRoute().params.prescriptionId;
 const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
@@ -154,7 +154,7 @@ const submitForm = ref({
   prescription_id:prescription_id,
   app_id:app_id,
   user_id: user_id,
-  doctor_id: '',
+  doctor_id:'',
   symptoms: '',
   examination_data: '',
   advice_note: '',
@@ -177,7 +177,7 @@ const fetchAppointmentInfo = async () => {
   try {
     const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`);
     appointment_info.value = response.data.appointment_info;
-    console.log(appointment_info.value)
+    submitForm.value.doctor_id = appointment_info.value.doctor_id;
     loading.value=false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -188,7 +188,12 @@ const fetchPrescriptionData=async ()=>{
   try {
     const response =await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`)
     prescription_data.value = response.data.prescription_data;
-    console.log('prescription data',prescription_data.value)
+    prescription_medicine_data.value = response.data.prescription_medicine_data;
+    submitForm.value.medicines = prescription_medicine_data.value
+    submitForm.value.symptoms = prescription_data.value.symptoms
+    submitForm.value.advice_note = prescription_data.value.advice_note
+    submitForm.value.followup_date = prescription_data.value.followup_date
+
   }catch (error){
     console.error('Error fetching data:', error);
   }
@@ -216,23 +221,43 @@ const removeMedicine = (index) => {
 };
 
 const submit = async () => {
-  console.log('doctor+id',doctor_id)
-    try {
-      const response = await axiosInstance.post('/admin/prescription/prescription?patient_id='+ appointment_info.value.patient_id ,
-        submitForm.value,
-      );
-      if (response.data.message) {
-        loading.value=true;
-        const prescriptionId = response.data.prescription_id;
-        router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
-        notify.Success(response.data.message);
-        loading.value=false;
 
-      } else {
-        notify.Error(response.data.errors);
+    if(prescription_id.value !== null){
+      try {
+        const response = await axiosInstance.post('/admin/prescription/prescription-update?patient_id='+ appointment_info.value.patient_id ,
+          submitForm.value,
+        );
+        if (response.data.message) {
+          loading.value=true;
+          const prescriptionId = response.data.prescription_id;
+          router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
+          notify.Success(response.data.message);
+          loading.value=false;
+
+        } else {
+          notify.Error(response.data.errors);
+        }
+      } catch (error) {
+        notify.Error(error.response.data.errors);
       }
-    } catch (error) {
-      notify.Error(error.response.data.errors);
+    }else{
+      try {
+        const response = await axiosInstance.post('/admin/prescription/prescription?patient_id='+ appointment_info.value.patient_id ,
+          submitForm.value,
+        );
+        if (response.data.message) {
+          loading.value=true;
+          const prescriptionId = response.data.prescription_id;
+          router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
+          notify.Success(response.data.message);
+          loading.value=false;
+
+        } else {
+          notify.Error(response.data.errors);
+        }
+      } catch (error) {
+        notify.Error(error.response.data.errors);
+      }
     }
 
 };

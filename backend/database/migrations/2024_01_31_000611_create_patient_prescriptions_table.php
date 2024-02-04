@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('patient_prescriptions', function (Blueprint $table) {
             $table->id();
             $table->string('patient_id');
+            $table->integer('doctor_id');
             $table->longText('symptoms')->nullable();
             $table->longText('advice_note')->nullable();
             $table->date('followup_date')->nullable();
             $table->date('create_date');
             $table->integer('status')->default(1)->comment('1=Active, 0=Inactive');
+            $table->tinyInteger('user_id');
             $table->longText('ip_address')->comment('creator device and ip information');
             $table->timestamps();
         });

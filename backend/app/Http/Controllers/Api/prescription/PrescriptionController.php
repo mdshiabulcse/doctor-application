@@ -44,7 +44,7 @@ class PrescriptionController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->successApiResponse($request->all());
+//        return $this->successApiResponse($request->all());
         DB::beginTransaction();
         try {
             //user browser history check here
@@ -63,6 +63,7 @@ class PrescriptionController extends Controller
             $prescriptionData->followup_date = $request['followup_date'];
             $prescriptionData->create_date = Carbon::now();
             $prescriptionData->status = 1;
+            $prescriptionData->user_id = $request['user_id'];
             $prescriptionData->ip_address = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
             $prescriptionData->save();
 
@@ -98,7 +99,9 @@ class PrescriptionController extends Controller
      */
     public function show($id)
     {
-        $data['prescription_data']=PatientPrescription::whereId($id)->with()->get();
+
+        $data['prescription_data']=PatientPrescription::whereId($id)->with(['patient_info','doctor_info'])->first();
+        $data['prescription_medicine_data']=PatientPrescriptionMedicine::where('prescription_id',$id)->get();
         return $this->successApiResponse($data);
     }
 
@@ -122,7 +125,7 @@ class PrescriptionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
@@ -134,6 +137,56 @@ class PrescriptionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function prescriptionUpdate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            //user browser history check here
+            $browserName = Agent::browser();
+            $browserVersion = Agent::version($browserName);
+            $deviceInfo = Agent::device();
+            $osPlatform = Agent::platform();
+            $IP = request()->ip();
+
+            //Prescription data save
+            $prescriptionData =PatientPrescription::find($request['prescription_id']);
+            $prescriptionData->patient_id = $request['patient_id'];
+            $prescriptionData->doctor_id = $request['doctor_id'];
+            $prescriptionData->symptoms = $request['symptoms'];
+            $prescriptionData->advice_note = $request['advice_note'];
+            $prescriptionData->followup_date = $request['followup_date'];
+            $prescriptionData->create_date = Carbon::now();
+            $prescriptionData->status = 1;
+            $prescriptionData->user_id = $request['user_id'];
+            $prescriptionData->ip_address = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
+            $prescriptionData->save();
+
+            //Prescription Medicine Data Save
+            $prescriptionMedicineData=PatientPrescriptionMedicine::where('prescription_id',$prescriptionData->id)->delete();
+            foreach ($request['medicines'] as $medicineValue){
+                $medicineData=new PatientPrescriptionMedicine();
+                $medicineData->prescription_id= $prescriptionData->id;
+                $medicineData->patient_id = $request['patient_id'];
+                $medicineData->medicine_id = $medicineValue['medicine_id'];
+                $medicineData->duration = $medicineValue['duration'];
+                $medicineData->medicine_instruction = $medicineValue['medicine_instruction'];
+                $medicineData->status = 1;
+                $medicineData->save();
+            }
+
+
+            $response['prescription_id'] = $prescriptionData->id;
+            DB::commit();
+        }catch (Exception $e){
+            DB::rollBack();
+            $response['errors']=$e->getMessage().$e->getLine();
+            return $this->failureApiResponse($response);
+        }
+        $response['message']='Prescription Save successfully';
+        return $this->successApiResponse($response);
     }
 
     public function getMedicineInPrescription()
