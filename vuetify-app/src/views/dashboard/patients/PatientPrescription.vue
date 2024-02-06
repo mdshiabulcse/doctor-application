@@ -9,12 +9,15 @@
                <v-row >
                  <v-col cols="4">
                    <v-autocomplete
+                     v-model="submitForm.previous_prescription_id"
+                     :items="previous_prescription"
                      label="Previous Prescription"
-                   >
-                   </v-autocomplete>
+                     :item-title="formatPreviousPrescriptionTitle"
+                     item-value="id"
+                   ></v-autocomplete>
                  </v-col>
                  <v-col cols="4">
-                   <v-btn class="ma-2" color="success" @click="submit"> Save</v-btn>
+                   <v-btn class="ma-2" color="success" @click="submit"> {{ buttonText }}</v-btn>
                    <v-btn class="ma-2" prepend-icon="mdi-printer" color="primary"> Print</v-btn>
                  </v-col>
                </v-row>
@@ -134,7 +137,7 @@
      </v-row>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref,computed } from 'vue';
 import axiosInstance from "@/services/axiosService";
 import { useNotification } from "@/store/notification";
 import { useAuth } from "@/store/auth";
@@ -145,15 +148,18 @@ const notify = useNotification();
 const appointment_info = ref();
 const prescription_data = ref([]);
 const prescription_medicine_data = ref([]);
+const previous_prescription = ref([]);
 const medicine_data = ref([]);
 const user_id = useAuth().user.data.id;
 const routeParams = useRoute().params;
 const app_id = routeParams.app_id;
+const patient_id = routeParams.pid;
 const prescription_id = routeParams.prescriptionId !== 'null' ? parseInt(routeParams.prescriptionId) : 0 ;
 
 const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
 const submitForm = ref({
   prescription_id:prescription_id,
+  previous_prescription_id:'',
   app_id:app_id,
   user_id: user_id,
   doctor_id:'',
@@ -171,8 +177,9 @@ const submitForm = ref({
 
 onMounted(async () => {
   await fetchAppointmentInfo(); // Wait for the appointment info to be fetched
-  fetchMedicineData();
-  fetchPrescriptionData();
+  await fetchMedicineData();
+  await fetchPrescriptionData();
+  await fetchPreviousPrescription();
 });
 
 const fetchAppointmentInfo = async () => {
@@ -186,20 +193,40 @@ const fetchAppointmentInfo = async () => {
   }
 };
 
+const fetchPreviousPrescription =async ()=>{
+  try {
+    const response = await axiosInstance(`/admin/prescription/previous-prescription/${patient_id}`);
+    previous_prescription.value = response.data.previous_prescription;
+  }catch (error){
+    console.error('error ',error)
+  }
+}
 
+const formatPreviousPrescriptionTitle = (item) => {
+  // Concatenate create_date and id
+  return `${item.create_date} - ${item.id}`;
+};
+
+const buttonText = computed(() => {
+  return prescription_id ? "Update" : "Save";
+});
 const fetchPrescriptionData = async () => {
   try {
+
+
 
     if (prescription_id  !== 0) {
       const response = await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`);
       prescription_data.value = response.data.prescription_data;
       prescription_medicine_data.value = response.data.prescription_medicine_data;
-
+      console.log('logo value',prescription_data.value.id)
 
       submitForm.value.medicines = prescription_medicine_data.value;
       submitForm.value.symptoms = prescription_data.value.symptoms;
       submitForm.value.advice_note = prescription_data.value.advice_note;
       submitForm.value.followup_date = prescription_data.value.followup_date;
+      submitForm.value.previous_prescription_id = prescription_data.value.id;
+
     } else {
       console.log('Prescription ID is null. Not fetching data.');
     }
