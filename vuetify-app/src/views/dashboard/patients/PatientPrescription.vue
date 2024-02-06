@@ -147,8 +147,10 @@ const prescription_data = ref([]);
 const prescription_medicine_data = ref([]);
 const medicine_data = ref([]);
 const user_id = useAuth().user.data.id;
-const app_id = useRoute().params.app_id;
-const prescription_id = useRoute().params.prescriptionId;
+const routeParams = useRoute().params;
+const app_id = routeParams.app_id;
+const prescription_id = routeParams.prescriptionId !== 'null' ? parseInt(routeParams.prescriptionId) : 0 ;
+
 const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
 const submitForm = ref({
   prescription_id:prescription_id,
@@ -184,20 +186,28 @@ const fetchAppointmentInfo = async () => {
   }
 };
 
-const fetchPrescriptionData=async ()=>{
-  try {
-    const response =await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`)
-    prescription_data.value = response.data.prescription_data;
-    prescription_medicine_data.value = response.data.prescription_medicine_data;
-    submitForm.value.medicines = prescription_medicine_data.value
-    submitForm.value.symptoms = prescription_data.value.symptoms
-    submitForm.value.advice_note = prescription_data.value.advice_note
-    submitForm.value.followup_date = prescription_data.value.followup_date
 
-  }catch (error){
+const fetchPrescriptionData = async () => {
+  try {
+
+    if (prescription_id  !== 0) {
+      const response = await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`);
+      prescription_data.value = response.data.prescription_data;
+      prescription_medicine_data.value = response.data.prescription_medicine_data;
+
+
+      submitForm.value.medicines = prescription_medicine_data.value;
+      submitForm.value.symptoms = prescription_data.value.symptoms;
+      submitForm.value.advice_note = prescription_data.value.advice_note;
+      submitForm.value.followup_date = prescription_data.value.followup_date;
+    } else {
+      console.log('Prescription ID is null. Not fetching data.');
+    }
+  } catch (error) {
     console.error('Error fetching data:', error);
   }
-}
+};
+
 const fetchMedicineData = async () => {
   try {
     const response = await axiosInstance(`/admin/prescription/medicine-data`);
@@ -220,47 +230,35 @@ const removeMedicine = (index) => {
   submitForm.value.medicines.splice(index, 1);
 };
 
+
 const submit = async () => {
+  try {
+    let response;
 
-    if(prescription_id.value !== null){
-      try {
-        const response = await axiosInstance.post('/admin/prescription/prescription-update?patient_id='+ appointment_info.value.patient_id ,
-          submitForm.value,
-        );
-        if (response.data.message) {
-          loading.value=true;
-          const prescriptionId = response.data.prescription_id;
-          router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
-          notify.Success(response.data.message);
-          loading.value=false;
-
-        } else {
-          notify.Error(response.data.errors);
-        }
-      } catch (error) {
-        notify.Error(error.response.data.errors);
-      }
-    }else{
-      try {
-        const response = await axiosInstance.post('/admin/prescription/prescription?patient_id='+ appointment_info.value.patient_id ,
-          submitForm.value,
-        );
-        if (response.data.message) {
-          loading.value=true;
-          const prescriptionId = response.data.prescription_id;
-          router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
-          notify.Success(response.data.message);
-          loading.value=false;
-
-        } else {
-          notify.Error(response.data.errors);
-        }
-      } catch (error) {
-        notify.Error(error.response.data.errors);
-      }
+    if (prescription_id !== 0) {
+      // Update logic
+      response = await axiosInstance.post('/admin/prescription/prescription-update?patient_id=' + appointment_info.value.patient_id, submitForm.value);
+    } else {
+      // Save logic
+      response = await axiosInstance.post('/admin/prescription/prescription?patient_id=' + appointment_info.value.patient_id, submitForm.value);
     }
 
-};
+    if (response.data.message) {
+      const prescriptionId = response.data.prescription_id;
+      // Navigate to the same route with different parameters
+      await router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${prescriptionId}` });
+      notify.Success(response.data.message);
+      // Fetch updated data after the route change
+      await fetchPrescriptionData();
 
+      // Reload the page
+      window.location.reload();
+    } else {
+      notify.Error(response.data.errors);
+    }
+  } catch (error) {
+    notify.Error(error.response.data.errors);
+  }
+};
 
 </script>
