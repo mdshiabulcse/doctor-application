@@ -194,4 +194,9 @@ class PrescriptionController extends Controller
         $data['medicine_data']=MedicineData::whereStatus(1)->get();
         return $this->successApiResponse($data);
     }
+    public function getPreviousPrescription($patient_id)
+    {
+        $data['previous_prescription']=PatientPrescription::where('patient_id',$patient_id)->get();
+        return $this->successApiResponse($data);
+    }
 }
