@@ -210,9 +210,7 @@ const formatPreviousPrescriptionTitle = (item) => {
 };
 
 watch(() => submitForm.value.previous_prescription_id, async (newValue, oldValue) => {
-  console.log('Previous prescription ID changed:', newValue);
-  console.log('Previous prescription ID changed old:', oldValue);
-  if (newValue) {
+  if (newValue !== oldValue) {
     await updateFormFromPreviousPrescription(newValue);
   }
 });
@@ -220,6 +218,7 @@ watch(() => submitForm.value.previous_prescription_id, async (newValue, oldValue
 const updateFormFromPreviousPrescription = async (newValue) => {
   try {
     await router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${newValue}` });
+    submitForm.value.prescription_id = newValue;
     await fetchPrescriptionData();
   } catch (error) {
     console.error('Error updating form from previous prescription:', error);
@@ -231,7 +230,6 @@ const buttonText = computed(() => {
   return prescription_id ? "Update" : "Save";
 });
 const fetchPrescriptionData = async () => {
-  console.log('okkkk',submitForm.value.previous_prescription_id)
   try {
     if (prescription_id  !== 0) {
       const response = await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`);
