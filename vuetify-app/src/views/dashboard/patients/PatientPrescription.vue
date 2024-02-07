@@ -14,6 +14,7 @@
                      label="Previous Prescription"
                      :item-title="formatPreviousPrescriptionTitle"
                      item-value="id"
+                     @change="updateFormFromPreviousPrescription"
                    ></v-autocomplete>
                  </v-col>
                  <v-col cols="4">
@@ -137,7 +138,7 @@
      </v-row>
 </template>
 <script setup>
-import { onMounted, ref,computed } from 'vue';
+import { onMounted, ref,computed ,watch} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import { useNotification } from "@/store/notification";
 import { useAuth } from "@/store/auth";
@@ -194,6 +195,7 @@ const fetchAppointmentInfo = async () => {
 };
 
 const fetchPreviousPrescription =async ()=>{
+  console.log('patient_id',patient_id)
   try {
     const response = await axiosInstance(`/admin/prescription/previous-prescription/${patient_id}`);
     previous_prescription.value = response.data.previous_prescription;
@@ -207,19 +209,34 @@ const formatPreviousPrescriptionTitle = (item) => {
   return `${item.create_date} - ${item.id}`;
 };
 
+watch(() => submitForm.value.previous_prescription_id, async (newValue, oldValue) => {
+  console.log('Previous prescription ID changed:', newValue);
+  console.log('Previous prescription ID changed old:', oldValue);
+  if (newValue) {
+    await updateFormFromPreviousPrescription(newValue);
+  }
+});
+
+const updateFormFromPreviousPrescription = async (newValue) => {
+  try {
+    await router.push({ path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${newValue}` });
+    await fetchPrescriptionData();
+  } catch (error) {
+    console.error('Error updating form from previous prescription:', error);
+    notify.Error('Failed to update form from previous prescription.');
+  }
+};
+
 const buttonText = computed(() => {
   return prescription_id ? "Update" : "Save";
 });
 const fetchPrescriptionData = async () => {
+  console.log('okkkk',submitForm.value.previous_prescription_id)
   try {
-
-
-
     if (prescription_id  !== 0) {
       const response = await axiosInstance.get(`/admin/prescription/prescription/${submitForm.value.prescription_id}`);
       prescription_data.value = response.data.prescription_data;
       prescription_medicine_data.value = response.data.prescription_medicine_data;
-      console.log('logo value',prescription_data.value.id)
 
       submitForm.value.medicines = prescription_medicine_data.value;
       submitForm.value.symptoms = prescription_data.value.symptoms;
@@ -258,11 +275,15 @@ const removeMedicine = (index) => {
 };
 
 
+
+
 const submit = async () => {
   try {
     let response;
+    const selectedPrescription = previous_prescription.value.find(prescription => prescription.id === submitForm.value.previous_prescription_id);
+    const isTodayPrescription = selectedPrescription && new Date(selectedPrescription.create_date).toDateString() === new Date().toDateString();
 
-    if (prescription_id !== 0) {
+    if (isTodayPrescription) {
       // Update logic
       response = await axiosInstance.post('/admin/prescription/prescription-update?patient_id=' + appointment_info.value.patient_id, submitForm.value);
     } else {
