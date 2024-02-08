@@ -72,6 +72,7 @@ class PrescriptionController extends Controller
                 $medicineData=new PatientPrescriptionMedicine();
                 $medicineData->prescription_id= $prescriptionData->id;
                 $medicineData->patient_id = $request['patient_id'];
+                $medicineData->type = $medicineValue['type'];
                 $medicineData->medicine_id = $medicineValue['medicine_id'];
                 $medicineData->duration = $medicineValue['duration'];
                 $medicineData->medicine_instruction = $medicineValue['medicine_instruction'];
@@ -171,6 +172,7 @@ class PrescriptionController extends Controller
                 $medicineData->prescription_id= $prescriptionData->id;
                 $medicineData->patient_id = $request['patient_id'];
                 $medicineData->medicine_id = $medicineValue['medicine_id'];
+                $medicineData->type = $medicineValue['type'];
                 $medicineData->duration = $medicineValue['duration'];
                 $medicineData->medicine_instruction = $medicineValue['medicine_instruction'];
                 $medicineData->status = 1;
