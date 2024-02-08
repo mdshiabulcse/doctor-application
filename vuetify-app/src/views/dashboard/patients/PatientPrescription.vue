@@ -195,7 +195,6 @@ const fetchAppointmentInfo = async () => {
 };
 
 const fetchPreviousPrescription =async ()=>{
-  console.log('patient_id',patient_id)
   try {
     const response = await axiosInstance(`/admin/prescription/previous-prescription/${patient_id}`);
     previous_prescription.value = response.data.previous_prescription;
@@ -271,8 +270,6 @@ const addMedicine = () => {
 const removeMedicine = (index) => {
   submitForm.value.medicines.splice(index, 1);
 };
-
-
 
 
 const submit = async () => {
