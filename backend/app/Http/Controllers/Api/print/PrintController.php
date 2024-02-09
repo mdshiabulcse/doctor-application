@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\print;
 use App\Http\Controllers\Controller;
 use App\Models\dashboard\invoice\Invoice;
 use App\Models\dashboard\invoice\InvoiceInfo;
+use App\Models\dashboard\patient\PatientPrescription;
+use App\Models\dashboard\patient\PatientPrescriptionMedicine;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -173,5 +175,12 @@ class PrintController extends Controller
         return view('print.invoice-list-print',$data);
 //        return $this->successApiResponse($data);
 
+    }
+
+    public function prescriptionPrint($patient_id,$prescription_id)
+    {
+        $data['prescription_data']=PatientPrescription::where(['id'=>$prescription_id,'patient_id'=>$patient_id])->with(['patient_info','doctor_info'])->first();
+        $data['prescription_medicine_data']=PatientPrescriptionMedicine::where('prescription_id',$prescription_id)->with('prescription_medicine')->get();
+        return $this->successApiResponse($data);
     }
 }

@@ -36,5 +36,6 @@ Route::group(['prefix'=> 'print'],function (){
     Route::get('invoice-print/{inv_id}',[PrintController::class, 'InvoicePrint']);
     Route::get('invoice-print-list',[PrintController::class, 'InvoicePrintList']);
     Route::get('consultation-invoice-print/{inv_id}',[PrintController::class, 'consultationInvoicePrint']);
+    Route::get('prescription-print/{patient_id}/{prescription_id}',[PrintController::class, 'prescriptionPrint']);
 });
 
