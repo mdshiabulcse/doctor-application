@@ -14,7 +14,7 @@
                   label="Previous Prescription"
                   :item-title="formatPreviousPrescriptionTitle"
                   item-value="id"
-                  @change="updateFormFromPreviousPrescription"
+                  @change="updateFormPreviousPrescription"
                 ></v-autocomplete>
               </v-col>
               <v-col v-if="showActionButtons" cols="4">
@@ -162,8 +162,8 @@ const routeParams = useRoute().params;
 const app_id = routeParams.app_id;
 const patient_id = routeParams.pid;
 const prescription_id = routeParams.prescriptionId !== 'null' ? parseInt(routeParams.prescriptionId) : 0;
-
 const medicine_type = ref(['Tab', 'Cap', 'Drop', 'Syrup', 'Inj']);
+
 const submitForm = ref({
   prescription_id: prescription_id,
   previous_prescription_id: '',
@@ -216,11 +216,11 @@ const formatPreviousPrescriptionTitle = (item) => {
 
 watch(() => submitForm.value.previous_prescription_id, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    await updateFormFromPreviousPrescription(newValue);
+    await updateFormPreviousPrescription(newValue);
   }
 });
 
-const updateFormFromPreviousPrescription = async (newValue) => {
+const updateFormPreviousPrescription = async (newValue) => {
   try {
     await router.push({path: `/patient-prescription/${app_id}/${appointment_info.value.patient_id}/${newValue}`});
     submitForm.value.prescription_id = newValue;
@@ -231,7 +231,7 @@ const updateFormFromPreviousPrescription = async (newValue) => {
   }
 };
 
-
+// create ,update and Create as New function call here and return
 const buttonText = computed(() => {
   if (prescription_id === 0) {
     return "Save"; // New prescription, show "Save" button
@@ -252,6 +252,8 @@ const showActionButtons = computed(() => {
     return isTodayPrescription;
   }
 });
+
+// this is prescription get function data
 
 const fetchPrescriptionData = async () => {
   try {
@@ -274,6 +276,7 @@ const fetchPrescriptionData = async () => {
   }
 };
 
+// this is medicine filed add , remove and medicine get function
 const fetchMedicineData = async () => {
   try {
     const response = await axiosInstance(`/admin/prescription/medicine-data`);
@@ -296,6 +299,7 @@ const removeMedicine = (index) => {
   submitForm.value.medicines.splice(index, 1);
 };
 
+// when you create and update new prescription today then work this
 
 const submit = async () => {
   try {
@@ -328,6 +332,8 @@ const submit = async () => {
     notify.Error(error.response.data.errors);
   }
 };
+
+// when prescription not create today if you import old prescription and create old wise then this is work
 const createNewPrescription = async () => {
   try {
     let response;
@@ -353,9 +359,21 @@ const createNewPrescription = async () => {
   }
 };
 
+// Doctor wise prescription suggests here
 
+const prescriptionSuggestionData=async ()=>{
+  try {
+    const response = await axiosInstance(`/admin/prescription/prescription-suggestion-data`);
+    medicine_data.value = response.data.medicine_data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 const PrintPrescription = () => {
   window.open(localUrl.value + `/print/prescription-print/${patient_id}/${prescription_id}` , '_blank');
 };
+
+
+
 
 </script>
