@@ -9,6 +9,7 @@
             <v-row>
               <v-col cols="4">
                 <v-autocomplete
+                  density="compact"
                   v-model="submitForm.previous_prescription_id"
                   :items="previous_prescription"
                   label="Previous Prescription"
@@ -58,6 +59,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
+                    density="compact"
                     v-model="submitForm.symptoms"
                     required
                     minlength="2"
@@ -66,6 +68,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
+                    density="compact"
                     v-model="submitForm.examination_data"
                     required
                     minlength="2"
@@ -74,6 +77,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-textarea
+                    density="compact"
                     v-model="submitForm.advice_note"
                     required
                     label="Advice Note"
@@ -81,6 +85,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
+                    density="compact"
                     v-model="submitForm.followup_date"
                     label="Followup Date"
                     type="date"
@@ -94,9 +99,17 @@
         <v-col>
           <v-card class="pa-2 ma-2">
             <v-card-text>
+              <v-row>
+                <v-col cols="2"></v-col>
+                <v-col cols="3"><v-btn @click="dialog = true" size="x-small" prepend-icon="mdi-plus" color="primary"  >Add</v-btn></v-col>
+                <v-col cols="2"></v-col>
+                <v-col cols="3"></v-col>
+                <v-col cols="2"></v-col>
+              </v-row>
               <v-row v-for="(medicine, index) in submitForm.medicines" :key="index">
                 <v-col cols="2">
                   <v-autocomplete
+                    density="compact"
                     v-model="medicine.type"
                     required
                     label="Type"
@@ -105,6 +118,7 @@
                 </v-col>
                 <v-col cols="3">
                   <v-autocomplete
+                    density="compact"
                     v-model="medicine.medicine_id"
                     :items="medicine_data"
                     required
@@ -115,6 +129,7 @@
                 </v-col>
                 <v-col cols="2">
                   <v-text-field
+                    density="compact"
                     v-model="medicine.duration"
                     required
                     label="Duration"
@@ -122,6 +137,7 @@
                 </v-col>
                 <v-col cols="3">
                   <v-text-field
+                    density="compact"
                     v-model="medicine.medicine_instruction"
                     required
                     label="Instruction"
@@ -139,6 +155,53 @@
         </v-col>
       </v-row>
     </v-col>
+    <div>
+      <v-row
+        justify="center"
+      >
+        <v-dialog
+          v-model="dialog"
+          width="250"
+
+        >
+          <v-card>
+            <v-card-title>
+              Add Medicine
+            </v-card-title>
+            <v-card-text>
+              <v-select
+                variant="outlined"
+                density="compact"
+                label="Type"
+                :items="medicine_type"
+                v-model="submitMedicine.medicine_type"
+              >
+              </v-select>
+              <v-text-field
+                variant="outlined"
+                density="compact"
+                label="Name"
+                v-model="submitMedicine.medicine_name"
+              >
+              </v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="addMedicineData" color="primary" variant="text" >
+                Submit
+              </v-btn>
+              <v-btn
+                color="warning"
+                variant="text"
+                @click="dialog = false"
+              >
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+      </v-row>
+    </div>
   </v-row>
 </template>
 <script setup>
@@ -151,11 +214,13 @@ import {localUrl} from "@/services/globalUrlConfig";
 
 const router = useRouter();
 const loading = ref(true);
+const dialog = ref(false);
 const notify = useNotification();
 const appointment_info = ref();
 const prescription_data = ref([]);
 const prescription_medicine_data = ref([]);
 const previous_prescription = ref([]);
+const suggest_prescription_data = ref([]);
 const medicine_data = ref([]);
 const user_id = useAuth().user.data.id;
 const routeParams = useRoute().params;
@@ -182,11 +247,16 @@ const submitForm = ref({
   }],
 });
 
+const submitMedicine=ref({
+  medicine_type:'',
+  medicine_name:'',
+});
 onMounted(async () => {
   await fetchAppointmentInfo(); // Wait for the appointment info to be fetched
   await fetchMedicineData();
   await fetchPrescriptionData();
   await fetchPreviousPrescription();
+  await prescriptionSuggestionData();
 });
 
 const fetchAppointmentInfo = async () => {
@@ -363,11 +433,34 @@ const createNewPrescription = async () => {
 
 const prescriptionSuggestionData=async ()=>{
   try {
-    const response = await axiosInstance(`/admin/prescription/prescription-suggestion-data`);
-    medicine_data.value = response.data.medicine_data;
+    const response = await axiosInstance(`/admin/prescription/prescription-suggestion-data/${submitForm.value.doctor_id}`);
+    suggest_prescription_data.value = response.data.suggest_prescription_data;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
+}
+
+// add new medicine data
+
+const addMedicineData=async ()=>{
+ try {
+   loading.value=true;
+   const response=await axiosInstance.post('/admin/prescription/medicine-data-store',submitMedicine.value);
+   if (response.data.message) {
+     notify.Success(response.data.message);
+     // Fetch updated data after the route change
+     await fetchMedicineData();
+     await fetchPrescriptionData();
+     dialog.value=false;
+     submitMedicine.value.medicine_type='';
+     submitMedicine.value.medicine_name='';
+     loading.value=false;
+   } else {
+     notify.Error(response.data.errors);
+   }
+ }catch (error) {
+   notify.Error(error.response.data.errors);
+ }
 }
 const PrintPrescription = () => {
   window.open(localUrl.value + `/print/prescription-print/${patient_id}/${prescription_id}` , '_blank');

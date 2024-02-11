@@ -64,6 +64,7 @@ Route::group(['prefix' => 'prescription'], function (){
     Route::post('prescription-update',[PrescriptionController::class,'prescriptionUpdate']);
     Route::get('previous-prescription/{patient_id}',[PrescriptionController::class,'getPreviousPrescription']);
     Route::get('prescription-suggestion-data/{doctor_id}',[PrescriptionController::class,'getPrescriptionSuggestionData']);
+    Route::post('medicine-data-store',[PrescriptionController::class,'medicineDataStore']);
 });
 
 

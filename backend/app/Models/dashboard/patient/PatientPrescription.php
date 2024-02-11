@@ -16,4 +16,5 @@ class PatientPrescription extends Model
         return $this->belongsTo(DoctorInfo::class, 'doctor_id');
     }
 
+
 }

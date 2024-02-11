@@ -10,6 +10,7 @@ use App\Traits\ApiStatusTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Jenssegers\Agent\Facades\Agent;
 use Mockery\Exception;
 
@@ -202,8 +203,46 @@ class PrescriptionController extends Controller
         return $this->successApiResponse($data);
     }
 
-    public function getPrescriptionSuggestionData()
+    public function getPrescriptionSuggestionData($doctor_id)
     {
+        $data['suggest_prescription_data']=PatientPrescription::where('doctor_id',$doctor_id)->get();
+        return $this->successApiResponse($data);
+    }
 
+    public function medicineDataStore(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // Validation: Check if the medicine_type and medicine_name fields are filled
+            $validationRules = [
+                'medicine_type' => 'required',
+                'medicine_name' => 'required',
+            ];
+
+            $validationMessages = [
+                'medicine_type.required' => 'The Medicine type is required.',
+                'medicine_name.required' => 'The Medicine Name is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $validationRules,$validationMessages);
+
+            if ($validator->fails()) {
+                $response['errors'] = $validator->errors()->all();
+                return $this->failureApiResponse($response);
+            }
+
+            $addMedicine=new MedicineData();
+            $addMedicine->type = $request['medicine_type'];
+            $addMedicine->medicine_name = $request['medicine_name'];
+            $addMedicine->status = 1;
+            $addMedicine->save();
+            DB::commit();
+        }catch (\Exception $e){
+            DB::rollBack();
+            $response['errors']=$e->getMessage().$e->getLine();
+            return $this->failureApiResponse($response);
+        }
+        $response['message']='Medicine Save Successfully!';
+        return $this->successApiResponse($response);
     }
 }
