@@ -50,6 +50,8 @@
     </v-main>
   </v-layout>
 </template>
+
+
 <script setup>
 import {ref} from "vue";
 import {useAuth} from "@/store/auth.js";
@@ -57,8 +59,7 @@ import {storeToRefs} from "pinia";
 import Sidbar from "@/views/dashboard/Sidebar.vue"
 
 
-
-const drawer = ref(true);
+const drawer = ref(true)
 const rail = ref(false);
 const order = ref(0);
 const userData = useAuth();

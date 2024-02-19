@@ -1,6 +1,6 @@
 <template>
-  <v-row>
-    <v-col>
+  <v-row no-gutters>
+    <v-col >
       <v-col cols="12">
         <v-card
           :loading="loading"

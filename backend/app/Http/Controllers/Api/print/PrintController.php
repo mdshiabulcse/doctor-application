@@ -181,6 +181,8 @@ class PrintController extends Controller
     {
         $data['prescription_data']=PatientPrescription::where(['id'=>$prescription_id,'patient_id'=>$patient_id])->with(['patient_info','doctor_info'])->first();
         $data['prescription_medicine_data']=PatientPrescriptionMedicine::where('prescription_id',$prescription_id)->with('prescription_medicine')->get();
-        return $this->successApiResponse($data);
+        $data['pageTitle']=$data['prescription_data']->patient_id;
+//        return $this->successApiResponse($data);
+        return view('print.prescription.prescription',$data);
     }
 }

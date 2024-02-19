@@ -1,8 +1,7 @@
 <template>
   <v-app>
-    <default-navbar />
+    <DefaultNavbar />
     <Footer />
-
   </v-app>
 </template>
 
