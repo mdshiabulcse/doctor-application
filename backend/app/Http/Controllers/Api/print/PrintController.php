@@ -10,6 +10,7 @@ use App\Models\dashboard\patient\PatientPrescriptionMedicine;
 use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PrintController extends Controller
 {
@@ -184,5 +185,11 @@ class PrintController extends Controller
         $data['pageTitle']=$data['prescription_data']->patient_id;
 //        return $this->successApiResponse($data);
         return view('print.prescription.prescription',$data);
+    }
+    public function qrCode()
+    {
+        return QrCode::generate(
+            'Hello, World!',
+        );
     }
 }

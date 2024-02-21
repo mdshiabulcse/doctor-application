@@ -8,7 +8,6 @@
     <meta name="generator" content="Hugo 0.104.2">
     <title>{{$pageTitle}}</title>
     <link href="{{asset('/')}}assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{asset('/')}}assets/bootstrap/font/fontawesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,11 +55,11 @@
 <main>
 <table>
     <thead>
-    <div class="border-bottom">
+    <div class="border">
         <div class="d-flex">
-            <div class="p-2 ">
-                <p class="text-uppercase"><strong>Patient ID: {{$prescription_data->patient_id}} </strong></p>
-                <p class="text-uppercase"><strong>Patient Name: {{$prescription_data->patient_info->patient_name}} </strong></p>
+            <div class="p-2 border-end">
+                <p class="text-uppercase"><svg id="barcode"></svg></p>
+                <p class="text-uppercase"><strong>Name: {{$prescription_data->patient_info->patient_name}} </strong></p>
                 <p class="text-uppercase"><strong>Age: {{\Carbon\Carbon::parse($prescription_data->patient_info->patient_dob )->diff(\Carbon\Carbon::now())->format('%y years, %m months and %d days')}} </strong></p>
             </div>
             <div class="p-2">
@@ -73,5 +72,10 @@
 </main>
 <script src="{{asset('/')}}assets/bootstrap/js/bootstrap.bundle.js"></script>
 <script src="{{asset('/')}}assets/bootstrap/js/fontawesome.min.js"></script>
+<script src="{{asset('/')}}assets/barcode/JsBarcode.all.min.js"></script>
+<script >
+    var patientId = '{{ $prescription_data->patient_id }}';
+    JsBarcode('#barcode', patientId, {height:30,width:1, format: 'CODE128', textPosition: "top", fontSize: 16, marginTop: 15 }).render();
+</script>
 </body>
 </html>
