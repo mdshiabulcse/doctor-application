@@ -7,7 +7,7 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.104.2">
     <title>{{$pageTitle}}</title>
-    <link href="{{asset('/')}}assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
     <style>
         body {
             background-color: white; /* Set background color to white for printing */
-            margin: 0; /* Remove default margin for printing */
+            margin: 0 0 0 30px; /* Remove default margin for printing */
             padding: 0; /* Remove default padding for printing */
             font-family: 'Noto Sans', sans-serif;
             font-family: 'Noto Sans Bengali', sans-serif;
@@ -56,18 +56,44 @@
 <table>
     <thead>
     <div class="border">
-        <div class="d-flex">
-            <div class="p-2 border-end">
-                <p class="text-uppercase"><svg id="barcode"></svg></p>
-                <p class="text-uppercase"><strong>Name: {{$prescription_data->patient_info->patient_name}} </strong></p>
-                <p class="text-uppercase"><strong>Age: {{\Carbon\Carbon::parse($prescription_data->patient_info->patient_dob )->diff(\Carbon\Carbon::now())->format('%y years, %m months and %d days')}} </strong></p>
+        <div class="row">
+            <div class="col">
+                <div class=" p-2 border-end " style="line-height: 2px">
+                    <p class="text-uppercase"><svg id="barcode"></svg></p>
+                    <p class="text-uppercase"><strong>Name: {{$prescription_data->patient_info->patient_name .' ['.$prescription_data->id.']'}}  </strong></p>
+                    <p class="text-uppercase"><strong>Age: {{\Carbon\Carbon::parse($prescription_data->patient_info->patient_dob )->diff(\Carbon\Carbon::now())->format('%y years, %m months and %d days')}} </strong></p>
+                    <p class="text-uppercase"><strong>Phone: {{$prescription_data->patient_info->patient_phone }} </strong></p>
+                </div>
             </div>
-            <div class="p-2">
-
+            <div class="col">
+                <p class="text-uppercase"><strong>{{$prescription_data->doctor_info->doctor_name }}  </strong></p>
+                <span style="line-height: 2px">{!!  $prescription_data->doctor_info->doctor_details !!}</span>
             </div>
         </div>
+        </div>
     </div >
+    <div class="border-bottom ">
+        <div class="row">
+            <div class="col"><p>Date: <strong>{{date('Y-m-d H:i a',strtotime($prescription_data->created_at))}}</strong></p></div>
+            <div class="col"></div>
+        </div>
+    </div>
+
     </thead>
+    <tbody>
+    <table>
+        <tr>
+            <td>
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>Symptoms:</strong> {{$prescription_data->symptoms}}</p>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    </tbody>
 </table>
 </main>
 <script src="{{asset('/')}}assets/bootstrap/js/bootstrap.bundle.js"></script>

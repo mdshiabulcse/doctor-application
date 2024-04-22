@@ -20,7 +20,7 @@
               </v-col>
               <v-col v-if="showActionButtons" cols="4">
                 <v-btn class="ma-2" color="success" @click="submit">{{ buttonText }}</v-btn>
-                <v-btn class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">Print</v-btn>
+                <v-btn  class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">Print</v-btn>
               </v-col>
               <v-col v-else cols="4">
                 <v-btn class="ma-2" color="primary" @click="createNewPrescription">Create as New</v-btn>
