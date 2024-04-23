@@ -30,10 +30,6 @@
             margin-bottom: -18px;
         }
 
-
-
-
-
         .table tr td {
             padding: 0px;
         }
@@ -98,8 +94,23 @@
         .patient-barcode{
             text-align: center;
             float: left;
-            padding-right: 354px;
+            padding-right: 275px;
         }
+        .barcode-id{
+           background-color: #fff;
+        }
+
+        .barcode-div{
+            margin-top: -10px;
+        }
+        .barcode-img{
+            width: 200px; height: 35px; margin-top: 5px
+        }
+        .patient-span{
+            font-weight: bold;
+        }
+        .doctor-degree{
+            font-size: 15px; line-height: 1px
         }
 
     </style>
@@ -127,32 +138,26 @@
                 <div class="row border" >
                     <div class="col-6 border-right" >
                         <div class="row">
-                            <div class="col-12 patient-barcode"  style="text-align: center ; float: left ; ">
-                                <img id="barcode" style="width: 200px; height: 35px; margin-top: 5px"/><br/>
-                                <div>
-                                    <span style="background-color: #fff; text-align: center" >{{ @$prescription_data->patient_id }}</span>
+                            <div class="col-12 patient-barcode">
+                                <img id="barcode" class="barcode-img"/><br/>
+                                <div class="barcode-div">
+                                    <span class="barcode-id">{{ @$prescription_data->patient_id }}</span>
                                 </div>
                             </div>
-                            <div class="col-12" style=" width:100%; ">
+                            <div class="col-12">
                                 <p>
-                                    Name: <span
-                                        class="title">{{$prescription_data->patient_info->patient_name .' ['.$prescription_data->id.']'}}</span><br/>
-                                    Age: <span
-                                        style="font-weight: bold; ">{{\Carbon\Carbon::parse($prescription_data->patient_info->patient_dob )->diff(\Carbon\Carbon::now())->format('%y years, %m months and %d days')}}</span><br/>
-                                    DOB: <span
-                                        style="font-weight: bold;">{{date('d-m-Y', strtotime(@$prescription_data->patient_info->patient_dob))}}</span>,
-                                    Gender: <span
-                                        style="font-weight: bold;">{{$prescription_data->patient_info->gender }}</span><br/>
-                                    Phone: <span
-                                        style="font-weight: bold;">{{$prescription_data->patient_info->patient_phone }}</span><br/>
+                                    Name: <span class="title">{{$prescription_data->patient_info->patient_name .' ['.$prescription_data->id.']'}}</span><br/>
+                                    Age: <span class="patient-span">{{\Carbon\Carbon::parse($prescription_data->patient_info->patient_dob )->diff(\Carbon\Carbon::now())->format('%y years, %m months and %d days')}}</span><br/>
+                                    DOB: <span class="patient-span">{{date('d-m-Y', strtotime(@$prescription_data->patient_info->patient_dob))}}</span>,
+                                    Gender: <span class="patient-span">{{$prescription_data->patient_info->gender }}</span><br/>
+                                    Phone: <span class="patient-span">{{$prescription_data->patient_info->patient_phone }}</span><br/>
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div class="col-6" >
                         <p class="title">{{$prescription_data->doctor_info->doctor_name }}</p>
-                        <span
-                            style="font-size: 15px; line-height: 1px">{!!  $prescription_data->doctor_info->doctor_details !!}</span>
+                        <span class="doctor-degree">{!!  $prescription_data->doctor_info->doctor_details !!}</span>
                     </div>
 
 
@@ -211,251 +216,21 @@
                                         <th>Medicine:</th>
                                     </tr>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">First</th>
-                                        <th scope="col">Last</th>
-                                        <th scope="col">Handle</th>
+                                        <th scope="col">Sl</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Duration</th>
+                                        <th scope="col">Instruction</th>
                                     </tr>
                                     </thead>
                                     <tbody class="table-group-divider">
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td colspan="2">Larry the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
+                                    @foreach(@$prescription_medicine_data as $prescription_medicine)
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td><small class="text-muted">{{$prescription_medicine->prescription_medicine->type}}</small> {{$prescription_medicine->prescription_medicine->medicine_name}}</td>
+                                            <td>{{$prescription_medicine->duration}}</td>
+                                            <td>{{$prescription_medicine->medicine_instruction}}</td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </main>
