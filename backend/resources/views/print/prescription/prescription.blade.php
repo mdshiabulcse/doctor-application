@@ -39,29 +39,90 @@
 
         }
 
-        @page {
-            size: A4;
-            margin-top: 200px;
-            margin-bottom: 80px;
-            margin-left: 70px;
 
-        }
 
         @media print {
             #pagePrintNone {
                 display: none;
             }
 
-            html, body {
+            body {
+                font-family: 'Noto Sans', sans-serif;
+                font-family: 'Noto Sans Bengali', sans-serif;
                 width: 210mm;
                 height: 297mm;
+                margin: 0; /* Reset default margins */
+                padding: 0; /* Reset default padding */
             }
 
+            /* Adjust margins for A4 size */
             @page {
                 size: A4;
                 margin-top: 120px;
                 margin-bottom: 90px;
                 margin-left: 70px;
+            }
+
+            .page-footer {
+                display: none;
+                /*position: fixed;*/
+                /*left: 0;*/
+                /*bottom: 0;*/
+                /*width: 100%;*/
+                /*color: black;*/
+                /*text-align: center;*/
+                /*margin-bottom: -18px;*/
+            }
+
+            .table-page {
+                margin: auto;
+            }
+
+            th, td {
+                font-size: 16px;
+            }
+
+            tr td {
+                line-height: 26px;
+            }
+
+            ul li {
+                line-height: 38px;
+                font-size: 18px;
+            }
+
+            .title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .patient-barcode {
+                text-align: center;
+                float: left;
+                padding-right: 275px;
+            }
+
+            .barcode-id {
+                background-color: #fff;
+            }
+
+            .barcode-div {
+                margin-top: -10px;
+            }
+
+            .barcode-img {
+                width: 200px;
+                height: 35px;
+                margin-top: 5px
+            }
+
+            .patient-span {
+                font-weight: bold;
+            }
+
+            .doctor-degree {
+                font-size: 15px;
+                line-height: 1px
             }
         }
 
@@ -113,6 +174,7 @@
             font-size: 15px; line-height: 1px
         }
 
+
     </style>
 </head>
 
@@ -130,7 +192,7 @@
         </div>
     </div>
 </div>
-<table class="table-page" style="width:100%">
+<table class="table-page" >
     <thead>
     <tr>
         <td>
@@ -179,7 +241,8 @@
                 <div class="container mt-2">
                     <div class="row">
                         <div class="col-md-12 col-12 col-lg-12">
-                            <main class=" mt-2 page-content">
+                            <main class=" mt-2 ">
+                                {{--   Start::Examination and symptoms table --}}
                                 <table>
                                     <tr>
                                         <td>
@@ -187,8 +250,6 @@
                                                 <div class="p-2 flex-fill bd-highlight"><p>
                                                         <strong>Symptoms:</strong> {{$prescription_data->symptoms}}</p>
                                                 </div>
-                                                <div class="p-2 flex-fill bd-highlight">Flex item</div>
-                                                <div class="p-2 flex-fill bd-highlight">Flex item</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -210,22 +271,24 @@
                                         </td>
                                     </tr>
                                 </table>
+                                {{--   End::Examination and symptoms table --}}
+                                {{--   Start::Medicine table --}}
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Medicine:</th>
+                                        <th class="border-top-0 border-bottom-0 ">Medicine:</th>
                                     </tr>
                                     <tr>
-                                        <th scope="col">Sl</th>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Duration</th>
-                                        <th scope="col">Instruction</th>
+                                        <th class="border-top-0  " scope="col">Sl</th>
+                                        <th class="border-top-0  " scope="col">Title</th>
+                                        <th class="border-top-0  " scope="col">Duration</th>
+                                        <th class="border-top-0 " scope="col">Instruction</th>
                                     </tr>
                                     </thead>
                                     <tbody class="table-group-divider">
                                     @foreach(@$prescription_medicine_data as $prescription_medicine)
                                         <tr>
-                                            <th scope="row">1</th>
+                                            <th scope="row">{{@$loop->iteration}}</th>
                                             <td><small class="text-muted">{{$prescription_medicine->prescription_medicine->type}}</small> {{$prescription_medicine->prescription_medicine->medicine_name}}</td>
                                             <td>{{$prescription_medicine->duration}}</td>
                                             <td>{{$prescription_medicine->medicine_instruction}}</td>
@@ -233,6 +296,31 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+                                {{--   End::Medicine table --}}
+                                {{--   Start::Advice note table --}}
+                                <table >
+                                    <thead>
+                                    <tr>
+                                        <th class="border-top-0 border-bottom-0 ">Advice Note:</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="table-group-divider">
+                                        <tr><td><strong>{{@$prescription_data->advice_note}}</strong></td></tr>
+                                    </tbody>
+                                </table>
+                                {{--   End::Advice Note table --}}
+                                {{--   Start::Followup date table --}}
+                                <table >
+                                    <thead>
+                                    <tr>
+                                        <th class="border-top-0 border-bottom-0 ">Followup Date:</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="table-group-divider">
+                                    <tr><td><strong>{{@$prescription_data->followup_date}}</strong></td></tr>
+                                    </tbody>
+                                </table>
+                                {{--   End::Followup Date table --}}
                             </main>
                         </div>
                     </div>
