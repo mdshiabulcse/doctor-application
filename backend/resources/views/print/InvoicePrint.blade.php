@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.104.2">
-    <title>{{$invData->invoice_id}}</title>
+    <title>{{@$invData->invoice_id}}</title>
     <link href="{{asset('/')}}assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" >
     <style>
         body {

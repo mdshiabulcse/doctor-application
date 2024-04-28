@@ -4,16 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="author" content="DOCTUCH">
     <meta name="generator" content="Hugo 0.104.2">
     <title>{{$pageTitle}}</title>
-    <link href="{{asset('/')}}assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{asset('/')}}assets/bootstrap/font/fontawesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('frontend/bootstrap@4.4.1/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+Bengali:wght@300&display=swap"
+          rel="stylesheet">
+
     <style>
         body {
-            background-color: white; /* Set background color to white for printing */
-            margin: 0; /* Remove default margin for printing */
-            padding: 0; /* Remove default padding for printing */
+            background: white;
+            font-family: 'Noto Sans', sans-serif;
+            font-family: 'Noto Sans Bengali', sans-serif;
         }
 
 
@@ -35,7 +42,7 @@
         <div class="container mb-5 mt-3">
             <div class="row d-flex">
                 <div class="col-xl-3 float-end">
-                    <button onclick="window.print()" class="btn btn-primary btn-lg">Print
+                    <button onclick="window.print()" class="btn btn-primary btn-lg"><i class="bi bi-printer"></i> Print
                     </button>
                 </div>
             </div>
@@ -176,7 +183,6 @@
         </tbody>
     </table>
 </div>
-<script src="{{asset('/')}}assets/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="{{asset('/')}}assets/bootstrap/js/fontawesome.min.js"></script>
+<script src="{{ asset('frontend/bootstrap@4.4.1/dist/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
