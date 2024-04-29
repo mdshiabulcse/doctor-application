@@ -99,13 +99,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach(@$invInfoDatas as  $invInfoData)
-                            <tr>
-                                <th scope="row">{{ $loop->iteration }}</th>
-                                <td>{{ @$invInfoData->exam_data->ex_name }}</td>
-                                <td>{{ @$invInfoData->invoice_item_amount }}</td>
-                            </tr>
-                        @endforeach
+                        @if($invData->invoice_type == )
+
+                        @else
+                            @foreach(@$invInfoDatas as  $invInfoData)
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{ @$invInfoData->exam_data->ex_name }}</td>
+                                    <td>{{ @$invInfoData->invoice_item_amount }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+
                         </tbody>
 
                     </table>

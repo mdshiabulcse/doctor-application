@@ -62,6 +62,11 @@ class ConsultationInvoiceController extends Controller
                 return $this->failureApiResponse($response);
             }
 
+            if(!$request['doctor_id']){
+                $response['errors'] = 'Consultation Doctor is required. please reload your page!';
+                return $this->failureApiResponse($response);
+            }
+
             //user browser history check here
             $browserName = Agent::browser();
             $browserVersion = Agent::version($browserName);
