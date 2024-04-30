@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_id',60);
-            $table->string('invoice_type',50)->comment('Pathology,Consultation');
+            $table->string('invoice_type',50)->comment('Consultation,Investigation,Pathology,Operation');
             $table->string('patient_id',50);
             $table->integer('dr_id')->nullable();
             $table->integer('ref_dr_id')->nullable();
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->decimal('paid_amount',9,2)->comment('Invoice  Paid Amount');
             $table->decimal('received_amount',9,2)->comment('Invoice  Received Amount');
             $table->decimal('due_amount',9,2)->default(0)->comment('Invoice  Due Amount');
+            $table->string('pay_method',50);
             $table->string('status',20)->comment('Invoice  Status: Paid, Due, Void');
             $table->date('inv_create')->comment('Invoice Create Date');
             $table->tinyInteger('user_id')->comment('create user ID');
