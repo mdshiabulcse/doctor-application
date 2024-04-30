@@ -84,11 +84,12 @@
 
 <script>
 import {ref} from 'vue';
+import {useAuth} from "@/store/auth.js";
 
 export default {
   setup() {
     const mini = ref(false);
-    const childItemsVisible = ref([false, false]);
+    const childItemsVisible = ref([false, false,false]);
     const childItems = [
       [
         {title: 'Doctor List', icon: 'mdi-plus', route: '/doctor-list'},
@@ -103,16 +104,31 @@ export default {
       ],
     ];
 
+    const authData = useAuth();
+
     function toggleSidebar() {
       mini.value = !mini.value;
     }
 
+    // function toggleChildItems(parentIndex) {
+    //   childItemsVisible.value[parentIndex] = !childItemsVisible.value[parentIndex];
+    // }
     function toggleChildItems(parentIndex) {
-      childItemsVisible.value[parentIndex] = !childItemsVisible.value[parentIndex];
+      if (childItemsVisible.value[parentIndex]) {
+        childItemsVisible.value[parentIndex] = false; // Close the menu if already open
+      } else {
+        childItemsVisible.value[parentIndex] = checkGroupPermission(parentIndex); // Check permission and open menu
+      }
     }
 
     function hideChildItems(parentIndex) {
       childItemsVisible.value[parentIndex] = false;
+    }
+
+    function checkGroupPermission() {
+      const userGroups = authData.user.data.user_group.map(group => group.group_id);
+      const allowedGroups = [1,2,3]; // Define the group IDs allowed to access the menu item (e.g., [1, 2, 3])
+      return allowedGroups.some(group => userGroups.includes(group));
     }
 
     return {
