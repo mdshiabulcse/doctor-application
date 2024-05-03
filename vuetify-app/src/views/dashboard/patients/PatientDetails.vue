@@ -10,65 +10,94 @@
           </v-breadcrumbs>
         </v-sheet>
       </v-col>
-     <v-row>
-         <v-col cols="12" class="">
-           <v-card
-             class="mx-auto my-2"
-             title="Patient Details"
-             prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
-             rel="noopener"
-             color="warning"
-           ></v-card>
-           <v-col cols="12">
-             <v-card>
-               <v-container>
-                 <v-row align="center" justify="center">
-                   <v-col cols="auto">
-                     <v-btn prepend-icon="mdi-pencil-plus-outline" color="primary">edit</v-btn>
-                   </v-col>
-                   <v-col cols="auto">
-                     <v-btn prepend-icon="mdi-medical-bag" color="warning" @click="patientExamination">Examination</v-btn>
-                   </v-col>
-                 </v-row>
-               </v-container>
-             </v-card>
-           </v-col>
-           <v-card>
-             <v-card-text class="">
-               <v-row >
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient ID:</span>
-                   <span class="ma-2 pa-2 mb-1"> {{ patient_details.patient_id }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient Name:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_name }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2 mb-1 ">Patient Phone:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_phone }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient E-mail:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_email }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient DOB:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.patient_dob }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient Gender:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.gender }}</span>
-                 </div>
-                 <div class="flex-1-1-100">
-                   <span class="ma-2 pa-2  mb-1 ">Patient Registration:</span>
-                   <span class="ma-2 pa-2  mb-1"> {{ patient_details.created_at }}</span>
-                 </div>
-               </v-row>
-             </v-card-text>
-           </v-card>
-         </v-col>
-     </v-row>
+      <v-row>
+        <v-col cols="12" class="">
+          <v-card
+            class="mx-auto my-2"
+            title="Patient Details"
+            prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
+            rel="noopener"
+            color="warning"
+          ></v-card>
+          <v-col cols="12">
+            <v-card>
+              <v-container>
+                <v-row align="center" justify="center">
+                  <v-col cols="auto">
+                    <v-btn prepend-icon="mdi-pencil-plus-outline" color="primary">edit</v-btn>
+                  </v-col>
+                  <v-col cols="auto">
+                    <v-btn prepend-icon="mdi-medical-bag" color="warning" @click="patientExamination">Examination
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-col>
+          <v-col cols="8">
+            <v-card
+              class="mx-auto"
+            >
+              <v-img
+                height="200"
+                src="https://picsum.photos/700?image=996"
+                cover
+              ></v-img>
+              <v-card-item class="bg-cyan-darken-1">
+                <v-card-title>
+                  <span class="text-h5">{{ patient_details.patient_name }}</span>
+                </v-card-title>
+
+                <template v-slot:append>
+                  <v-defaults-provider :defaults="{
+                    VBtn: {
+                      variant: 'text',
+                      density: 'comfortable',
+                      }}">
+                    <v-btn icon="mdi-pencil"></v-btn>
+                  </v-defaults-provider>
+                </template>
+              </v-card-item>
+
+              <v-list>
+                <v-list-item
+                  prepend-icon="mdi-card-account-details"
+                  :title="patient_details.patient_id"
+                ></v-list-item>
+                <v-divider></v-divider>
+
+                <v-list-item
+                  prepend-icon="mdi-phone"
+                  :title="patient_details.patient_phone"
+                ></v-list-item>
+
+                <v-divider></v-divider>
+
+                <v-list-item
+                  prepend-icon="mdi-email"
+                  :title="patient_details.patient_email"
+                ></v-list-item>
+                <v-divider></v-divider>
+                <v-list-item
+                  prepend-icon="mdi-cake"
+                  :title="patient_details.patient_dob"
+                ></v-list-item>
+                <v-divider></v-divider>
+                <v-list-item
+                  prepend-icon="mdi-gender-male-female-variant"
+                  :title="patient_details.gender"
+                ></v-list-item>
+                <v-divider></v-divider>
+                <v-list-item
+                  prepend-icon="mdi-calendar-edit"
+                  :title="patient_details.created_at"
+                ></v-list-item>
+                <v-divider></v-divider>
+              </v-list>
+            </v-card>
+          </v-col>
+        </v-col>
+      </v-row>
     </v-row>
   </v-container>
 </template>
@@ -112,7 +141,7 @@ const fetchPatientDetails = async () => {
   }
 };
 const patientExamination = () => {
-  router.push({ path: `/patient-examination-invoice/${patient_details.value.patient_id}` });
+  router.push({path: `/patient-examination-invoice/${patient_details.value.patient_id}`});
 };
 
 </script>
