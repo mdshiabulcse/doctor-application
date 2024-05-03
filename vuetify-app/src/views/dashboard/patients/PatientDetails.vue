@@ -38,11 +38,6 @@
             <v-card
               class="mx-auto"
             >
-              <v-img
-                height="200"
-                src="https://picsum.photos/700?image=996"
-                cover
-              ></v-img>
               <v-card-item class="bg-cyan-darken-1">
                 <v-card-title>
                   <span class="text-h5">{{ patient_details.patient_name }}</span>
