@@ -40,6 +40,9 @@ const routes = [
         path: '/patient-create', name: 'patient.create', component: PatientCreate, meta:{title:"Patient Create", requiresAuth:true},
       },
       {
+        path: '/patient-create/:patientId', name: 'patient.create.:patientId', component: PatientCreate, meta:{title:"Patient Edit", requiresAuth:true},
+      },
+      {
         path: '/patient-details/:patientId', name: 'patient.details', component: PatientDetails, meta:{title:"Patient Details", requiresAuth:true},
       },
       {

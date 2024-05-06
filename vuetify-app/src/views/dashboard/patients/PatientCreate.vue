@@ -16,7 +16,7 @@
           title="Patient Create"
           prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
           rel="noopener"
-          color="warning"
+          color="info"
         ></v-card>
         <v-card>
           <v-card-text>
@@ -118,7 +118,7 @@
                   >
                     submit
                   </v-btn>
-                  <v-btn prepend-icon="mdi-trash-can-outline" @click="handleReset">
+                  <v-btn v-if="patientId.value !== null && patientId.value !== ''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
                     clear
                   </v-btn>
                 </v-col>
@@ -132,15 +132,19 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref,watch} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
+import {useRoute, useRouter} from "vue-router";
 
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
 const patient_sources=ref([]);
+const patient_details = ref([]);
+const patientId = ref('');
+const router = useRouter();
 
 const breadcrumbs = computed(() => [
   {
@@ -167,9 +171,13 @@ const submitForm=ref({
 });
 
 
+
+
 onMounted(() => {
+  patientId.value = useRoute().params.patientId;
   fetchPatientSources (); // Fetch data when the component is mounted
 });
+
 
 const fetchPatientSources = async () => {
   try {
@@ -183,7 +191,7 @@ const fetchPatientSources = async () => {
 
 const nameRules = [
   (v) => !!v || 'Name is required',
-  (v) => (v && v.length >= 2) || 'Name must be at least 2 characters',
+  (v) => (v && v.length >= 3) || 'Name must be at least 3 characters',
 ];
 
 const phoneRules = [
@@ -201,23 +209,46 @@ const genderRules = [
   (v) => !!v || 'Gender is required',
 ];
 
+const initializeForm = () => {
+  if (patientId.value) {
+    fetchPatientDetails();
+  } else {
+    handleReset();
+  }
+};
+
+onMounted(initializeForm);
+
+const fetchPatientDetails = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/patients/patients/${patientId.value}`);
+    patient_details.value = response.data.patient_details;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
 
-// Add rules for other form fields
 
 const submit = async () => {
-
-  // Validate form fields
   const isFormValid = await validateForm();
 
   if (isFormValid) {
-    // Proceed with API submission
     try {
-      const response = await axiosInstance.post('/admin/patients/patients?user_id=' + user_id, submitForm.value);
-      if (response.data.message) {
+      // Check if it's an edit or create operation
+      if (patientId.value) {
+        console.log(patientId.value)
+        // It's an edit operation
+        // await axiosInstance.put(`/admin/patients/patients/${patientId.value}?user_id=${user_id}`, submitForm.value);
+        // notify.Success('Patient details updated successfully');
+      } else {
+        // It's a create operation
+        const response = await axiosInstance.post(`/admin/patients/patients?user_id=${user_id}`, submitForm.value);
+        if (response.data.message) {
         notify.Success(response.data.message);
       } else {
         notify.Error(response.data.errors);
+      }
       }
     } catch (error) {
       notify.Error(error.response.data.errors);
@@ -226,6 +257,8 @@ const submit = async () => {
     console.error('Form validation failed. Please check the fields.');
   }
 };
+
+// ===============Form Validation Code Start Here===============  //
 
 const validateForm = async () => {
   const results = await Promise.all([
@@ -277,12 +310,30 @@ const calculateDateFromAge = () => {
   submitForm.value.selectedDob = birthDate.toISOString().substr(0, 10);
 };
 
+// ===============Form Validation Code End Here===============  //
 
+const updateSubmitForm = () => {
+  watch(patient_details, (newValue) => {
+    const patientDetails = newValue;
+    if (patientDetails) {
+      submitForm.value = {
+        name: patientDetails.patient_name,
+        phone: patientDetails.patient_phone,
+        email: patientDetails.patient_email,
+        selectedDob: patientDetails.patient_dob,
+        selectedAge: patientDetails.patient_age,
+        gender: patientDetails.gender,
+        source_name: patientDetails.hospital_name,
+      };
+    }
+  });
+};
 
+updateSubmitForm();
 
 const handleReset = () => {
   // Reset the form fields
-  submitForm.value.source_name = {
+  submitForm.value = {
     name: '',
     phone: '',
     email: '',
@@ -291,5 +342,4 @@ const handleReset = () => {
     source_name: '',
   };
 };
-
 </script>

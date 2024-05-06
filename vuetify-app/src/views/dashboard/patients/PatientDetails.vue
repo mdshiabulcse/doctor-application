@@ -24,7 +24,7 @@
               <v-container>
                 <v-row align="center" justify="center">
                   <v-col cols="auto">
-                    <v-btn prepend-icon="mdi-pencil-plus-outline" color="primary">edit</v-btn>
+                    <v-btn prepend-icon="mdi-pencil-plus-outline" color="primary" @click="patientEdit">edit</v-btn>
                   </v-col>
                   <v-col cols="auto">
                     <v-btn prepend-icon="mdi-medical-bag" color="warning" @click="patientExamination">Examination
@@ -49,7 +49,7 @@
                       variant: 'text',
                       density: 'comfortable',
                       }}">
-                    <v-btn icon="mdi-pencil"></v-btn>
+                    <v-btn icon="mdi-pencil" @click="patientEdit"></v-btn>
                   </v-defaults-provider>
                 </template>
               </v-card-item>
@@ -131,12 +131,17 @@ const fetchPatientDetails = async () => {
   try {
     const response = await axiosInstance.get(`/admin/patients/patients/${patientId.value}`); // get patient details
     patient_details.value = response.data.patient_details;
+    console.log('inn',patient_details.value);
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
 const patientExamination = () => {
   router.push({path: `/patient-examination-invoice/${patient_details.value.patient_id}`});
+};
+
+const patientEdit = () => {
+  router.push({path: `/patient-create/${patient_details.value.patient_id}`});
 };
 
 </script>
