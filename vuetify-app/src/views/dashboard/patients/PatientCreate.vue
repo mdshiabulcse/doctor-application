@@ -13,7 +13,7 @@
       <v-col cols="7">
         <v-card
           class="mx-auto my-2"
-          title="Patient Create"
+          :title="patient_details.patient_id ? patient_details.patient_id : 'Patient Create'"
           prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
           rel="noopener"
           color="info"
@@ -118,8 +118,8 @@
                   >
                     submit
                   </v-btn>
-                  <v-btn v-if="patientId.value !== null && patientId.value !== ''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
-                    clear
+                  <v-btn :class="patient_details.patient_id ? 'd-none':''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
+                    Clear
                   </v-btn>
                 </v-col>
               </v-row>
@@ -237,15 +237,20 @@ const submit = async () => {
     try {
       // Check if it's an edit or create operation
       if (patientId.value) {
-        console.log(patientId.value)
         // It's an edit operation
-        // await axiosInstance.put(`/admin/patients/patients/${patientId.value}?user_id=${user_id}`, submitForm.value);
-        // notify.Success('Patient details updated successfully');
+        const response = await axiosInstance.post(`/admin/patients/patients-update/${patientId.value}?user_id=${user_id}`, submitForm.value);
+        if (response.data.message) {
+          notify.Success(response.data.message);
+          router.push({ path: `/patient-details/${response.data.patient_id}` });
+        } else {
+          notify.Error(response.data.errors);
+        }
       } else {
         // It's a create operation
         const response = await axiosInstance.post(`/admin/patients/patients?user_id=${user_id}`, submitForm.value);
         if (response.data.message) {
         notify.Success(response.data.message);
+        router.push({ path: `/patient-details/${response.data.patient_id}` });
       } else {
         notify.Error(response.data.errors);
       }
@@ -315,6 +320,7 @@ const calculateDateFromAge = () => {
 const updateSubmitForm = () => {
   watch(patient_details, (newValue) => {
     const patientDetails = newValue;
+
     if (patientDetails) {
       submitForm.value = {
         name: patientDetails.patient_name,
