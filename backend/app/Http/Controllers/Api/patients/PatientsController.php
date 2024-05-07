@@ -142,6 +142,7 @@ class PatientsController extends Controller
             $patientLogData->user_id = $patientData->user_id;
             $patientLogData->save();
 
+            $response['patient_id'] = $patientData->patient_id;
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -185,7 +186,77 @@ class PatientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+
+            // Validation: Check if the name and phone fields are filled
+            $validationRules = [
+                'name' => 'required',
+                'phone' => 'required',
+                'gender' => 'required',
+                'selectedDob' => 'required',
+                'selectedAge' => 'required',
+            ];
+
+            $validationMessages = [
+                'name.required' => 'The patient name is required.',
+                'phone.required' => 'The phone number is required.',
+                'gender.required' => 'The Gender is required.',
+                'selectedDob.required' => 'The Date of Birth is required.',
+                'selectedAge.required' => 'The Age is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $validationRules,$validationMessages);
+
+            if ($validator->fails()) {
+                $response['errors'] = $validator->errors()->all();
+                return $this->failureApiResponse($response);
+            }
+
+            // Continue with the rest of your code to save the data
+
+            //user browser history check here
+            $browserName = Agent::browser();
+            $browserVersion = Agent::version($browserName);
+            $deviceInfo = Agent::device();
+            $osPlatform = Agent::platform();
+            $IP = request()->ip();
+
+
+
+            //patient information created here
+            $patientData=PatientInfo::where('patient_id', $id)->first();
+            $patientData->patient_name = $request->name;
+            $patientData->patient_phone = $request->phone;
+            $patientData->patient_email = $request->email;
+            $patientData->patient_address = '';
+            $patientData->patient_father = '';
+            $patientData->patient_mother = '';
+            $patientData->hospital_name = $request->source_name;
+            $patientData->gender = $request->gender;
+            $patientData->patient_dob = $request->selectedDob;
+            $patientData->patient_age = $request->selectedAge;
+            $patientData->status = 1;
+            $patientData->save();
+
+            //patient log information created here
+            $patientLogData=new PatientLog();
+            $patientLogData->patient_id = $patientData->patient_id;
+            $patientLogData->patient_log_data = $patientData->patient_name.','.$patientData->patient_phone;
+            $patientLogData->device_info = 'IP-'.$IP.',DEV-'.$deviceInfo.',OS-'.$osPlatform.',BROW-'.$browserName.',VER-'.$browserVersion;
+            $patientLogData->user_id = $request->user_id;
+            $patientLogData->save();
+            $response['patient_id'] = $patientData->patient_id;
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response['errors'] = $e->getMessage() . $e->getLine();
+            return $this->failureApiResponse($response);
+        }
+
+        $response['message'] = 'Updated Successfully!';
+        return $this->successApiResponse($response);
     }
 
     /**

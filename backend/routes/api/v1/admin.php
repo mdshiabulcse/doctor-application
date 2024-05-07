@@ -41,6 +41,7 @@ Route::group(['prefix' => 'administrative'], function (){
 
 Route::group(['prefix' => 'patients'], function (){
     Route::resource('patients',PatientsController::class);
+    Route::post('patients-update/{id}',[PatientsController::class,'update']);
     Route::get('patient-sources',[PatientsController::class,'patientSources']);
 });
 Route::group(['prefix' => 'appointment'], function (){
