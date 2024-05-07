@@ -278,16 +278,15 @@ const validateForm = async () => {
   // Check if all validation results are truthy (indicating valid)
   return results.every((result) => result === true);
 };
+// Invalid date entered for Date of Birth
 const calculateAgeFromDate = () => {
-  console.log("log date of birth",submitForm.value.selectedDob)
   const birthDate = new Date(submitForm.value.selectedDob);
   if (isNaN(birthDate.getTime())) {
-    console.error('Invalid date entered for Date of Birth');
     return;
   }
 
+  // Date of Birth cannot be in the future
   if (birthDate > new Date()) {
-    console.error('Date of Birth cannot be in the future');
     return;
   }
 
@@ -297,7 +296,6 @@ const calculateAgeFromDate = () => {
 };
 
 const calculateDateFromAge = () => {
-  console.log("log date of age",submitForm.value.selectedAge)
   const enteredAge = parseInt(submitForm.value.selectedAge);
   if (isNaN(enteredAge) || enteredAge < 0) {
     return;
@@ -322,6 +320,13 @@ const updateSubmitForm = () => {
     const patientDetails = newValue;
 
     if (patientDetails) {
+
+      let sourceName = '';
+      if (patientDetails.hospital_name !== null) {
+        const selectedSources = patient_sources.value.filter(source => patientDetails.hospital_name.includes(source.id));
+        sourceName = selectedSources.map(source => source.source_name).join(', ');
+      }
+
       submitForm.value = {
         name: patientDetails.patient_name,
         phone: patientDetails.patient_phone,
@@ -329,7 +334,7 @@ const updateSubmitForm = () => {
         selectedDob: patientDetails.patient_dob,
         selectedAge: patientDetails.patient_age,
         gender: patientDetails.gender,
-        source_name: patientDetails.hospital_name,
+        source_name: sourceName,
       };
     }
   });
