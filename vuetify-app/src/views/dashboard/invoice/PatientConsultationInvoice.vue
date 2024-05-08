@@ -92,6 +92,14 @@
                       <v-col cols="4">
                       </v-col>
                       <v-col cols="4">
+                        <v-select
+                        v-model="handleSubmit.pay_method"
+                        :items="payment_method"
+                        item-value="method_name"
+                        item-title="method_name"
+                        label="Payment Method"
+                        >
+                        </v-select>
                       </v-col>
                       <v-col cols="4">
                         <v-text-field
@@ -182,7 +190,7 @@
   </v-container>
 </template>
 <script setup>
-import {computed, onMounted, ref, watchEffect} from 'vue'
+import {computed, onMounted, ref, watch, watchEffect} from 'vue'
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useRoute} from "vue-router";
@@ -211,6 +219,7 @@ const AppointmentId = ref('');
 const special_doctor = ref([]);
 const referral_doctor = ref([]);
 const discount_list = ref([]);
+const payment_method = ref([]);
 const dialog = ref(false);
 const discountRef = ref('');
 const invoice_id = ref('');
@@ -227,6 +236,7 @@ const handleSubmit = ref({
   total_paid_amount: '',
   received_amount: '',
   due_amount: '',
+  pay_method: 'Cash',
 
 });
 
@@ -239,6 +249,7 @@ onMounted(async () => {
     await fetchPatientAppointmentDetails();
     await  fetchDoctorData();
     await  fetchDiscountListData();
+    await  fetchPaymentMethod();
     handleSubmit.value.doctor_id = appointment_details.value.doctor_info.id;
     handleSubmit.value.subtotal = appointment_details.value.doctor_info.doctor_fees;
 
@@ -270,6 +281,14 @@ const fetchDiscountListData = async () => { //discount list
   try {
     const response = await axiosInstance.get(`/admin/invoice/discount-list`); // get doctor details
     discount_list.value = response.data.discount_list;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const fetchPaymentMethod = async () => { //discount list
+  try {
+    const response = await axiosInstance.get(`/admin/invoice/payment-method`); // get doctor details
+    payment_method.value = response.data.payment_method;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -330,6 +349,7 @@ const submitForm = async () => {
       appointment_id: AppointmentId.value,
       user_id: user_id,
       patient_id: patientId.value,
+      pay_method: handleSubmit.value.pay_method,
 
       // Add other form fields as needed
     };
@@ -359,4 +379,5 @@ const submitForm = async () => {
     notify.Error(error.response.data.errors);
   }
 };
+
 </script>
