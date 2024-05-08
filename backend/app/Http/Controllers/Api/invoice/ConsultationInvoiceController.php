@@ -66,6 +66,10 @@ class ConsultationInvoiceController extends Controller
                 $response['errors'] = 'Consultation Doctor is required. please reload your page!';
                 return $this->failureApiResponse($response);
             }
+            if(!$request['pay_method']){
+                $response['errors'] = 'Payment Method is required. please select the method!';
+                return $this->failureApiResponse($response);
+            }
 
             //user browser history check here
             $browserName = Agent::browser();
@@ -110,6 +114,7 @@ class ConsultationInvoiceController extends Controller
             $ExInvoice->paid_amount = $request['total_paid_amount'];
             $ExInvoice->received_amount = $request['received_amount'];
             $ExInvoice->due_amount = $request['due_amount'];
+            $ExInvoice->pay_method = $request['pay_method'];
             $ExInvoice->status = $request['due_amount'] == 0 ? 'Paid' : 'Due';
             $ExInvoice->inv_create = Carbon::now();
             $ExInvoice->user_id = $request['user_id'];

@@ -55,7 +55,7 @@
                 <div class="col-md-12">
                     <div class="text-center">
                         <i class="fab fa-mdb fa-4x ms-0"  ></i>
-                        <p class="pt-0">Oriant Dental</p>
+                        <p class="pt-0">DEMO Hospital</p>
                     </div>
 
                 </div>
@@ -80,7 +80,7 @@
                                     class="fw-bold">Invoice Type: </span> {{$invData->invoice_type}}
                             </li>
                             <li ><i class="fas fa-circle" ></i> <span
-                                    class="fw-bold">Creation Date: </span>{{\Carbon\Carbon::parse($invData->inv_create)->format('d-M-Y')}}
+                                    class="fw-bold">Creation Date: </span>{{\Carbon\Carbon::parse($invData->created_at)->format('d-M-Y,H:i A')}}
                             </li>
                             <li><i class="fas fa-circle" ></i>
                                 <span class="me-1 fw-bold">Status:</span><span class="badge {{$invData->status == 'Paid' ? 'bg-success':'bg-warning'}} text-black fw-bold">{{$invData->status}}</span></li>
@@ -94,13 +94,23 @@
                         <thead >
                         <tr>
                             <th class="col-1">#</th>
+                            @if ($invData->invoice_type == 'Consultation')
+                            <th class="col-8">Consultant</th>
+                            @else
                             <th class="col-8">Description</th>
+                            @endif
                             <th class="col-3">Amount</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @if($invData->invoice_type == )
-
+                        @if($invData->invoice_type == 'Consultation')
+                            @foreach(@$invInfoDatas as  $invInfoData)
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{@$invData->doctor_info->doctor_name}}</td>
+                                    <td>{{ @$invInfoData->invoice_item_amount }}</td>
+                                </tr>
+                            @endforeach
                         @else
                             @foreach(@$invInfoDatas as  $invInfoData)
                                 <tr>

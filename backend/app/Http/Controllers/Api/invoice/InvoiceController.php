@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\invoice;
 
 use App\Http\Controllers\Controller;
+use App\Models\administrative\PaymentMethod;
 use App\Models\dashboard\invoice\Invoice;
 use App\Models\User;
 use App\Traits\ApiStatusTrait;
@@ -156,5 +157,11 @@ class InvoiceController extends Controller
     {
         $data['user_info']=User::where('isVerified',1)->get();
         return $this->successApiResponse($data);
+    }
+
+    public function paymentMethod()
+    {
+       $response['payment_method']= PaymentMethod::where('status',1)->get();
+       return $this->successApiResponse($response);
     }
 }

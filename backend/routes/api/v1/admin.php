@@ -57,6 +57,7 @@ Route::group(['prefix' => 'invoice'], function (){
     Route::get('discount-list',[ExaminationInvoiceController::class,'discountList']);
     Route::resource('invoice',InvoiceController::class);
     Route::get('user-data',[InvoiceController::class,'user_info']);
+    Route::get('payment-method',[InvoiceController::class,'paymentMethod']);
     Route::resource('consultation-invoice',ConsultationInvoiceController::class);
 });
 Route::group(['prefix' => 'prescription'], function (){
