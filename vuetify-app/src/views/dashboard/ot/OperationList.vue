@@ -69,8 +69,9 @@
                   >
                   </v-text-field>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="3">
                   <v-btn prepend-icon="mdi-printer" color="primary"> Print</v-btn>
+                  <v-btn prepend-icon="mdi-plus" color="primary" @click="operationRegistration">Create</v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -199,10 +200,11 @@ const appointmentInvoice = (item) => {
   router.push({path: `/patient-consultation-invoice/${item.selectable.id}/${item.selectable.patient_id}`});
 };
 const appointmentPrescription = (item) => {
-  console.log('item', item.selectable);
   router.push({path: `/patient-prescription/${item.selectable.id}/${item.selectable.patient_id}/${null}`});
 };
-
+const operationRegistration = () => {
+  router.push({path: `/operation-registration`});
+};
 watchEffect(() => {
   appointmentData();
 });

@@ -8,7 +8,7 @@ import {useAuth} from "@/store/auth.js";
 import {DoctorList,UserInfo,PatientSourceInfo} from "@/views/dashboard/Index";
 import {PatientData,PatientCreate,PatientDetails,PatientAppointment, AppointmentData,PatientPrescription} from "@/views/dashboard/patients/Index";
 import {PatientExaminationInvoice,PatientConsultationInvoice,PatientInvoiceList} from "@/views/dashboard/invoice/Index";
-import {OperationList} from "@/views/dashboard/ot/Index";
+import {OperationList, OperationRegistration} from "@/views/dashboard/ot/Index";
 
 const routes = [
   {
@@ -72,6 +72,9 @@ const routes = [
       {
         path: '/operation-list', name: 'operation.list', component: OperationList, meta:{title:"Operation List", requiresAuth:true},
       },
+      {
+        path: '/operation-registration', name: 'operation.registration', component: OperationRegistration, meta:{title:"Operation Registration", requiresAuth:true},
+      }
       /*   End:: Operation Route  */
     ],
   },
