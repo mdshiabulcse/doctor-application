@@ -8,6 +8,7 @@ import {useAuth} from "@/store/auth.js";
 import {DoctorList,UserInfo,PatientSourceInfo} from "@/views/dashboard/Index";
 import {PatientData,PatientCreate,PatientDetails,PatientAppointment, AppointmentData,PatientPrescription} from "@/views/dashboard/patients/Index";
 import {PatientExaminationInvoice,PatientConsultationInvoice,PatientInvoiceList} from "@/views/dashboard/invoice/Index";
+import {OperationList} from "@/views/dashboard/ot/Index";
 
 const routes = [
   {
@@ -55,7 +56,7 @@ const routes = [
         path: '/patient-prescription/:app_id/:pid/:prescriptionId', name: 'patient.prescription ', component: PatientPrescription, meta:{title:"Patient Precription", requiresAuth:true},
       },
       // -----------Patients  Info End-----------
-      // -----------Invoice  Info Start-----------
+      /* -----------Invoice  Info Start-----------*/
       {
         path: '/patient-examination-invoice/:patientId', name: 'patient.examination', component: PatientExaminationInvoice, meta:{title:"Patient Examination Invoice", requiresAuth:true},
       },
@@ -65,8 +66,13 @@ const routes = [
       {
         path: '/invoice-list', name: 'invoice.list', component: PatientInvoiceList, meta:{title:"Patient Invoice List", requiresAuth:true},
       },
-      // -----------Invoice  Info End-----------
+      /* -----------Invoice  Info End----------- */
 
+      /*   Start:: Operation Route  */
+      {
+        path: '/operation-list', name: 'operation.list', component: OperationList, meta:{title:"Operation List", requiresAuth:true},
+      },
+      /*   End:: Operation Route  */
     ],
   },
 ]
