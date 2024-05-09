@@ -160,7 +160,7 @@
 
                 <div class="row">
                     <div class="col">
-                        <p class="ms-3">In Words: <span>@numberToWord({{$invData->received_amount}})</span></p>
+                        <p class="ms-3">In Words: <span>{{ numberToWords($invData->received_amount) }}</span></p>
                     </div>
                 </div>
 
@@ -185,5 +185,6 @@
     </div>
 </div>
 <script src="{{asset('/')}}assets/bootstrap/js/bootstrap.bundle.js" ></script>
+
 </body>
 </html>
