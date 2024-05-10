@@ -13,7 +13,7 @@
       <v-col cols="7">
         <v-card
           class="mx-auto my-2"
-          :title="patient_details.patient_id ? patient_details.patient_id : 'Patient Create'"
+          :title="patient_details.patient_id ? patient_details.patient_id : 'Operation Registration'"
           prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
           rel="noopener"
           color="info"
@@ -153,7 +153,7 @@ const breadcrumbs = computed(() => [
     href: '/',
   },
   {
-    title: 'Patients Create',
+    title: 'OT Registration',
     disabled: false,
     href: '#',
   },

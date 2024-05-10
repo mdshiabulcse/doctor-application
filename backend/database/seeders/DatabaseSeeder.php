@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\dashboard\ot\OperationCategory;
+use App\Models\dashboard\ot\OperationList;
+use App\Models\dashboard\ot\OperationType;
+use Database\Factories\OperationListFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,17 +18,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         \App\Models\dashboard\DoctorInfo::factory(10)->create();
+//         \App\Models\dashboard\DoctorInfo::factory(10)->create();
 
-//         \App\Models\User::factory()->create([
-//             'name' => 'Test User',
-//             'email' => 'test@example.com',
-//         ]);
 
-        $this->call([
-//            AdminsTableSeeder::class,
-//            SellersTableSeeder::class,
-        DoctorInfo::class
-        ]);
+        OperationList::factory('10')->has(
+            OperationType::factory('5')->create(),
+            OperationCategory::factory('5')->create(),
+        )->create();
+
+//        $this->call([
+//        DoctorInfo::class
+//        ]);
     }
 }
