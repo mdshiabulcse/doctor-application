@@ -69,8 +69,11 @@
                   >
                   </v-text-field>
                 </v-col>
-                <v-col cols="3">
+                <v-col cols="auto">
                   <v-btn prepend-icon="mdi-printer" color="primary"> Print</v-btn>
+
+                </v-col>
+                <v-col cols="auto">
                   <v-btn prepend-icon="mdi-plus" color="primary" @click="operationRegistration">Create</v-btn>
                 </v-col>
               </v-row>
