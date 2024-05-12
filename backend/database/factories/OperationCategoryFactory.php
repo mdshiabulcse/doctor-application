@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\dashboard\ot\OperationCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,10 +15,11 @@ class OperationCategoryFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = OperationCategory::class;
     public function definition()
     {
         return [
-            //
+            'operation_category_name'=>$this->faker->unique()->word,
         ];
     }
 }

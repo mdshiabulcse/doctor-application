@@ -6,7 +6,6 @@ namespace Database\Seeders;
 use App\Models\dashboard\ot\OperationCategory;
 use App\Models\dashboard\ot\OperationList;
 use App\Models\dashboard\ot\OperationType;
-use Database\Factories\OperationListFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,13 +20,15 @@ class DatabaseSeeder extends Seeder
 //         \App\Models\dashboard\DoctorInfo::factory(10)->create();
 
 
-        OperationList::factory('10')->has(
-            OperationType::factory('5')->create(),
-            OperationCategory::factory('5')->create(),
-        )->create();
+        OperationList::factory('10')->create();
+        OperationType::factory('5')->create();
+        OperationCategory::factory('5')->create();
 
-//        $this->call([
+        $this->call([
 //        DoctorInfo::class
-//        ]);
+//        OperationList::factory('10')->create(),
+//        OperationType::factory('5')->create(),
+//        OperationCategory::factory('5')->create(),
+        ]);
     }
 }

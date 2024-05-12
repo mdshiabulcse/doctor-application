@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\dashboard\ot\OperationCategory;
+use App\Models\dashboard\ot\OperationList;
 use App\Models\dashboard\ot\OperationType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,12 +17,13 @@ class OperationListFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = OperationList::class;
     public function definition()
     {
         return [
-            'operation_name'=>fake()->word(),
-            'operation_sub_head'=>fake()->name(),
-            'operation_procedure_details'=>fake()->word(),
+            'operation_name'=>$this->faker->unique()->word,
+            'operation_sub_head'=>$this->faker->unique()->name,
+            'operation_procedure_details'=>$this->faker->unique()->sentence,
             'operation_type_id' => function () {
             return factory(OperationType::class)->create()->id;
         },
