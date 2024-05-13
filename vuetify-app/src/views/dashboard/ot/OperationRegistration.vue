@@ -10,10 +10,10 @@
           </v-breadcrumbs>
         </v-sheet>
       </v-col>
-      <v-col cols="7">
+      <v-col cols="12" md="7">
         <v-card
           class="mx-auto my-2"
-          :title="patient_details.patient_id ? patient_details.patient_id : 'Operation Registration'"
+          title="Operation Registration"
           prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
           rel="noopener"
           color="info"
@@ -24,11 +24,11 @@
               <v-row>
                 <v-col cols="12">
                   <v-text-field
-                    v-model="submitForm.name"
+                    v-model="submitForm.patient_id"
                     required
                     minlength="2"
-                    label="Name"
-                    :rules="nameRules"
+                    label="Patient ID"
+                    :rules="submitPatientId"
                   ></v-text-field>
                 </v-col>
 
@@ -126,6 +126,31 @@
             </form>
           </v-card-text>
         </v-card>
+      </v-col >
+      <v-col :class="patient_details.patient_id ? '':'d-none'" cols="12" md="5">
+        <v-card
+          color="indigo"
+          variant="elevated"
+          class="mx-auto my-2"
+        >
+          <v-card-item>
+            <div>
+
+              <div class="text-h6 mb-1">
+                {{patient_details.patient_id}}
+              </div>
+              <div class="text-overline mb-1">
+                {{patient_details.patient_name}}
+              </div>
+            </div>
+          </v-card-item>
+
+          <v-card-actions>
+            <v-btn>
+              Button
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </v-col>
 
     </v-row>
@@ -160,7 +185,7 @@ const breadcrumbs = computed(() => [
 ]);
 
 const submitForm=ref({
-  name:'',
+  patient_id:'',
   phone:'',
   email:'',
   selectedDob:'',
@@ -189,9 +214,9 @@ const fetchPatientSources = async () => {
 };
 
 
-const nameRules = [
-  (v) => !!v || 'Name is required',
-  (v) => (v && v.length >= 3) || 'Name must be at least 3 characters',
+const submitPatientId = [
+  (v) => !!v || 'Patient ID is required',
+  (v) => (v && v.length >= 3) || 'Patient ID must be at least 3 characters',
 ];
 
 const phoneRules = [
@@ -209,24 +234,23 @@ const genderRules = [
   (v) => !!v || 'Gender is required',
 ];
 
-const initializeForm = () => {
-  if (patientId.value) {
-    fetchPatientDetails();
-  } else {
-    handleReset();
-  }
-};
 
-onMounted(initializeForm);
 
-const fetchPatientDetails = async () => {
-  try {
-    const response = await axiosInstance.get(`/admin/patients/patients/${patientId.value}`);
-    patient_details.value = response.data.patient_details;
-  } catch (error) {
-    console.error('Error fetching data:', error);
+watch(() => submitForm.value.patient_id, async (newPatientId) => {
+  if (newPatientId) {
+    try {
+      const response = await axiosInstance.get(`/admin/patients/patients/${newPatientId}`);
+      if (response.data && response.data.patient_details) {
+        patient_details.value = response.data.patient_details;
+        submitForm.value.patient_id = response.data.patient_details.patient_id;
+      } else {
+        notify.Error('No patient details found for the given ID.');
+      }
+    } catch (error) {
+      console.error('Error fetching patient details:', error);
+    }
   }
-};
+});
 
 
 
@@ -267,7 +291,7 @@ const submit = async () => {
 
 const validateForm = async () => {
   const results = await Promise.all([
-    ...nameRules.map((rule) => rule(submitForm.value.name)),
+    ...submitPatientId.map((rule) => rule(submitForm.value.patient_id)),
     ...phoneRules.map((rule) => rule(submitForm.value.phone)),
     ...dobRules.map((rule) => rule(submitForm.value.selectedDob)),
     ...ageRules.map((rule) => rule(submitForm.value.selectedAge)),
@@ -328,7 +352,7 @@ const updateSubmitForm = () => {
       }
 
       submitForm.value = {
-        name: patientDetails.patient_name,
+        patient_id: patientDetails.patient_id,
         phone: patientDetails.patient_phone,
         email: patientDetails.patient_email,
         selectedDob: patientDetails.patient_dob,
