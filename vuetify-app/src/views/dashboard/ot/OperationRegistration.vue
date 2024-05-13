@@ -10,148 +10,176 @@
           </v-breadcrumbs>
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="7">
-        <v-card
-          class="mx-auto my-2"
-          title="Operation Registration"
-          prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
-          rel="noopener"
-          color="info"
-        ></v-card>
-        <v-card>
-          <v-card-text>
-            <form @submit.prevent="submit">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.patient_id"
-                    required
-                    minlength="2"
-                    label="Patient ID"
-                    :rules="submitPatientId"
-                  ></v-text-field>
-                </v-col>
+     <v-row>
+       <v-col cols="12" md="7">
+         <v-card
+           class="mx-auto my-2"
+           title="Operation Registration"
+           prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
+           rel="noopener"
+           color="info"
+         ></v-card>
+         <v-card>
+           <v-card-text>
+             <form @submit.prevent="submit">
+               <v-row>
+                 <v-col cols="12">
+                   <v-text-field
+                     v-model="submitForm.patient_id"
+                     required
+                     minlength="2"
+                     label="Patient ID"
+                     :rules="submitPatientId"
+                   ></v-text-field>
+                 </v-col>
 
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.phone"
-                    required
-                    pattern="\d{11,}"
-                    label="Phone Number"
-                    :rules="phoneRules"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="submitForm.email"
-                    label="E-mail"
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12" sm="7">
-                  <v-text-field
-                    label="Date Of Birth"
-                    v-model="submitForm.selectedDob"
-                    clearable
-                    type="date"
-                    :max="new Date().toISOString().substr(0, 10)"
-                    min="1920-01-01"
-                    @input="calculateAgeFromDate"
-                    :rules="dobRules"
-                    required
-                  >
-                  </v-text-field>
-                </v-col>
-                <span>Or</span>
-                <v-col cols="12" sm="4">
-                  <v-text-field
-                    label="Patient Age"
-                    v-model="submitForm.selectedAge"
-                    clearable
-                    @input="calculateDateFromAge"
-                    :rules="ageRules"
-                    required
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-radio-group
-                    inline
-                    v-model="submitForm.gender"
-                    required
-                    :rules="genderRules"
-                  >
-                    <template v-slot:label>
-                      <div>Select <strong>Gender</strong></div>
-                    </template>
-                    <v-radio
-                      label="Male"
-                      value="Male"
-                    ></v-radio>
-                    <v-radio
-                      label="Female"
-                      value="Female"
-                    ></v-radio>
-                    <v-radio
-                      label="Other"
-                      value="Other"
-                    ></v-radio>
-                  </v-radio-group>
-                </v-col>
-                <v-col cols="12">
-                  <v-autocomplete
-                    label="Patient Source"
-                    v-model="submitForm.source_name"
-                    :items="patient_sources"
-                    color="blue-grey-lighten-2"
-                    item-value="id"
-                    item-title="source_name"
-                  >
-                  </v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    prepend-icon="mdi-check-circle"
-                    class="me-4"
-                    type="submit"
-                    color="primary"
-                  >
-                    submit
-                  </v-btn>
-                  <v-btn :class="patient_details.patient_id ? 'd-none':''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
-                    Clear
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </form>
-          </v-card-text>
-        </v-card>
-      </v-col >
-      <v-col :class="patient_details.patient_id ? '':'d-none'" cols="12" md="5">
-        <v-card
-          color="indigo"
-          variant="elevated"
-          class="mx-auto my-2"
-        >
-          <v-card-item>
-            <div>
+                 <v-col cols="6">
+                   <v-autocomplete
+                     v-model="submitForm.phone"
+                     required
+                     label="Doctor"
+                     :rules="phoneRules"
+                   ></v-autocomplete>
+                 </v-col>
+                 <v-col cols="6">
+                   <v-autocomplete
+                     v-model="submitForm.phone"
+                     required
+                     label="Referral Doctor"
+                   ></v-autocomplete>
+                 </v-col>
+                 <v-col cols="6">
+                   <v-autocomplete
+                     v-model="submitForm.phone"
+                     required
+                     label="Operation Name"
+                     :rules="phoneRules"
+                   ></v-autocomplete>
+                 </v-col>
+                 <v-col cols="6">
+                   <v-text-field
+                     v-model="submitForm.phone"
+                     required
+                     label="Operation Subhead"
+                   ></v-text-field>
+                 </v-col>
+                 <v-col cols="12" sm="6">
+                   <v-text-field
+                     label="Operation Date"
+                     v-model="submitForm.selectedDob"
+                     clearable
+                     type="date"
+                     :min="new Date().toISOString().substr(0, 10)"
+                     :rules="dobRules"
+                     required
+                   >
+                   </v-text-field>
+                 </v-col>
+                 <span>Or</span>
+                 <v-col cols="12" sm="4">
+                   <v-text-field
+                     label="Patient Age"
+                     v-model="submitForm.selectedAge"
+                     clearable
+                     @input="calculateDateFromAge"
+                     :rules="ageRules"
+                     required
+                   >
+                   </v-text-field>
+                 </v-col>
+                 <v-col cols="12">
+                   <v-radio-group
+                     inline
+                     v-model="submitForm.gender"
+                     required
+                     :rules="genderRules"
+                   >
+                     <template v-slot:label>
+                       <div>Select <strong>Gender</strong></div>
+                     </template>
+                     <v-radio
+                       label="Male"
+                       value="Male"
+                     ></v-radio>
+                     <v-radio
+                       label="Female"
+                       value="Female"
+                     ></v-radio>
+                     <v-radio
+                       label="Other"
+                       value="Other"
+                     ></v-radio>
+                   </v-radio-group>
+                 </v-col>
+                 <v-col cols="12">
+                   <v-autocomplete
+                     label="Patient Source"
+                     v-model="submitForm.source_name"
+                     :items="patient_sources"
+                     color="blue-grey-lighten-2"
+                     item-value="id"
+                     item-title="source_name"
+                   >
+                   </v-autocomplete>
+                 </v-col>
+                 <v-col cols="12">
+                   <v-btn
+                     prepend-icon="mdi-check-circle"
+                     class="me-4"
+                     type="submit"
+                     color="primary"
+                   >
+                     submit
+                   </v-btn>
+                   <v-btn :class="patient_details.patient_id ? 'd-none':''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
+                     Clear
+                   </v-btn>
+                 </v-col>
+               </v-row>
+             </form>
+           </v-card-text>
+         </v-card>
+       </v-col >
+       <v-col :class="patient_details.patient_id ? '':'d-none'" cols="12" md="5">
+         <v-card
+           color="warning"
+           class="mx-auto my-2"
+         >
+           <v-card-item>
+             <div>
 
-              <div class="text-h6 mb-1">
-                {{patient_details.patient_id}}
-              </div>
-              <div class="text-overline mb-1">
-                {{patient_details.patient_name}}
-              </div>
-            </div>
-          </v-card-item>
+               <div class="text-h6 mb-1">
+                 {{patient_details.patient_id}}
+               </div>
+               <div class="text-overline mb-1">
+                 {{patient_details.patient_name}}
+               </div>
+               <div class="text-overline mb-1">
+                 {{patient_details.patient_phone}}
+               </div>
+               <div class="text-overline mb-1">
+                 {{patient_details.patient_dob}}
+               </div>
+               <div class="text-overline mb-1">
+                 {{patient_details.gender}}
+               </div>
+             </div>
+           </v-card-item>
+           <v-card-item>
+               <div class="text-h6 mb-1">
+                 <v-btn
+                   prepend-icon="mdi mdi-account-edit-outline"
+                   color="#5865f2"
+                   size="small"
+                 >
+                   Edit
+                 </v-btn>
+               </div>
+           </v-card-item>
 
-          <v-card-actions>
-            <v-btn>
-              Button
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
+         </v-card>
+       </v-col>
+     </v-row>
 
     </v-row>
   </v-container>
