@@ -35,30 +35,30 @@
 
                  <v-col cols="6">
                    <v-autocomplete
-                     v-model="submitForm.phone"
+                     v-model="submitForm.doctor_id"
                      required
                      label="Doctor"
-                     :rules="phoneRules"
+                     :rules="otDoctor"
                    ></v-autocomplete>
                  </v-col>
                  <v-col cols="6">
                    <v-autocomplete
-                     v-model="submitForm.phone"
+                     v-model="submitForm.refer_doctor_id"
                      required
                      label="Referral Doctor"
                    ></v-autocomplete>
                  </v-col>
                  <v-col cols="6">
                    <v-autocomplete
-                     v-model="submitForm.phone"
+                     v-model="submitForm.operation_id"
                      required
                      label="Operation Name"
-                     :rules="phoneRules"
+                     :rules="otID"
                    ></v-autocomplete>
                  </v-col>
                  <v-col cols="6">
                    <v-text-field
-                     v-model="submitForm.phone"
+                     v-model="submitForm.operation_subhead"
                      required
                      label="Operation Subhead"
                    ></v-text-field>
@@ -66,61 +66,42 @@
                  <v-col cols="12" sm="6">
                    <v-text-field
                      label="Operation Date"
-                     v-model="submitForm.selectedDob"
+                     v-model="submitForm.operation_date"
                      clearable
                      type="date"
                      :min="new Date().toISOString().substr(0, 10)"
-                     :rules="dobRules"
+                     :rules="otDate"
                      required
                    >
                    </v-text-field>
                  </v-col>
-                 <span>Or</span>
-                 <v-col cols="12" sm="4">
+                 <v-col cols="12" sm="6">
                    <v-text-field
-                     label="Patient Age"
-                     v-model="submitForm.selectedAge"
+                     label="Operation Time"
+                     v-model="submitForm.operation_time"
                      clearable
-                     @input="calculateDateFromAge"
-                     :rules="ageRules"
+                     type="time"
                      required
                    >
                    </v-text-field>
                  </v-col>
                  <v-col cols="12">
-                   <v-radio-group
-                     inline
-                     v-model="submitForm.gender"
+                   <v-text-field
+                     label="Operation Amount"
+                     v-model="submitForm.ot_amount"
+                     clearable
                      required
-                     :rules="genderRules"
+                     :rules="otAmount"
                    >
-                     <template v-slot:label>
-                       <div>Select <strong>Gender</strong></div>
-                     </template>
-                     <v-radio
-                       label="Male"
-                       value="Male"
-                     ></v-radio>
-                     <v-radio
-                       label="Female"
-                       value="Female"
-                     ></v-radio>
-                     <v-radio
-                       label="Other"
-                       value="Other"
-                     ></v-radio>
-                   </v-radio-group>
+                   </v-text-field>
                  </v-col>
                  <v-col cols="12">
-                   <v-autocomplete
-                     label="Patient Source"
-                     v-model="submitForm.source_name"
-                     :items="patient_sources"
+                   <v-textarea
+                     label="Operation Description"
+                     v-model="submitForm.ot_description"
                      color="blue-grey-lighten-2"
-                     item-value="id"
-                     item-title="source_name"
                    >
-                   </v-autocomplete>
+                   </v-textarea>
                  </v-col>
                  <v-col cols="12">
                    <v-btn
@@ -213,13 +194,17 @@ const breadcrumbs = computed(() => [
 ]);
 
 const submitForm=ref({
+  registration_number:'',
   patient_id:'',
-  phone:'',
-  email:'',
-  selectedDob:'',
-  selectedAge:'',
-  gender:'',
-  source_name:'',
+  doctor_id:'',
+  refer_doctor_id:'',
+  operation_id:'',
+  operation_subhead:'',
+  operation_date:'',
+  operation_time:'',
+  ot_amount:'',
+  ot_description:'',
+  user_id:'',
 
 });
 
@@ -247,20 +232,19 @@ const submitPatientId = [
   (v) => (v && v.length >= 3) || 'Patient ID must be at least 3 characters',
 ];
 
-const phoneRules = [
-  (v) => !!v || 'Phone Number is required',
-  (v) => (v && /^\d{11,}$/.test(v)) || 'Invalid Phone Number',
+const otDoctor = [
+  (v) => !!v || 'Operation Doctor is required',
 ];
-const dobRules = [
-  (v) => !!v || 'Date of Birth is required',
+const otID = [
+  (v) => !!v || 'Operation Name is required',
 ];
-const ageRules = [
-  (v) => !!v || 'Age is required',
-  (v) => !isNaN(parseInt(v)) || 'Age must be a valid number',
+const otDate = [
+  (v) => !!v || 'Operation Date is required',
 ];
-const genderRules = [
-  (v) => !!v || 'Gender is required',
+const otAmount = [
+  (v) => !!v || 'Operation Amount is required',
 ];
+
 
 
 
@@ -320,50 +304,16 @@ const submit = async () => {
 const validateForm = async () => {
   const results = await Promise.all([
     ...submitPatientId.map((rule) => rule(submitForm.value.patient_id)),
-    ...phoneRules.map((rule) => rule(submitForm.value.phone)),
-    ...dobRules.map((rule) => rule(submitForm.value.selectedDob)),
-    ...ageRules.map((rule) => rule(submitForm.value.selectedAge)),
-    ...genderRules.map((rule) => rule(submitForm.value.gender)),
-
+    ...otDoctor.map((rule) => rule(submitForm.value.doctor_id)),
+    ...otID.map((rule) => rule(submitForm.value.operation_id)),
+    ...otDate.map((rule) => rule(submitForm.value.operation_date)),
+    ...otAmount.map((rule) => rule(submitForm.value.ot_amount)),
   ]);
 
   // Check if all validation results are truthy (indicating valid)
   return results.every((result) => result === true);
 };
-// Invalid date entered for Date of Birth
-const calculateAgeFromDate = () => {
-  const birthDate = new Date(submitForm.value.selectedDob);
-  if (isNaN(birthDate.getTime())) {
-    return;
-  }
 
-  // Date of Birth cannot be in the future
-  if (birthDate > new Date()) {
-    return;
-  }
-
-  const today = new Date();
-  const age = today.getFullYear() - birthDate.getFullYear();
-  submitForm.value.selectedAge = age.toString();
-};
-
-const calculateDateFromAge = () => {
-  const enteredAge = parseInt(submitForm.value.selectedAge);
-  if (isNaN(enteredAge) || enteredAge < 0) {
-    return;
-  }
-
-  const today = new Date();
-  const birthYear = today.getFullYear() - enteredAge;
-  const birthDate = new Date(birthYear, today.getMonth(), today.getDate());
-
-  if (birthDate > today) {
-    console.error('Date of Birth calculated from age cannot be in the future');
-    return;
-  }
-
-  submitForm.value.selectedDob = birthDate.toISOString().substr(0, 10);
-};
 
 // ===============Form Validation Code End Here===============  //
 
