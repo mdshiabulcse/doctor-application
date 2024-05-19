@@ -36,6 +36,10 @@
                  <v-col cols="6">
                    <v-autocomplete
                      v-model="submitForm.doctor_id"
+                     :items="special_doctor"
+                     color="blue-grey-lighten-2"
+                     item-value="id"
+                     item-title="doctor_name"
                      required
                      label="Doctor"
                      :rules="otDoctor"
@@ -44,6 +48,10 @@
                  <v-col cols="6">
                    <v-autocomplete
                      v-model="submitForm.refer_doctor_id"
+                     :items="all_doctor_list"
+                     color="blue-grey-lighten-2"
+                     item-value="id"
+                     item-title="doctor_name"
                      required
                      label="Referral Doctor"
                    ></v-autocomplete>
@@ -51,6 +59,10 @@
                  <v-col cols="6">
                    <v-autocomplete
                      v-model="submitForm.operation_id"
+                     :items="operation_list"
+                     color="blue-grey-lighten-2"
+                     item-value="id"
+                     item-title="operation_name"
                      required
                      label="Operation Name"
                      :rules="otID"
@@ -175,7 +187,9 @@ import {useRoute, useRouter} from "vue-router";
 const notify = useNotification();
 const userData = useAuth();
 const user_id = userData.user.data.id;
-const patient_sources=ref([]);
+const special_doctor=ref([]);
+const all_doctor_list=ref([]);
+const operation_list=ref([]);
 const patient_details = ref([]);
 const patientId = ref('');
 const router = useRouter();
@@ -213,18 +227,37 @@ const submitForm=ref({
 
 onMounted(() => {
   patientId.value = useRoute().params.patientId;
-  fetchPatientSources (); // Fetch data when the component is mounted
+  fetchDoctorData();
+  allDoctorData();
+  operationList();
 });
 
-
-const fetchPatientSources = async () => {
+const fetchDoctorData = async () => {
   try {
-    const response = await axiosInstance('/admin/patients/patient-sources'); // Replace with your API endpointa
-    patient_sources.value = response.data.patient_sources;
+    const response = await axiosInstance.get(`/admin/default/special-doctor-list`);
+    special_doctor.value = response.data.special_doctor_list;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+const allDoctorData = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/default/all-doctor-list`);
+    all_doctor_list.value = response.data.all_doctor_list;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+const operationList = async () => {
+  try {
+    const response = await axiosInstance.get(`/admin/default/operation-list`);
+    operation_list.value = response.data.operation_list;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
 
 
 const submitPatientId = [
@@ -242,7 +275,9 @@ const otDate = [
   (v) => !!v || 'Operation Date is required',
 ];
 const otAmount = [
-  (v) => !!v || 'Operation Amount is required',
+  (v) => !!v || 'Operation Amount is required',  // Check if the value is present
+  (v) => (v > 0) || 'Amount must be greater than 0',  // Check if the value is positive
+  (v) => (v >= 10) || 'Minimum amount is 10',
 ];
 
 
@@ -323,20 +358,8 @@ const updateSubmitForm = () => {
 
     if (patientDetails) {
 
-      let sourceName = '';
-      if (patientDetails.hospital_name !== null) {
-        const selectedSources = patient_sources.value.filter(source => patientDetails.hospital_name.includes(source.id));
-        sourceName = selectedSources.map(source => source.source_name).join(', ');
-      }
-
       submitForm.value = {
         patient_id: patientDetails.patient_id,
-        phone: patientDetails.patient_phone,
-        email: patientDetails.patient_email,
-        selectedDob: patientDetails.patient_dob,
-        selectedAge: patientDetails.patient_age,
-        gender: patientDetails.gender,
-        source_name: sourceName,
       };
     }
   });
@@ -347,12 +370,15 @@ updateSubmitForm();
 const handleReset = () => {
   // Reset the form fields
   submitForm.value = {
-    name: '',
-    phone: '',
-    email: '',
-    selectedDob: '',
-    selectedAge: '',
-    source_name: '',
+    patient_id: '',
+    doctor_id: '',
+    refer_doctor_id: '',
+    operation_id: '',
+    operation_subhead: '',
+    operation_date: '',
+    operation_time: '',
+    ot_amount: '',
+    ot_description: '',
   };
 };
 </script>
