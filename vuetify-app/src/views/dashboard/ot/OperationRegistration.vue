@@ -26,7 +26,6 @@
                  <v-col cols="12">
                    <v-text-field
                      v-model="submitForm.patient_id"
-                     required
                      minlength="2"
                      label="Patient ID"
                      :rules="submitPatientId"
@@ -40,7 +39,6 @@
                      color="blue-grey-lighten-2"
                      item-value="id"
                      item-title="doctor_name"
-                     required
                      label="Doctor"
                      :rules="otDoctor"
                    ></v-autocomplete>
@@ -52,7 +50,6 @@
                      color="blue-grey-lighten-2"
                      item-value="id"
                      item-title="doctor_name"
-                     required
                      label="Referral Doctor"
                    ></v-autocomplete>
                  </v-col>
@@ -63,7 +60,6 @@
                      color="blue-grey-lighten-2"
                      item-value="id"
                      item-title="operation_name"
-                     required
                      label="Operation Name"
                      :rules="otID"
                    ></v-autocomplete>
@@ -71,7 +67,6 @@
                  <v-col cols="6">
                    <v-text-field
                      v-model="submitForm.operation_subhead"
-                     required
                      label="Operation Subhead"
                    ></v-text-field>
                  </v-col>
@@ -83,7 +78,6 @@
                      type="date"
                      :min="new Date().toISOString().substr(0, 10)"
                      :rules="otDate"
-                     required
                    >
                    </v-text-field>
                  </v-col>
@@ -93,7 +87,6 @@
                      v-model="submitForm.operation_time"
                      clearable
                      type="time"
-                     required
                    >
                    </v-text-field>
                  </v-col>
@@ -102,7 +95,6 @@
                      label="Operation Amount"
                      v-model="submitForm.ot_amount"
                      clearable
-                     required
                      :rules="otAmount"
                    >
                    </v-text-field>
@@ -124,7 +116,7 @@
                    >
                      submit
                    </v-btn>
-                   <v-btn :class="patient_details.patient_id ? 'd-none':''" prepend-icon="mdi-trash-can-outline" @click="handleReset">
+                   <v-btn  prepend-icon="mdi-trash-can-outline" @click="handleReset">
                      Clear
                    </v-btn>
                  </v-col>
@@ -302,32 +294,28 @@ watch(() => submitForm.value.patient_id, async (newPatientId) => {
 
 
 const submit = async () => {
+  console.log('Form submission initiated');
+
   const isFormValid = await validateForm();
 
   if (isFormValid) {
+    console.log('Form is valid, proceeding with submission');
+
     try {
-      // Check if it's an edit or create operation
-      if (patientId.value) {
-        // It's an edit operation
-        const response = await axiosInstance.post(`/admin/patients/patients-update/${patientId.value}?user_id=${user_id}`, submitForm.value);
-        if (response.data.message) {
-          notify.Success(response.data.message);
-          router.push({ path: `/patient-details/${response.data.patient_id}` });
-        } else {
-          notify.Error(response.data.errors);
-        }
+      const response = await axiosInstance.post(`/admin/ot/operation?user_id=${user_id}`, submitForm.value);
+      console.log('Response received:', response);
+
+      if (response.data.message) {
+        notify.Success(response.data.message);
+        console.log('Form submitted successfully');
+        // router.push({ path: `/patient-details/${response.data.patient_id}` });
       } else {
-        // It's a create operation
-        const response = await axiosInstance.post(`/admin/patients/patients?user_id=${user_id}`, submitForm.value);
-        if (response.data.message) {
-          notify.Success(response.data.message);
-          router.push({ path: `/patient-details/${response.data.patient_id}` });
-        } else {
-          notify.Error(response.data.errors);
-        }
+        notify.Error(response.data.errors);
+        console.error('Submission error:', response.data.errors);
       }
     } catch (error) {
       notify.Error(error.response.data.errors);
+      console.error('HTTP request error:', error.response.data.errors);
     }
   } else {
     console.error('Form validation failed. Please check the fields.');
@@ -344,6 +332,9 @@ const validateForm = async () => {
     ...otDate.map((rule) => rule(submitForm.value.operation_date)),
     ...otAmount.map((rule) => rule(submitForm.value.ot_amount)),
   ]);
+
+  // Log the results for debugging
+  console.log('Validation results:', results);
 
   // Check if all validation results are truthy (indicating valid)
   return results.every((result) => result === true);

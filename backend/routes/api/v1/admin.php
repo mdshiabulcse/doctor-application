@@ -69,6 +69,9 @@ Route::group(['prefix' => 'prescription'], function (){
     Route::post('medicine-data-store',[PrescriptionController::class,'medicineDataStore']);
 });
 
+Route::group(['prefix' => 'ot'], function (){
+    Route::resource('operation',\App\Http\Controllers\Api\ot\OperationController::class);
+});
 
 Route::group(['prefix' => 'default'], function (){
     Route::get('patient-sources',[\App\Http\Controllers\Api\DefaultDataController::class,'patientSourcesData']);
