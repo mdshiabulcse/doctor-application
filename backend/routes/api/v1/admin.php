@@ -70,3 +70,11 @@ Route::group(['prefix' => 'prescription'], function (){
 });
 
 
+Route::group(['prefix' => 'default'], function (){
+    Route::get('patient-sources',[\App\Http\Controllers\Api\DefaultDataController::class,'patientSourcesData']);
+    Route::get('operation-list',[\App\Http\Controllers\Api\DefaultDataController::class,'operationListData']);
+    Route::get('special-doctor-list',[\App\Http\Controllers\Api\DefaultDataController::class,'specialDoctorData']);
+    Route::get('all-doctor-list',[\App\Http\Controllers\Api\DefaultDataController::class,'allDoctorData']);
+    Route::get('user-info',[\App\Http\Controllers\Api\DefaultDataController::class,'userInfo']);
+    Route::get('payment-method',[\App\Http\Controllers\Api\DefaultDataController::class,'paymentMethod']);
+});

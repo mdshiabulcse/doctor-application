@@ -275,4 +275,6 @@ class PatientsController extends Controller
         $response['patient_sources'] = PatientSourceinfo::whereStatus(1)->get();
         return $this->successApiResponse($response);
     }
+
+
 }
