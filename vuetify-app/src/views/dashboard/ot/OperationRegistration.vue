@@ -294,20 +294,14 @@ watch(() => submitForm.value.patient_id, async (newPatientId) => {
 
 
 const submit = async () => {
-  console.log('Form submission initiated');
-
   const isFormValid = await validateForm();
 
   if (isFormValid) {
-    console.log('Form is valid, proceeding with submission');
-
     try {
       const response = await axiosInstance.post(`/admin/ot/operation?user_id=${user_id}`, submitForm.value);
-      console.log('Response received:', response);
-
       if (response.data.message) {
         notify.Success(response.data.message);
-        console.log('Form submitted successfully');
+        console.log('Form submitted successfully',response.data.registration_number);
         // router.push({ path: `/patient-details/${response.data.patient_id}` });
       } else {
         notify.Error(response.data.errors);
