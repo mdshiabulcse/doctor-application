@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Api\ot;
 
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\ot\OperationRegistration;
+use App\Models\dashboard\patient\PatientLog;
 use App\Traits\ApiStatusTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Jenssegers\Agent\Facades\Agent;
 
 class OperationController extends Controller
 {
@@ -41,19 +47,19 @@ class OperationController extends Controller
 
         // Validation: Check if the name and phone fields are filled
         $validationRules = [
-            'name' => 'required',
-            'phone' => 'required',
-            'gender' => 'required',
-            'selectedDob' => 'required',
-            'selectedAge' => 'required',
+            'patient_id' => 'required',
+            'doctor_id' => 'required',
+            'operation_id' => 'required',
+            'operation_date' => 'required',
+            'ot_amount' => 'required',
         ];
 
         $validationMessages = [
-            'name.required' => 'The patient name is required.',
-            'phone.required' => 'The phone number is required.',
-            'gender.required' => 'The Gender is required.',
-            'selectedDob.required' => 'The Date of Birth is required.',
-            'selectedAge.required' => 'The Age is required.',
+            'patient_id.required' => 'The patient id is required.',
+            'doctor_id.required' => 'The operation doctor is required.',
+            'operation_id.required' => 'The operation name is required.',
+            'operation_date.required' => 'The operation date is required.',
+            'ot_amount.required' => 'The operation amount is required.',
         ];
 
         $validator = Validator::make($request->all(), $validationRules,$validationMessages);
@@ -69,47 +75,50 @@ class OperationController extends Controller
 
             // Continue with the rest of your code to save the data
 
-            //user browser history check here
+            /*Start:: User Device Info */
             $browserName = Agent::browser();
             $browserVersion = Agent::version($browserName);
             $deviceInfo = Agent::device();
             $osPlatform = Agent::platform();
             $IP = request()->ip();
+            /*Start:: User Device Info */
 
-            //patient unique id created here
+            /*Start:: Operation Register unique id created here */
             $currentDate = date('ymd');
-            $primaryIdCount = PatientInfo::where('create_date', $currentDate)->count();
+            $primaryIdCount = OperationRegistration::count();
             $primaryIdCount++;
-            $PID = 'PID'. $currentDate . substr('000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
+            $OTRID = 'OTR'. $currentDate . substr('000', 0, -strlen($primaryIdCount)) . $primaryIdCount;
+            /*End:: Operation Register unique id created here */
 
             //patient information created here
-            $patientData=new PatientInfo();
-            $patientData->patient_id = $PID;
-            $patientData->patient_name = $request->name;
-            $patientData->patient_phone = $request->phone;
-            $patientData->patient_email = $request->email;
-            $patientData->patient_address = '';
-            $patientData->patient_father = '';
-            $patientData->patient_mother = '';
-            $patientData->hospital_name = $request->source_name;
-            $patientData->gender = $request->gender;
-            $patientData->patient_dob = $request->selectedDob;
-            $patientData->patient_age = $request->selectedAge;
-            $patientData->user_id = $request->user_id;
-            $patientData->ip_address = $IP;
-            $patientData->status = 1;
-            $patientData->create_date = Carbon::now()->toDateString();
-            $patientData->save();
+            $operationRegisterData=new OperationRegistration();
+            $operationRegisterData->registration_number = $OTRID;
+            $operationRegisterData->patient_id = $request->patient_id;
+            $operationRegisterData->operation_id = $request->operation_id;
+            $operationRegisterData->operation_subhead = $request->operation_subhead;
+            $operationRegisterData->operation_date = $request->operation_date;
+            $operationRegisterData->operation_time = $request->operation_time;
+            $operationRegisterData->ot_amount = $request->ot_amount;
+            $operationRegisterData->doctor_id = $request->doctor_id;
+            $operationRegisterData->refer_doctor_id = $request->refer_doctor_id;
+            $operationRegisterData->ot_description = $request->ot_description;
+            $operationRegisterData->status = 'Active';
+            $operationRegisterData->user_id = $request->user_id;
+            $operationRegisterData->status = 1;
+            $operationRegisterData->create_date = Carbon::now();
+            $operationRegisterData->ip_information ='IP-'.$IP.',DEV-'.$deviceInfo.',OS-'.$osPlatform.',BROW-'.$browserName.',VER-'.$browserVersion;
+            $operationRegisterData->save();
 
             //patient log information created here
             $patientLogData=new PatientLog();
-            $patientLogData->patient_id = $patientData->patient_id;
-            $patientLogData->patient_log_data = $patientData->patient_name.','.$patientData->patient_phone;
+            $patientLogData->patient_id = $operationRegisterData->patient_id;
+            $patientLogData->patient_log_data = $operationRegisterData->registration_number.','.$operationRegisterData->operation_date;
             $patientLogData->device_info = 'IP-'.$IP.',DEV-'.$deviceInfo.',OS-'.$osPlatform.',BROW-'.$browserName.',VER-'.$browserVersion;
-            $patientLogData->user_id = $patientData->user_id;
+            $patientLogData->user_id = $operationRegisterData->user_id;
             $patientLogData->save();
 
-            $response['patient_id'] = $patientData->patient_id;
+            $response['registration_number'] = $operationRegisterData->registration_number;
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
