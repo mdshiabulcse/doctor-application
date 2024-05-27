@@ -302,7 +302,7 @@ const submit = async () => {
       if (response.data.message) {
         notify.Success(response.data.message);
         console.log('Form submitted successfully',response.data.registration_number);
-        // router.push({ path: `/patient-details/${response.data.patient_id}` });
+        router.push({ path: `/operation-list` });
       } else {
         notify.Error(response.data.errors);
         console.error('Submission error:', response.data.errors);

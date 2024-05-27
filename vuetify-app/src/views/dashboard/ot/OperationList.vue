@@ -47,7 +47,7 @@
                 </v-col>
                 <v-col cols="3">
                   <v-text-field
-                    v-model="handleSubmit.appointment_date"
+                    v-model="handleSubmit.start_date"
                     type="date"
                     label="Start Date"
                     hint="MM/DD/YYYY format"
@@ -59,7 +59,7 @@
                 </v-col>
                 <v-col cols="3">
                   <v-text-field
-                    v-model="handleSubmit.appointment_date"
+                    v-model="handleSubmit.end_date"
                     type="date"
                     label="End Date"
                     hint="MM/DD/YYYY format"
@@ -86,7 +86,7 @@
           </v-sheet>
           <v-data-table
             :headers="headers"
-            :items="appointment_data"
+            :items="operation_list"
             :search="search"
             class="elevation-1"
             item-value="id"
@@ -99,15 +99,15 @@
                 class="pa-0"
               ></v-text-field>
             </template>
-            <template v-if="handleSubmit.appointment_date === moment().format('YYYY-MM-DD')"
-                      v-slot:item.actions="{ item }">
-              <v-btn class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning"
-                     @click="appointmentInvoice(item)">
-              </v-btn>
-              <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"
-                     @click="appointmentPrescription(item)">
-              </v-btn>
-            </template>
+<!--            <template v-if="handleSubmit.appointment_date === moment().format('YYYY-MM-DD')"-->
+<!--                      v-slot:item.actions="{ item }">-->
+<!--              <v-btn class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning"-->
+<!--                     @click="appointmentInvoice(item)">-->
+<!--              </v-btn>-->
+<!--              <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"-->
+<!--                     @click="appointmentPrescription(item)">-->
+<!--              </v-btn>-->
+<!--            </template>-->
           </v-data-table>
         </v-col>
       </v-col>
@@ -127,22 +127,24 @@ const breadcrumbs = [
   {title: 'Operation List', disabled: false, href: '#'},
 ];
 const headers = [
+  {id: 'id', title: 'OT Reg', align: 'end', key: 'registration_number'},
   {id: 'id', title: 'PID', align: 'start', key: 'patient_id'},
-  {id: 'id', title: 'OT Reg', align: 'end', key: 'patient_info.patient_name'},
-  {id: 'id', title: 'Patient Name', align: 'end', key: 'appointment_sl'},
-  {id: 'id', title: 'Ot Name', align: 'end', key: 'appointment_time'},
+  {id: 'id', title: 'Patient Name', align: 'end', key: 'patient_info.patient_name'},
+  {id: 'id', title: 'Ot Name', align: 'end', key: 'operation_info.operation_name'},
   {id: 'id', title: 'Doctor', align: 'end', key: 'doctor_info.doctor_name'},
-  {id: 'id', title: 'Ot Amount', align: 'end', key: 'status'},
-  {id: 'id', title: 'Paid Amount', align: 'end', key: 'patient_info.patient_dob'},
-  {id: 'id', title: 'Status', align: 'end', key: 'patient_info.patient_dob'},
+  {id: 'id', title: 'Ot Amount', align: 'end', key: 'ot_amount'},
+  {id: 'id', title: 'Paid Amount', align: 'end', key: 'ot_amount_paid'},
+  {id: 'id', title: 'Status', align: 'end', key: 'status'},
   {id: 'id', title: 'Actions', key: 'actions', sortable: false},
 ];
 const search = ref('');
 const appointment_data = ref([]);
+const operation_list = ref([]);
 const loading = ref(true);
 const handleSubmit = ref({
   doctor_id: '',
-  appointment_date: moment().format('YYYY-MM-DD'),
+  start_date: moment().format('YYYY-MM-DD'),
+  end_date: moment().format('YYYY-MM-DD'),
 });
 
 onMounted(() => {
@@ -152,8 +154,8 @@ onMounted(() => {
 
 const fetchDoctorData = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/invoice/doctor-data`);
-    special_doctor.value = response.data.special_doctor;
+    const response = await axiosInstance.get(`/admin/default/special-doctor-list`);
+    special_doctor.value = response.data.special_doctor_list;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -172,7 +174,7 @@ const onDoctorChange = async () => {
 
 const onDateChange = async () => {
   try {
-    if (handleSubmit.value.doctor_id || handleSubmit.value.appointment_date) {
+    if (handleSubmit.value.doctor_id || handleSubmit.value.start_date|| handleSubmit.value.end_date) {
       await appointmentData();
     }
   } catch (error) {
@@ -183,7 +185,7 @@ const onDateChange = async () => {
 const appointmentData = async () => {
   try {
     loading.value = true
-    let apiUrl = `/admin/appointment/appointment-data?appointment_date=${handleSubmit.value.appointment_date}`;
+    let apiUrl = `/admin/ot/operation?start_date=${handleSubmit.value.start_date}` + `&end_date=${handleSubmit.value.end_date}`;
 
     if (handleSubmit.value.doctor_id) {
       loading.value = true
@@ -192,7 +194,7 @@ const appointmentData = async () => {
     }
 
     const response = await axiosInstance.get(apiUrl);
-    appointment_data.value = response.data.appointment_data;
+    operation_list.value = response.data.operation_list;
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
