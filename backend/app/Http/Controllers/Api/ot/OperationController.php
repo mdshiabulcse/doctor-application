@@ -20,9 +20,13 @@ class OperationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $start_date=$request->start_date;
+        $end_date=$request->end_date;
+
+        $response['operation_list']=OperationRegistration::with(['patient_info','doctor_info','operation_info'])->where(['operation_date'=>$start_date,'operation_date'=>$end_date])->get();
+        return $this->successApiResponse($response);
     }
 
     /**
@@ -104,7 +108,6 @@ class OperationController extends Controller
             $operationRegisterData->ot_description = $request->ot_description;
             $operationRegisterData->status = 'Active';
             $operationRegisterData->user_id = $request->user_id;
-            $operationRegisterData->status = 1;
             $operationRegisterData->create_date = Carbon::now();
             $operationRegisterData->ip_information ='IP-'.$IP.',DEV-'.$deviceInfo.',OS-'.$osPlatform.',BROW-'.$browserName.',VER-'.$browserVersion;
             $operationRegisterData->save();
