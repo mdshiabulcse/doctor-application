@@ -25,7 +25,7 @@ class OperationController extends Controller
         $start_date=$request->start_date;
         $end_date=$request->end_date;
 
-        $response['operation_list']=OperationRegistration::with(['patient_info','doctor_info','operation_info'])->where(['operation_date'=>$start_date,'operation_date'=>$end_date])->get();
+        $response['operation_list']=OperationRegistration::with(['patient_info','doctor_info','operation_info'])->whereBetween('operation_date', [$start_date, $end_date])->get();
         return $this->successApiResponse($response);
     }
 

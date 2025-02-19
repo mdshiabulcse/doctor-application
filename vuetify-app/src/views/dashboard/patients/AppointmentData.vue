@@ -1,5 +1,4 @@
 <template>
-  <v-container>
     <v-row no-gutters>
       <v-col cols="12">
         <v-sheet>
@@ -11,19 +10,21 @@
         </v-sheet>
       </v-col>
       <v-col cols="12" class="">
-        <v-card
-          class="mx-auto my-2"
-          title="Appointment Data"
-          prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
-          rel="noopener"
-          color="warning"
+        <v-col cols="12">
+          <v-card
+            class="mx-auto my-2"
+            title="Appointment Data"
+            prepend-icon="mdi-36px mdi-light mdi-clipboard-text-outline"
+            rel="noopener"
+            color="warning"
 
-        ></v-card>
+          ></v-card>
+        </v-col>
         <v-col cols="12">
           <v-card>
             <v-container>
-              <v-row>
-                <v-col cols="3">
+              <v-row class="d-flex">
+                <v-col cols="4">
                   <v-autocomplete
                     v-model="handleSubmit.doctor_id"
                     :items="special_doctor"
@@ -34,7 +35,7 @@
                     @change="onDoctorChange"
                   ></v-autocomplete>
                 </v-col>
-                <v-col cols="3">
+                <v-col cols="4">
                   <v-text-field
                     v-model="handleSubmit.appointment_date"
                     type="date"
@@ -54,9 +55,6 @@
           </v-card>
         </v-col>
         <v-col cols="12">
-          <v-sheet class="d-flex align-end flex-column ">
-
-          </v-sheet>
           <v-data-table
             :headers="headers"
             :items="appointment_data"
@@ -74,18 +72,17 @@
             </template>
             <template v-if="handleSubmit.appointment_date === moment().format('YYYY-MM-DD')"
                       v-slot:item.actions="{ item }">
-              <v-btn class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning"
+              <v-icon class="me-2" icon="mdi-clippy" title="Consultation Invoice" color="warning" size="small"
                      @click="appointmentInvoice(item)">
-              </v-btn>
-              <v-btn class="me-2" icon="mdi-file-document-edit-outline" title="New Prescription" color="primary"
+              </v-icon>
+              <v-icon class="me-2" icon="mdi-file-document-edit-outline" size="small" title="New Prescription" color="primary"
                      @click="appointmentPrescription(item)">
-              </v-btn>
+              </v-icon>
             </template>
           </v-data-table>
         </v-col>
       </v-col>
     </v-row>
-  </v-container>
 </template>
 <script setup>
 import {onMounted, ref, watchEffect} from 'vue'
@@ -183,12 +180,3 @@ watchEffect(() => {
   appointmentData();
 });
 </script>
-<style scoped>
-/* Add your custom styles for smaller font size or other styling here */
-/* For example: */
-.v-data-table td {
-  font-size: 12px; /* Adjust the font size as needed */
-}
-
-/* Add more custom styles if required */
-</style>

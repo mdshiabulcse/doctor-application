@@ -1,7 +1,7 @@
 <template>
-  <v-layout class="rounded rounded-md">
+  <v-layout class="rounded rounded-md" >
     <v-navigation-drawer
-      :width="220"
+      :width="200"
       color="#EEEEEE"
       v-model="drawer"
       :rail="rail"
@@ -17,7 +17,6 @@
           ></v-btn>
         </template>
       </v-list-item>
-      <v-divider></v-divider>
       <v-list density="compact" nav>
         <Sidbar/>
         <a href="javascript::void(0)" @click="userLogout">

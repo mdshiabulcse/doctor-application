@@ -35,6 +35,10 @@ export default defineConfig({
     ],
   },
   server: {
+    watch: {
+      usePolling: true, // Enable polling for file changes
+    },
+    host: true,
     port: 3000,
   },
 })

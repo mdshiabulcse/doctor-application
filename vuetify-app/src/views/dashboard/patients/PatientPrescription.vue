@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters>
-    <v-col >
-      <v-col cols="12">
+    <v-col>
+      <v-col cols="12" >
         <v-card
           :loading="loading"
         >
@@ -16,41 +16,41 @@
                   :item-title="formatPreviousPrescriptionTitle"
                   item-value="id"
                   @change="updateFormPreviousPrescription"
+                  variant="outlined"
                 ></v-autocomplete>
               </v-col>
-              <v-col v-if="showActionButtons" cols="4">
-                <v-btn class="ma-2" color="success" @click="submit">{{ buttonText }}</v-btn>
-                <v-btn  class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">Print</v-btn>
+              <v-col v-if="showActionButtons" cols="6">
+                <v-btn size="small" class="ma-2" color="success" @click="submit">{{ buttonText }}</v-btn>
+                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">Print</v-btn>
               </v-col>
-              <v-col v-else cols="4">
-                <v-btn class="ma-2" color="primary" @click="createNewPrescription">Create as New</v-btn>
-                <v-btn class="ma-2" prepend-icon="mdi-printer" color="info" @click="PrintPrescription">Print</v-btn>
+              <v-col v-else cols="6">
+                <v-btn size="small" class="ma-2" color="primary" @click="createNewPrescription">Create as New</v-btn>
+                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="info" @click="PrintPrescription">Print</v-btn>
               </v-col>
             </v-row>
           </v-container>
         </v-card>
       </v-col>
-      <v-row>
+      <v-row class="mx-auto">
         <v-col cols="3">
-          <v-card class="pa-2 ma-2">
+          <v-card>
             <v-card-text>
               <v-row>
                 <v-col>
                   <v-card
                     class="mx-auto"
                     max-width="100%"
-                    color="primary"
-                    variant="flat"
+                    color="warning"
                   >
                     <v-card-item>
                       <div v-if="appointment_info">
-                        <div class="text-overline mb-1">
-                          <span>Name: {{ appointment_info.patient_info.patient_name }}</span>
+                        <div class="text-overline">
+                          <span>{{ appointment_info.patient_info.patient_name }}</span>
                         </div>
-                        <div class="text-overline mb-1">
-                          <span>ID: {{ appointment_info.patient_id }}</span>
+                        <div class="text-overline">
+                          <span>{{ appointment_info.patient_id }}</span>
                         </div>
-                        <div class="text-overline mb-1">
+                        <div class="text-overline">
                           <span>Doctor: {{ appointment_info.doctor_info.doctor_name }}</span>
                         </div>
                       </div>
@@ -64,7 +64,18 @@
                     required
                     minlength="2"
                     label="Symptoms"
+                    variant="outlined"
+                    @input="handleSymptomInput"
                   ></v-text-field>
+
+                  <v-list v-if="symptomSuggestions.length && submitForm.symptoms.length"
+                          style="position: absolute; width: 100%; z-index: 1000;">
+                    <v-list-item-group v-for="(suggestion, index) in symptomSuggestions" :key="index">
+                      <v-list-item @click="selectSymptom(suggestion)">
+                        <v-list-item-content>{{ suggestion }}</v-list-item-content>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
@@ -73,6 +84,7 @@
                     required
                     minlength="2"
                     label="Examination(Pathology)"
+                    variant="outlined"
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
@@ -81,6 +93,7 @@
                     v-model="submitForm.advice_note"
                     required
                     label="Advice Note"
+                    variant="outlined"
                   ></v-textarea>
                 </v-col>
                 <v-col cols="12">
@@ -89,6 +102,7 @@
                     v-model="submitForm.followup_date"
                     label="Followup Date"
                     type="date"
+                    variant="outlined"
                   >
                   </v-text-field>
                 </v-col>
@@ -97,11 +111,13 @@
           </v-card>
         </v-col>
         <v-col>
-          <v-card class="pa-2 ma-2">
+          <v-card>
             <v-card-text>
               <v-row>
                 <v-col cols="2"></v-col>
-                <v-col cols="3"><v-btn @click="dialog = true" size="x-small" prepend-icon="mdi-plus" color="primary"  >Add</v-btn></v-col>
+                <v-col cols="3">
+                  <v-btn @click="dialog = true" size="x-small" prepend-icon="mdi-plus" color="primary">Add</v-btn>
+                </v-col>
                 <v-col cols="2"></v-col>
                 <v-col cols="3"></v-col>
                 <v-col cols="2"></v-col>
@@ -114,6 +130,8 @@
                     required
                     label="Type"
                     :items="medicine_type"
+                    size="small"
+                    variant="outlined"
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="3">
@@ -125,6 +143,7 @@
                     label="Medicine"
                     item-value="id"
                     item-title="medicine_name"
+                    variant="outlined"
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="2">
@@ -133,6 +152,7 @@
                     v-model="medicine.duration"
                     required
                     label="Duration"
+                    variant="outlined"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="3">
@@ -141,13 +161,14 @@
                     v-model="medicine.medicine_instruction"
                     required
                     label="Instruction"
+                    variant="outlined"
                   ></v-text-field>
                 </v-col>
                 <v-col v-if="submitForm.medicines.length > 1" cols="1">
-                  <v-btn icon="mdi-minus" color="error" density="compact" @click="removeMedicine(index)"></v-btn>
+                  <v-btn size="small" icon="mdi-minus" color="error" density="compact" @click="removeMedicine(index)"></v-btn>
                 </v-col>
                 <v-col cols="1">
-                  <v-btn icon="mdi-plus" color="warning" density="compact" @click="addMedicine"></v-btn>
+                  <v-btn size="small" icon="mdi-plus" color="warning" density="compact" @click="addMedicine"></v-btn>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -186,7 +207,7 @@
               </v-text-field>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="addMedicineData" color="primary" variant="text" >
+              <v-btn @click="addMedicineData" color="primary" variant="text">
                 Submit
               </v-btn>
               <v-btn
@@ -247,9 +268,9 @@ const submitForm = ref({
   }],
 });
 
-const submitMedicine=ref({
-  medicine_type:'',
-  medicine_name:'',
+const submitMedicine = ref({
+  medicine_type: '',
+  medicine_name: '',
 });
 onMounted(async () => {
   await fetchAppointmentInfo(); // Wait for the appointment info to be fetched
@@ -339,10 +360,10 @@ const fetchPrescriptionData = async () => {
       submitForm.value.previous_prescription_id = prescription_data.value.id;
 
     } else {
-      console.log('Prescription ID is null. Not fetching data.');
+      notify.Success('Prescription ID is null. Not fetching data.');
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    notify.Error('Error fetching data:' + error);
   }
 };
 
@@ -352,7 +373,7 @@ const fetchMedicineData = async () => {
     const response = await axiosInstance(`/admin/prescription/medicine-data`);
     medicine_data.value = response.data.medicine_data;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    notify.Error('Error fetching data:' + error);
   }
 };
 
@@ -431,7 +452,7 @@ const createNewPrescription = async () => {
 
 // Doctor wise prescription suggests here
 
-const prescriptionSuggestionData=async ()=>{
+const prescriptionSuggestionData = async () => {
   try {
     const response = await axiosInstance(`/admin/prescription/prescription-suggestion-data/${submitForm.value.doctor_id}`);
     suggest_prescription_data.value = response.data.suggest_prescription_data;
@@ -442,31 +463,81 @@ const prescriptionSuggestionData=async ()=>{
 
 // add new medicine data
 
-const addMedicineData=async ()=>{
- try {
-   loading.value=true;
-   const response=await axiosInstance.post('/admin/prescription/medicine-data-store',submitMedicine.value);
-   if (response.data.message) {
-     notify.Success(response.data.message);
-     // Fetch updated data after the route change
-     await fetchMedicineData();
-     await fetchPrescriptionData();
-     dialog.value=false;
-     submitMedicine.value.medicine_type='';
-     submitMedicine.value.medicine_name='';
-     loading.value=false;
-   } else {
-     notify.Error(response.data.errors);
-   }
- }catch (error) {
-   notify.Error(error.response.data.errors);
- }
+const addMedicineData = async () => {
+  try {
+    loading.value = true;
+    const response = await axiosInstance.post('/admin/prescription/medicine-data-store', submitMedicine.value);
+    if (response.data.message) {
+      notify.Success(response.data.message);
+      // Fetch updated data after the route change
+      await fetchMedicineData();
+      await fetchPrescriptionData();
+      dialog.value = false;
+      submitMedicine.value.medicine_type = '';
+      submitMedicine.value.medicine_name = '';
+      loading.value = false;
+    } else {
+      notify.Error(response.data.errors);
+    }
+  } catch (error) {
+    notify.Error(error.response.data.errors);
+  }
 }
 const PrintPrescription = () => {
-  window.open(localUrl.value + `/print/prescription-print/${patient_id}/${prescription_id}` , '_blank');
+  window.open(localUrl.value + `/print/prescription-print/${patient_id}/${prescription_id}`, '_blank');
 };
 
 
+const symptomSuggestions = ref([]); // Filtered suggestions based on user input
+const allSymptoms = ref([]); // All symptoms loaded from localStorage
 
+// Method to load symptoms from localStorage
+const loadSymptomsFromLocalStorage = () => {
+  const storedSymptoms = localStorage.getItem("symptomsData");
+  if (storedSymptoms) {
+    allSymptoms.value = JSON.parse(storedSymptoms);
+  } else {
+    // Default symptoms data in case nothing is stored in localStorage
+    allSymptoms.value = [
+      "Headache", "Cough", "Fever", "Nausea", "Fatigue",
+      "Shortness of breath", "Dizziness", "Chest pain", // You can add more symptoms here
+    ];
+    // Store default data in localStorage
+    localStorage.setItem("symptomsData", JSON.stringify(allSymptoms.value));
+  }
+};
 
+// Method to handle user input and save automatically
+const handleSymptomInput = () => {
+  const query = submitForm.value.symptoms.trim();
+
+  // If the input length is less than 2, no suggestions are needed
+  if (query.length < 2) {
+    symptomSuggestions.value = [];
+    return;
+  }
+
+  // Filter symptoms based on user input
+  symptomSuggestions.value = allSymptoms.value.filter(symptom =>
+    symptom.toLowerCase().includes(query.toLowerCase())
+  );
+
+  // If the input is not in the list, add it to localStorage
+  if (query && !allSymptoms.value.includes(query) && !symptomSuggestions.value.includes(query)) {
+    allSymptoms.value.push(query); // Add new symptom
+    localStorage.setItem("symptomsData", JSON.stringify(allSymptoms.value)); // Save updated list
+  }
+};
+
+// Method to select a symptom from suggestions
+const selectSymptom = (suggestion) => {
+  submitForm.value.symptoms = suggestion; // Update input field with selected suggestion
+  symptomSuggestions.value = []; // Clear suggestions after selection
+};
+
+// Load symptoms from localStorage when the component is mounted
+onMounted(() => {
+  loadSymptomsFromLocalStorage();
+});
 </script>
+
