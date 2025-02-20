@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters>
     <v-col>
-      <v-col cols="12" >
+      <v-col cols="12">
         <v-card
           :loading="loading"
         >
@@ -21,11 +21,15 @@
               </v-col>
               <v-col v-if="showActionButtons" cols="6">
                 <v-btn size="small" class="ma-2" color="success" @click="submit">{{ buttonText }}</v-btn>
-                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">Print</v-btn>
+                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="primary" @click="PrintPrescription">
+                  Print
+                </v-btn>
               </v-col>
               <v-col v-else cols="6">
                 <v-btn size="small" class="ma-2" color="primary" @click="createNewPrescription">Create as New</v-btn>
-                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="info" @click="PrintPrescription">Print</v-btn>
+                <v-btn size="small" class="ma-2" prepend-icon="mdi-printer" color="info" @click="PrintPrescription">
+                  Print
+                </v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -65,16 +69,20 @@
                     minlength="2"
                     label="Symptoms"
                     variant="outlined"
-                    @input="handleSymptomInput"
+                    @input="fetchSymptomSuggestions"
+                    @keydown.enter.prevent="saveSymptom"
+                    @blur="hideSuggestions"
                   ></v-text-field>
 
-                  <v-list v-if="symptomSuggestions.length && submitForm.symptoms.length"
-                          style="position: absolute; width: 100%; z-index: 1000;">
-                    <v-list-item-group v-for="(suggestion, index) in symptomSuggestions" :key="index">
-                      <v-list-item @click="selectSymptom(suggestion)">
-                        <v-list-item-content>{{ suggestion }}</v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
+                  <!-- Suggestions List (Hidden When Not Typing) -->
+                  <v-list v-if="symptomSuggestions.length > 0">
+                    <v-list-item
+                      v-for="(suggestion, index) in symptomSuggestions"
+                      :key="index"
+                      @click="selectSymptom(suggestion)"
+                    >
+                      {{ suggestion }}
+                    </v-list-item>
                   </v-list>
                 </v-col>
                 <v-col cols="12">
@@ -165,7 +173,8 @@
                   ></v-text-field>
                 </v-col>
                 <v-col v-if="submitForm.medicines.length > 1" cols="1">
-                  <v-btn size="small" icon="mdi-minus" color="error" density="compact" @click="removeMedicine(index)"></v-btn>
+                  <v-btn size="small" icon="mdi-minus" color="error" density="compact"
+                         @click="removeMedicine(index)"></v-btn>
                 </v-col>
                 <v-col cols="1">
                   <v-btn size="small" icon="mdi-plus" color="warning" density="compact" @click="addMedicine"></v-btn>
@@ -232,6 +241,7 @@ import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
 import {useRoute, useRouter} from "vue-router";
 import {localUrl} from "@/services/globalUrlConfig";
+
 
 const router = useRouter();
 const loading = ref(true);
@@ -488,56 +498,41 @@ const PrintPrescription = () => {
 };
 
 
-const symptomSuggestions = ref([]); // Filtered suggestions based on user input
-const allSymptoms = ref([]); // All symptoms loaded from localStorage
+const symptomSuggestions = ref([]); // Store API suggestions
+let typingTimer = null; // Timer for managing API requests
 
-// Method to load symptoms from localStorage
-const loadSymptomsFromLocalStorage = () => {
-  const storedSymptoms = localStorage.getItem("symptomsData");
-  if (storedSymptoms) {
-    allSymptoms.value = JSON.parse(storedSymptoms);
-  } else {
-    // Default symptoms data in case nothing is stored in localStorage
-    allSymptoms.value = [
-      "Headache", "Cough", "Fever", "Nausea", "Fatigue",
-      "Shortness of breath", "Dizziness", "Chest pain", // You can add more symptoms here
-    ];
-    // Store default data in localStorage
-    localStorage.setItem("symptomsData", JSON.stringify(allSymptoms.value));
-  }
+// Fetch symptom suggestions while typing (without lodash)
+const fetchSymptomSuggestions = () => {
+  clearTimeout(typingTimer); // Clear previous timer
+  typingTimer = setTimeout(async () => {
+    if (submitForm.value.symptoms.length < 2) {
+      symptomSuggestions.value = [];
+      return;
+    }
+
+    try {
+
+      const response = await axiosInstance(`/admin/prescription/prescription-suggestion-data/${submitForm.value.doctor_id}`,
+        {params: {query: submitForm.value.symptoms}}
+      );
+      symptomSuggestions.value = response.data.suggest_prescription_data;
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  }, 300);
 };
 
-// Method to handle user input and save automatically
-const handleSymptomInput = () => {
-  const query = submitForm.value.symptoms.trim();
-
-  // If the input length is less than 2, no suggestions are needed
-  if (query.length < 2) {
+// Hide suggestions when user clicks outside
+const hideSuggestions = () => {
+  setTimeout(() => {
     symptomSuggestions.value = [];
-    return;
-  }
-
-  // Filter symptoms based on user input
-  symptomSuggestions.value = allSymptoms.value.filter(symptom =>
-    symptom.toLowerCase().includes(query.toLowerCase())
-  );
-
-  // If the input is not in the list, add it to localStorage
-  if (query && !allSymptoms.value.includes(query) && !symptomSuggestions.value.includes(query)) {
-    allSymptoms.value.push(query); // Add new symptom
-    localStorage.setItem("symptomsData", JSON.stringify(allSymptoms.value)); // Save updated list
-  }
+  }, 200);
 };
 
-// Method to select a symptom from suggestions
+// Select symptom from suggestions
 const selectSymptom = (suggestion) => {
-  submitForm.value.symptoms = suggestion; // Update input field with selected suggestion
-  symptomSuggestions.value = []; // Clear suggestions after selection
+  submitForm.value.symptoms = suggestion;
+  symptomSuggestions.value = []; // Hide suggestions
 };
-
-// Load symptoms from localStorage when the component is mounted
-onMounted(() => {
-  loadSymptomsFromLocalStorage();
-});
 </script>
 
