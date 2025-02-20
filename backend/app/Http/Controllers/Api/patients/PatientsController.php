@@ -186,35 +186,34 @@ class PatientsController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        // Validation: Check if the name and phone fields are filled
+        $validationRules = [
+            'name' => 'required',
+            'phone' => 'required',
+            'gender' => 'required',
+            'selectedDob' => 'required',
+            'selectedAge' => 'required',
+        ];
+
+        $validationMessages = [
+            'name.required' => 'The patient name is required.',
+            'phone.required' => 'The phone number is required.',
+            'gender.required' => 'The Gender is required.',
+            'selectedDob.required' => 'The Date of Birth is required.',
+            'selectedAge.required' => 'The Age is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $validationRules,$validationMessages);
+
+        if ($validator->fails()) {
+            $response['errors'] = $validator->errors()->all();
+            return $this->failureApiResponse($response);
+        }
+
+        // Continue with the rest of your code to save the data
         DB::beginTransaction();
         try {
-
-
-            // Validation: Check if the name and phone fields are filled
-            $validationRules = [
-                'name' => 'required',
-                'phone' => 'required',
-                'gender' => 'required',
-                'selectedDob' => 'required',
-                'selectedAge' => 'required',
-            ];
-
-            $validationMessages = [
-                'name.required' => 'The patient name is required.',
-                'phone.required' => 'The phone number is required.',
-                'gender.required' => 'The Gender is required.',
-                'selectedDob.required' => 'The Date of Birth is required.',
-                'selectedAge.required' => 'The Age is required.',
-            ];
-
-            $validator = Validator::make($request->all(), $validationRules,$validationMessages);
-
-            if ($validator->fails()) {
-                $response['errors'] = $validator->errors()->all();
-                return $this->failureApiResponse($response);
-            }
-
-            // Continue with the rest of your code to save the data
 
             //user browser history check here
             $browserName = Agent::browser();

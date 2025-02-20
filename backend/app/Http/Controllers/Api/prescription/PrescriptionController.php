@@ -203,9 +203,14 @@ class PrescriptionController extends Controller
         return $this->successApiResponse($data);
     }
 
-    public function getPrescriptionSuggestionData($doctor_id)
+    public function getPrescriptionSuggestionData(Request $request,$doctor_id)
     {
-        $data['suggest_prescription_data']=PatientPrescription::where('doctor_id',$doctor_id)->get();
+
+        $query = $request->query('query', '');
+
+        $data['suggest_prescription_data']=PatientPrescription::where('doctor_id',$doctor_id)->where('symptoms', 'like', "%$query%")
+            ->distinct()
+            ->pluck('symptoms');
         return $this->successApiResponse($data);
     }
 
