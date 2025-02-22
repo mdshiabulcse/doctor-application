@@ -170,8 +170,22 @@
                     required
                     label="Instruction"
                     variant="outlined"
+                    @input="fetchInstructionSuggestions(medicine.medicine_instruction, index)"
                   ></v-text-field>
+
+                  <!-- Suggestions List Below the Text Field -->
+                  <v-list v-if="instructionSuggestions[index] && instructionSuggestions[index].length > 0" class="suggestion-list">
+                    <v-list-item
+                      v-for="(suggestion, idx) in instructionSuggestions[index]"
+                      :key="idx"
+                      @click="selectSuggestion(suggestion, index)"
+                    >
+                      <v-list-item-title>{{ suggestion }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
                 </v-col>
+
+
                 <v-col v-if="submitForm.medicines.length > 1" cols="1">
                   <v-btn size="small" icon="mdi-minus" color="error" density="compact"
                          @click="removeMedicine(index)"></v-btn>
@@ -235,7 +249,7 @@
   </v-row>
 </template>
 <script setup>
-import {onMounted, ref, computed, watch} from 'vue';
+import {onMounted, ref, computed, watch,reactive} from 'vue';
 import axiosInstance from "@/services/axiosService";
 import {useNotification} from "@/store/notification";
 import {useAuth} from "@/store/auth";
@@ -534,5 +548,47 @@ const selectSymptom = (suggestion) => {
   submitForm.value.symptoms = suggestion;
   symptomSuggestions.value = []; // Hide suggestions
 };
+
+// Track suggestions for each medicine instruction
+const instructionSuggestions = reactive({});
+
+// Fetch suggestions based on the input query
+const fetchInstructionSuggestions = async (query, index) => {
+  // Check if both text fields have values before fetching suggestions
+  const medicineInstruction = submitForm.value.medicines[index].medicine_instruction;
+
+
+  // If either field is empty, do not show suggestions
+  if (!medicineInstruction) {
+    instructionSuggestions[index] = []; // Clear suggestions if conditions are not met
+    return; // Don't make the API call if one or both fields are empty
+  }
+
+  try {
+    const response = await axiosInstance.get('/admin/prescription/medicine-suggestions', {
+      params: { query }
+    });
+
+    // Assuming the API response is structured like: { suggestions: ["Take after meal"] }
+    if (response.data && response.data.suggestions) {
+      // Filter suggestions that match the query input
+      instructionSuggestions[index] = response.data.suggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(query.toLowerCase())
+      ) || [];
+    } else {
+      instructionSuggestions[index] = [];
+    }
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+    instructionSuggestions[index] = []; // Fallback to empty array in case of error
+  }
+};
+
+// Select suggestion and assign it to the medicine instruction field
+const selectSuggestion = (suggestion, index) => {
+  submitForm.value.medicines[index].medicine_instruction = suggestion;
+  instructionSuggestions[index] = []; // Clear suggestions after selection
+};
 </script>
+
 
