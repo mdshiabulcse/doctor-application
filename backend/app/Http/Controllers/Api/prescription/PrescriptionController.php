@@ -250,4 +250,23 @@ class PrescriptionController extends Controller
         $response['message']='Medicine Save Successfully!';
         return $this->successApiResponse($response);
     }
+
+
+    public function suggestions(Request $request)
+    {
+        $query = $request->input('query');
+        $suggestions = [
+            "Take after meal",
+            "Before bedtime",
+            "Twice a day",
+            "Once in the morning",
+            "Apply externally"
+        ];
+
+        $filtered = array_filter($suggestions, function ($instruction) use ($query) {
+            return stripos($instruction, $query) !== false;
+        });
+
+        return response()->json(['suggestions' => array_values($filtered)]);
+    }
 }
