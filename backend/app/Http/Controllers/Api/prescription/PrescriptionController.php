@@ -225,6 +225,18 @@ class PrescriptionController extends Controller
             return $this->successApiResponse($data);
 
 
+        }elseif ($type == 'duration') {
+            $data['medicine_duration'] = PatientPrescriptionMedicine::whereHas('prescription', function ($query) use ($doctor_id) {
+                $query->where('doctor_id', $doctor_id);
+            })
+                ->where('duration', 'LIKE', '%' . $searchQuery . '%')
+                ->select('duration')
+                ->distinct()
+                ->pluck('duration');
+
+            return $this->successApiResponse($data);
+
+
         } elseif ($type == 'symptom') {
             $data['suggest_prescription_data'] = PatientPrescription::where('doctor_id', $doctor_id)->where('symptoms', 'like', "%$searchQuery%")
                 ->distinct()
