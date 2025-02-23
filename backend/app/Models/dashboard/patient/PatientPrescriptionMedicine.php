@@ -13,4 +13,9 @@ class PatientPrescriptionMedicine extends Model
     public function prescription_medicine(){
         return $this->belongsTo(MedicineData::class, 'medicine_id');
     }
+
+    public function prescription()
+    {
+        return $this->belongsTo(PatientPrescription::class, 'prescription_id');
+    }
 }

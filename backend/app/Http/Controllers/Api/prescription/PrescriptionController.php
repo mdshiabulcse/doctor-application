@@ -17,6 +17,7 @@ use Mockery\Exception;
 class PrescriptionController extends Controller
 {
     use ApiStatusTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +41,7 @@ class PrescriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -65,13 +66,13 @@ class PrescriptionController extends Controller
             $prescriptionData->create_date = Carbon::now();
             $prescriptionData->status = 1;
             $prescriptionData->user_id = $request['user_id'];
-            $prescriptionData->ip_address = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
+            $prescriptionData->ip_address = 'IP-' . $IP . ',Browser Info-' . $browserName . ',Version-' . $browserVersion . ',Device Info-' . $deviceInfo . ',OS-' . $osPlatform;
             $prescriptionData->save();
 
             //Prescription Medicine Data Save
-            foreach ($request['medicines'] as $medicineValue){
-                $medicineData=new PatientPrescriptionMedicine();
-                $medicineData->prescription_id= $prescriptionData->id;
+            foreach ($request['medicines'] as $medicineValue) {
+                $medicineData = new PatientPrescriptionMedicine();
+                $medicineData->prescription_id = $prescriptionData->id;
                 $medicineData->patient_id = $request['patient_id'];
                 $medicineData->type = $medicineValue['type'];
                 $medicineData->medicine_id = $medicineValue['medicine_id'];
@@ -84,33 +85,33 @@ class PrescriptionController extends Controller
 
             $response['prescription_id'] = $prescriptionData->id;
             DB::commit();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
-            $response['errors']=$e->getMessage().$e->getLine();
+            $response['errors'] = $e->getMessage() . $e->getLine();
             return $this->failureApiResponse($response);
         }
-        $response['message']='Prescription Save successfully';
+        $response['message'] = 'Prescription Save successfully';
         return $this->successApiResponse($response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
 
-        $data['prescription_data']=PatientPrescription::whereId($id)->with(['patient_info','doctor_info'])->first();
-        $data['prescription_medicine_data']=PatientPrescriptionMedicine::where('prescription_id',$id)->get();
+        $data['prescription_data'] = PatientPrescription::whereId($id)->with(['patient_info', 'doctor_info'])->first();
+        $data['prescription_medicine_data'] = PatientPrescriptionMedicine::where('prescription_id', $id)->get();
         return $this->successApiResponse($data);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -121,8 +122,8 @@ class PrescriptionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -133,7 +134,7 @@ class PrescriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -154,7 +155,7 @@ class PrescriptionController extends Controller
             $IP = request()->ip();
 
             //Prescription data save
-            $prescriptionData =PatientPrescription::find($request['prescription_id']);
+            $prescriptionData = PatientPrescription::find($request['prescription_id']);
             $prescriptionData->patient_id = $request['patient_id'];
             $prescriptionData->doctor_id = $request['doctor_id'];
             $prescriptionData->symptoms = $request['symptoms'];
@@ -163,14 +164,14 @@ class PrescriptionController extends Controller
             $prescriptionData->create_date = Carbon::now();
             $prescriptionData->status = 1;
             $prescriptionData->user_id = $request['user_id'];
-            $prescriptionData->ip_address = 'IP-'.$IP.',Browser Info-'.$browserName.',Version-'.$browserVersion.',Device Info-'.$deviceInfo.',OS-'.$osPlatform;
+            $prescriptionData->ip_address = 'IP-' . $IP . ',Browser Info-' . $browserName . ',Version-' . $browserVersion . ',Device Info-' . $deviceInfo . ',OS-' . $osPlatform;
             $prescriptionData->save();
 
             //Prescription Medicine Data Save
-            $prescriptionMedicineData=PatientPrescriptionMedicine::where('prescription_id',$prescriptionData->id)->delete();
-            foreach ($request['medicines'] as $medicineValue){
-                $medicineData=new PatientPrescriptionMedicine();
-                $medicineData->prescription_id= $prescriptionData->id;
+            $prescriptionMedicineData = PatientPrescriptionMedicine::where('prescription_id', $prescriptionData->id)->delete();
+            foreach ($request['medicines'] as $medicineValue) {
+                $medicineData = new PatientPrescriptionMedicine();
+                $medicineData->prescription_id = $prescriptionData->id;
                 $medicineData->patient_id = $request['patient_id'];
                 $medicineData->medicine_id = $medicineValue['medicine_id'];
                 $medicineData->type = $medicineValue['type'];
@@ -183,35 +184,55 @@ class PrescriptionController extends Controller
 
             $response['prescription_id'] = $prescriptionData->id;
             DB::commit();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
-            $response['errors']=$e->getMessage().$e->getLine();
+            $response['errors'] = $e->getMessage() . $e->getLine();
             return $this->failureApiResponse($response);
         }
-        $response['message']='Prescription Save successfully';
+        $response['message'] = 'Prescription Save successfully';
         return $this->successApiResponse($response);
     }
 
     public function getMedicineInPrescription()
     {
-        $data['medicine_data']=MedicineData::whereStatus(1)->get();
+        $data['medicine_data'] = MedicineData::whereStatus(1)->get();
         return $this->successApiResponse($data);
     }
+
     public function getPreviousPrescription($patient_id)
     {
-        $data['previous_prescription']=PatientPrescription::where('patient_id',$patient_id)->get();
+        $data['previous_prescription'] = PatientPrescription::where('patient_id', $patient_id)->get();
         return $this->successApiResponse($data);
     }
 
-    public function getPrescriptionSuggestionData(Request $request,$doctor_id)
+    public function getPrescriptionSuggestionData(Request $request, $doctor_id)
     {
 
-        $query = $request->query('query', '');
+        $searchQuery = $request->query('query', '');
+        $type = $request->type;
+        if (strlen($searchQuery) < 3) {
+            return $this->successApiResponse([]);
+        }
+        if ($type == 'instruction') {
+            $data['medicine_instruction'] = PatientPrescriptionMedicine::whereHas('prescription', function ($query) use ($doctor_id) {
+                $query->where('doctor_id', $doctor_id);
+            })
+                ->where('medicine_instruction', 'LIKE', '%' . $searchQuery . '%')
+                ->select('medicine_instruction')
+                ->distinct()
+                ->pluck('medicine_instruction');
 
-        $data['suggest_prescription_data']=PatientPrescription::where('doctor_id',$doctor_id)->where('symptoms', 'like', "%$query%")
-            ->distinct()
-            ->pluck('symptoms');
-        return $this->successApiResponse($data);
+            return $this->successApiResponse($data);
+
+
+        } elseif ($type == 'symptom') {
+            $data['suggest_prescription_data'] = PatientPrescription::where('doctor_id', $doctor_id)->where('symptoms', 'like', "%$searchQuery%")
+                ->distinct()
+                ->pluck('symptoms');
+            return $this->successApiResponse($data);
+        }
+
+
     }
 
     public function medicineDataStore(Request $request)
@@ -229,25 +250,25 @@ class PrescriptionController extends Controller
                 'medicine_name.required' => 'The Medicine Name is required.',
             ];
 
-            $validator = Validator::make($request->all(), $validationRules,$validationMessages);
+            $validator = Validator::make($request->all(), $validationRules, $validationMessages);
 
             if ($validator->fails()) {
                 $response['errors'] = $validator->errors()->all();
                 return $this->failureApiResponse($response);
             }
 
-            $addMedicine=new MedicineData();
+            $addMedicine = new MedicineData();
             $addMedicine->type = $request['medicine_type'];
             $addMedicine->medicine_name = $request['medicine_name'];
             $addMedicine->status = 1;
             $addMedicine->save();
             DB::commit();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
-            $response['errors']=$e->getMessage().$e->getLine();
+            $response['errors'] = $e->getMessage() . $e->getLine();
             return $this->failureApiResponse($response);
         }
-        $response['message']='Medicine Save Successfully!';
+        $response['message'] = 'Medicine Save Successfully!';
         return $this->successApiResponse($response);
     }
 

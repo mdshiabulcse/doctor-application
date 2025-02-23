@@ -16,5 +16,14 @@ class PatientPrescription extends Model
         return $this->belongsTo(DoctorInfo::class, 'doctor_id');
     }
 
+    public function medicines()
+    {
+        return $this->hasMany(PatientPrescriptionMedicine::class, 'prescription_id');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(DoctorInfo::class, 'doctor_id');
+    }
 
 }
