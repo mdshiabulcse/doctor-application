@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\prescription;
 
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\examination\ExaminationList;
 use App\Models\dashboard\patient\PatientPrescription;
 use App\Models\dashboard\patient\PatientPrescriptionMedicine;
 use App\Models\dashboard\prescription\MedicineData;

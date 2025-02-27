@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\appointment;
 
 use App\Http\Controllers\Controller;
 use App\Models\administrative\AppointmentSetting;
+use App\Models\dashboard\examination\ExaminationList;
 use App\Models\dashboard\patient\PatientAppointment;
 use App\Traits\ApiStatusTrait;
 use Carbon\Carbon;
@@ -156,6 +157,7 @@ class AppointmentController extends Controller
     public function patientAppointmentInfo($id)
     {
         $data['appointment_info']=PatientAppointment::whereId($id)->with(['patient_info','doctor_info'])->first();
+        $data['examination_lists'] = ExaminationList::whereStatus(1)->get();
         return $this->successApiResponse($data);
     }
 }

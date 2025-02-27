@@ -86,6 +86,7 @@
                   </v-list>
                 </v-col>
                 <v-col cols="12">
+                  <v-btn @click="dialogAdviceInvestigation = true"  prepend-icon="mdi-plus" color="warning">Advice Investigation</v-btn>
                   <v-autocomplete
                     density="compact"
                     v-model="submitForm.examination_data"
@@ -93,6 +94,10 @@
                     minlength="2"
                     label="Examination(Pathology)"
                     variant="outlined"
+                    :items="examination_lists"
+                    item-value="id"
+                    item-title="ex_name"
+                    multiple
                   ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
@@ -257,6 +262,78 @@
 
       </v-row>
     </div>
+    <div>
+      <v-row
+        justify="center"
+      >
+        <!-- Modal Dialog -->
+        <v-dialog v-model="dialogAdviceInvestigation" max-width="700px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Select Investigations</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-row>
+                <!-- Investigation List with Checkboxes -->
+                <v-col cols="12">
+                  <h3>Investigations</h3>
+                  <v-list>
+                    <v-list-item v-for="investigation in investigationList" :key="investigation.id">
+                      <v-checkbox
+                        v-model="selectedInvestigations"
+                        :label="investigation.name"
+                        :value="investigation.id"
+                        @change="onInvestigationChange"
+                      ></v-checkbox>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+              </v-row>
+
+              <!-- Column-wise Selected Investigations -->
+              <v-row v-if="selectedInvestigations.length">
+                <v-col cols="4"><strong>Investigation</strong></v-col>
+                <v-col cols="4"><strong>Eye Type</strong></v-col>
+                <v-col cols="4"><strong>Note</strong></v-col>
+              </v-row>
+
+              <v-row v-for="id in selectedInvestigations" :key="id">
+                <v-col cols="4">
+                  <p>{{ getInvestigationName(id) }}</p>
+                </v-col>
+
+                <!-- Eye Type Selection (Only for Ocular Investigations) -->
+                <v-col cols="4" v-if="isOcular(id)">
+                  <v-select
+                    v-model="eyeTypes[id]"
+                    :items="eyeOptions"
+                    label="Select Eye Type"
+                    required
+                  ></v-select>
+                </v-col>
+                <v-col cols="4" v-else></v-col>
+
+                <!-- Note Input -->
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="notes[id]"
+                    label="Note"
+                    hint="Enter details"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
+              <v-btn color="green darken-1" text @click="submitInvestigations">Submit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+      </v-row>
+    </div>
   </v-row>
 </template>
 <script setup>
@@ -278,6 +355,7 @@ const prescription_medicine_data = ref([]);
 const previous_prescription = ref([]);
 const suggest_prescription_data = ref([]);
 const medicine_data = ref([]);
+const examination_lists = ref([]);
 const user_id = useAuth().user.data.id;
 const routeParams = useRoute().params;
 const app_id = routeParams.app_id;
@@ -320,6 +398,7 @@ const fetchAppointmentInfo = async () => {
     const response = await axiosInstance(`/admin/appointment/patient-appointment-info/${app_id}`);
     appointment_info.value = response.data.appointment_info;
     submitForm.value.doctor_id = appointment_info.value.doctor_id;
+    examination_lists.value = response.data.examination_lists;
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -522,6 +601,7 @@ const PrintPrescription = () => {
   window.open(localUrl.value + `/print/prescription-print/${patient_id}/${prescription_id}`, '_blank');
 };
 
+/*START:: Prescription Suggestion Data*/
 
 const symptomSuggestions = ref([]); // Store API suggestions
 let typingTimer = null; // Timer for managing API requests
@@ -641,6 +721,61 @@ const selectDurationSuggestion = (medicine_duration, index) => {
   submitForm.value.medicines[index].duration = medicine_duration;
   durationSuggestions[index] = [];
 };
+
+/*END:: Prescription Suggestion Data*/
+/*START:: Prescription Investigation advice data*/
+
+const dialogAdviceInvestigation = ref(false);
+const selectedInvestigations = ref([]); // Holds selected investigations
+const eyeTypes = ref({}); // Holds eye type selection per investigation
+const notes = ref({}); // Holds notes per investigation
+
+// List of Investigations
+const investigationList = ref([
+  { id: 1, name: 'Blood Test', type: 'Investigation' },
+  { id: 2, name: 'X-Ray Chest', type: 'Investigation' },
+  { id: 3, name: 'ECG', type: 'Investigation' },
+  { id: 4, name: 'Physical Examination', type: 'Examination' },
+  { id: 5, name: 'Ocular Examination', type: 'Ocular' }, // This triggers eye selection
+  { id: 6, name: 'Retina Scan', type: 'Ocular' }, // Another Ocular example
+]);
+
+const eyeOptions = ['Left', 'Right', 'Both'];
+
+// Check if an investigation is Ocular
+const isOcular = (id) => {
+  const investigation = investigationList.value.find(i => i.id === id);
+  return investigation?.type === 'Ocular';
+};
+
+// Get investigation name from ID
+const getInvestigationName = (id) => {
+  return investigationList.value.find(i => i.id === id)?.name || '';
+};
+
+// Reset Eye Selection if Ocular is Removed
+const onInvestigationChange = () => {
+  // Remove eye type selection if Ocular is unchecked
+  selectedInvestigations.value.forEach(id => {
+    if (!isOcular(id)) {
+      delete eyeTypes.value[id];
+    }
+  });
+};
+
+// Submit Investigations
+const submitInvestigations = () => {
+  const selectedData = selectedInvestigations.value.map(id => ({
+    investigation: getInvestigationName(id),
+    eyeType: eyeTypes.value[id] || null,
+    note: notes.value[id] || '',
+  }));
+
+  console.log('Selected Investigations:', selectedData);
+  // Close the modal after submission
+  dialogAdviceInvestigation.value = false;
+};
+/*END:: Prescription Investigation advice data*/
 </script>
 
 
